@@ -27,7 +27,7 @@ export default async function ClientDetailPage({
     .from('clients')
     .select(`
       *,
-      data_connections(id, platform, property_name, is_active, last_sync),
+      data_connections(id, platform, property_id, property_name, is_active, last_sync),
       client_context(id, context_type, content, is_active, created_at),
       report_instructions(id, instruction, is_active)
     `)
@@ -37,7 +37,7 @@ export default async function ClientDetailPage({
 
   if (!client) notFound()
 
-  const connections = client.data_connections as { id: string; platform: string; property_name: string; is_active: boolean; last_sync: string }[]
+  const connections = client.data_connections as { id: string; platform: string; property_id: string | null; property_name: string | null; is_active: boolean; last_sync: string | null }[]
   const contextItems = client.client_context as { id: string; context_type: string; content: string; is_active: boolean; created_at: string }[]
   const instructions = client.report_instructions as { id: string; instruction: string; is_active: boolean }[]
 
