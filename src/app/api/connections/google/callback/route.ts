@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getOAuthClient } from '@/lib/google/oauth'
 
 export async function GET(request: NextRequest) {
@@ -76,8 +76,9 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Upsert the connection (encrypted tokens stored as text — add vault encryption post-MVP)
-  await supabase.from('data_connections').upsert({
+  // Upsert the connection — use service client to bypass RLS on data_connections
+  const serviceSupabase = createServiceClient()
+  await serviceSupabase.from('data_connections').upsert({
     client_id: state.clientId,
     platform: state.platform,
     property_id: propertyId,

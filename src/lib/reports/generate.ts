@@ -184,7 +184,8 @@ export async function generateNarrative(input: GenerateReportInput): Promise<Nar
 
   let parsed: RawNarrativeOutput
   try {
-    parsed = JSON.parse(rawText) as RawNarrativeOutput
+    const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+    parsed = JSON.parse(cleaned) as RawNarrativeOutput
   } catch {
     // Claude returned something unparseable — surface a degraded section rather than crashing
     return required.map(section => ({
