@@ -59,11 +59,11 @@ export default function SignupForm() {
       return
     }
 
-    // Normal signup: use server API route to bypass RLS for agency creation
+    // Create agency via server route (bypasses RLS), then sign up normally
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, fullName: name, agencyName }),
+      body: JSON.stringify({ agencyName }),
     })
 
     const data = await res.json()
@@ -74,11 +74,21 @@ export default function SignupForm() {
       return
     }
 
-    // Sign in after account created
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-    if (signInError) {
-      setError('Account created — please sign in.')
-      router.push('/login')
+    const { error: signupError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          agency_id: data.agencyId,
+          role: 'owner',
+          full_name: name,
+        },
+      },
+    })
+
+    if (signupError) {
+      setError(signupError.message)
+      setLoading(false)
       return
     }
 
