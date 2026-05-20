@@ -1,5 +1,26 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, CheckCircle, Zap } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'NarratorHQ — Client Reporting Automation for Digital Marketing Agencies',
+  description: 'NarratorHQ automates client performance reports for digital marketing agencies. Connect GA4, Google Ads, and Meta. Get a polished, white-labeled narrative report in minutes — not hours. 14-day free trial.',
+  keywords: 'client reporting automation, agency reporting software, marketing report automation, automated client reports, white label reporting, GA4 reporting, Google Ads reports, Meta Ads reports',
+  alternates: {
+    canonical: 'https://narratorhq.com',
+  },
+  openGraph: {
+    title: 'NarratorHQ — Client Reporting Automation for Agencies',
+    description: 'Stop spending 20 hours a month writing client reports. NarratorHQ connects to GA4, Google Ads, and Meta and writes the narrative automatically.',
+    url: 'https://narratorhq.com',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NarratorHQ — Client Reporting Automation for Agencies',
+    description: 'Stop spending 20 hours a month writing client reports. NarratorHQ connects to GA4, Google Ads, and Meta and writes the narrative automatically.',
+  },
+}
 
 const PAIN_STATS = [
   { value: '20 hrs', label: 'average time agencies spend on client reports per month' },
@@ -70,13 +91,34 @@ const FAQ = [
   },
 ]
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'NarratorHQ',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description: 'Client reporting automation for digital marketing agencies. Connect GA4, Google Ads, and Meta — get white-labeled narrative reports delivered automatically.',
+  url: 'https://narratorhq.com',
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'GBP',
+    lowPrice: '149',
+    highPrice: '399',
+    offerCount: '3',
+  },
+}
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <nav className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-10">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="font-bold text-lg text-gray-900">NarratorHQ</span>
+          <Link href="/" className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors">NarratorHQ</Link>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
               Sign in
@@ -287,15 +329,42 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 py-8">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
-          <span className="font-semibold text-gray-600">NarratorHQ</span>
-          <div className="flex gap-6">
-            <Link href="/login" className="hover:text-gray-600 transition-colors">Sign in</Link>
-            <Link href="/signup" className="hover:text-gray-600 transition-colors">Sign up</Link>
-            <a href="mailto:hello@narratorhq.com" className="hover:text-gray-600 transition-colors">Contact</a>
+      <footer className="border-t border-gray-100 py-10">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
+            <div>
+              <p className="font-bold text-gray-900 mb-1">NarratorHQ</p>
+              <p className="text-sm text-gray-400 max-w-xs">Client reporting automation for digital marketing agencies.</p>
+            </div>
+            <div className="flex flex-wrap gap-x-10 gap-y-4 text-sm text-gray-500">
+              <div className="space-y-2">
+                <p className="font-medium text-gray-700 text-xs uppercase tracking-wider">Product</p>
+                <div className="space-y-1.5">
+                  <Link href="/#pricing" className="block hover:text-gray-900 transition-colors">Pricing</Link>
+                  <Link href="/signup" className="block hover:text-gray-900 transition-colors">Start free trial</Link>
+                  <Link href="/login" className="block hover:text-gray-900 transition-colors">Sign in</Link>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="font-medium text-gray-700 text-xs uppercase tracking-wider">Resources</p>
+                <div className="space-y-1.5">
+                  <Link href="/blog/how-to-automate-client-marketing-reports" className="block hover:text-gray-900 transition-colors">How to automate reports</Link>
+                  <Link href="/blog/agencyanalytics-alternative" className="block hover:text-gray-900 transition-colors">AgencyAnalytics alternative</Link>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="font-medium text-gray-700 text-xs uppercase tracking-wider">Legal</p>
+                <div className="space-y-1.5">
+                  <Link href="/privacy" className="block hover:text-gray-900 transition-colors">Privacy Policy</Link>
+                  <Link href="/terms" className="block hover:text-gray-900 transition-colors">Terms of Service</Link>
+                  <a href="mailto:hello@narratorhq.com" className="block hover:text-gray-900 transition-colors">Contact</a>
+                </div>
+              </div>
+            </div>
           </div>
-          <span>© {new Date().getFullYear()} NarratorHQ</span>
+          <div className="border-t border-gray-100 pt-6 text-xs text-gray-400">
+            © {new Date().getFullYear()} NarratorHQ. All rights reserved.
+          </div>
         </div>
       </footer>
     </div>

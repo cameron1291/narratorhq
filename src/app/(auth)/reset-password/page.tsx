@@ -48,6 +48,11 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="absolute top-4 left-4">
+        <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
+          ← Back to sign in
+        </Link>
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>Reset password</CardTitle>

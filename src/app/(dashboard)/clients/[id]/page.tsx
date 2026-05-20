@@ -7,6 +7,8 @@ import { ClientConnectionsPanel } from '@/components/clients/client-connections-
 import { ClientSettingsPanel } from '@/components/clients/client-settings-panel'
 import { GenerateReportButton } from '@/components/clients/generate-report-button'
 import { ConnectionToast } from '@/components/clients/connection-toast'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { Suspense } from 'react'
 
 export default async function ClientDetailPage({
@@ -46,6 +48,10 @@ export default async function ClientDetailPage({
   return (
     <div className="p-8 max-w-5xl mx-auto">
       <Suspense fallback={null}><ConnectionToast /></Suspense>
+      <Link href="/clients" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors">
+        <ArrowLeft className="h-3.5 w-3.5" />
+        All clients
+      </Link>
       <div className="flex items-center gap-4 mb-8">
         <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg">
           {client.name.charAt(0).toUpperCase()}
