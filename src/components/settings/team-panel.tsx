@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Trash2, Crown, Shield, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -42,6 +43,8 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
   const [inviting, setInviting] = useState(false)
   const [inviteError, setInviteError] = useState<string | null>(null)
   const [inviteSuccess, setInviteSuccess] = useState(false)
+  const [removeTarget, setRemoveTarget] = useState<Member | null>(null)
+  const [removing, setRemoving] = useState(false)
 
   const canManage = ['owner', 'admin'].includes(currentUserRole)
 
@@ -77,10 +80,13 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
     setMembers(prev => prev.map(m => m.id === memberId ? { ...m, role } : m))
   }
 
-  async function removeMember(memberId: string) {
-    if (!confirm('Remove this team member? They will lose access immediately.')) return
-    const res = await fetch(`/api/team/members/${memberId}`, { method: 'DELETE' })
-    if (res.ok) setMembers(prev => prev.filter(m => m.id !== memberId))
+  async function confirmRemoveMember() {
+    if (!removeTarget) return
+    setRemoving(true)
+    const res = await fetch(`/api/team/members/${removeTarget.id}`, { method: 'DELETE' })
+    if (res.ok) setMembers(prev => prev.filter(m => m.id !== removeTarget.id))
+    setRemoving(false)
+    setRemoveTarget(null)
   }
 
   return (
@@ -125,7 +131,7 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
                       </SelectContent>
                     </Select>
                     <button
-                      onClick={() => removeMember(member.id)}
+                      onClick={() => setRemoveTarget(member)}
                       className="p-1.5 text-gray-300 hover:text-red-500 transition-colors rounded"
                       title="Remove member"
                     >
@@ -194,6 +200,23 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
           <p className="text-xs text-gray-400 mt-2">Invite link valid for 7 days. Admins can invite and manage members. Owners can manage admins.</p>
         </section>
       )}
+
+      <Dialog open={!!removeTarget} onOpenChange={open => !open && setRemoveTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogTitle>Remove {removeTarget?.full_name ?? 'this member'}?</DialogTitle>
+          <p className="text-sm text-gray-600 mt-1">
+            They will immediately lose access to your agency. This cannot be undone — you would need to send a new invite.
+          </p>
+          <div className="flex gap-2 mt-4">
+            <Button variant="destructive" className="flex-1" disabled={removing} onClick={confirmRemoveMember}>
+              {removing ? 'Removing…' : 'Remove member'}
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={() => setRemoveTarget(null)}>
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

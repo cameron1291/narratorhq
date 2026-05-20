@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { ReportApproval } from '@/components/reports/report-approval'
+import { GeneratingPoller } from '@/components/reports/generating-poller'
 import type { NarrativeSection } from '@/lib/normalization/types'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -49,11 +50,12 @@ export default async function ReportPage({
   if (report.status === 'generating') {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center">
+        <GeneratingPoller />
         <div className="inline-flex items-center gap-2 text-gray-600">
           <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
           Generating report…
         </div>
-        <p className="text-sm text-gray-400 mt-2">This usually takes 10–15 seconds. Refresh to check progress.</p>
+        <p className="text-sm text-gray-400 mt-2">This usually takes 10–15 seconds.</p>
       </div>
     )
   }
@@ -74,14 +76,14 @@ export default async function ReportPage({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 pt-4">
-        <Link
-          href={`/clients/${report.client_id}`}
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
+      <div className="max-w-3xl mx-auto px-4 pt-4 flex items-center gap-2 text-sm text-gray-500">
+        <Link href="/reports" className="hover:text-gray-700 transition-colors">Reports</Link>
+        <span>/</span>
+        <Link href={`/clients/${report.client_id}`} className="hover:text-gray-700 transition-colors">
           {client?.name ?? 'Client'}
         </Link>
+        <span>/</span>
+        <span className="text-gray-900">{periodLabel}</span>
       </div>
 
       <ReportApproval

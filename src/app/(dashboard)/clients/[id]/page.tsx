@@ -6,6 +6,8 @@ import { ClientContextPanel } from '@/components/clients/client-context-panel'
 import { ClientConnectionsPanel } from '@/components/clients/client-connections-panel'
 import { ClientSettingsPanel } from '@/components/clients/client-settings-panel'
 import { GenerateReportButton } from '@/components/clients/generate-report-button'
+import { ConnectionToast } from '@/components/clients/connection-toast'
+import { Suspense } from 'react'
 
 export default async function ClientDetailPage({
   params,
@@ -43,6 +45,7 @@ export default async function ClientDetailPage({
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
+      <Suspense fallback={null}><ConnectionToast /></Suspense>
       <div className="flex items-center gap-4 mb-8">
         <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg">
           {client.name.charAt(0).toUpperCase()}

@@ -15,7 +15,12 @@ const nav = [
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
-export function Sidebar() {
+interface SidebarProps {
+  userEmail: string
+  userName: string | null
+}
+
+export function Sidebar({ userEmail, userName }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
@@ -27,6 +32,9 @@ export function Sidebar() {
     router.refresh()
   }
 
+  const displayName = userName ?? userEmail.split('@')[0]
+  const initials = displayName.charAt(0).toUpperCase()
+
   return (
     <aside className={cn(
       'flex flex-col h-screen bg-gray-900 text-white transition-all duration-200',
@@ -34,7 +42,9 @@ export function Sidebar() {
     )}>
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
-          <span className="font-bold text-lg tracking-tight">NarratorHQ</span>
+          <Link href="/clients" className="font-bold text-lg tracking-tight hover:text-blue-300 transition-colors">
+            NarratorHQ
+          </Link>
         )}
         <Button
           variant="ghost"
@@ -64,7 +74,25 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-2 border-t border-gray-700">
+      <div className="p-2 border-t border-gray-700 space-y-1">
+        {!collapsed && (
+          <div className="flex items-center gap-2.5 px-3 py-2">
+            <div className="h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-white truncate">{displayName}</p>
+              <p className="text-xs text-gray-400 truncate">{userEmail}</p>
+            </div>
+          </div>
+        )}
+        {collapsed && (
+          <div className="flex justify-center py-1">
+            <div className="h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">
+              {initials}
+            </div>
+          </div>
+        )}
         <button
           onClick={handleSignOut}
           className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 hover:text-white w-full transition-colors"

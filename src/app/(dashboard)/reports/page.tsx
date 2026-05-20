@@ -91,7 +91,10 @@ export default async function ReportsPage() {
       {(!reports || reports.length === 0) && (
         <div className="text-center py-16 text-gray-400">
           <FileText className="h-8 w-8 mx-auto mb-3 opacity-40" />
-          <p className="text-sm">No reports yet. Generate your first report from a client page.</p>
+          <p className="text-sm">No reports yet.</p>
+          <Link href="/clients" className="text-sm text-blue-600 hover:text-blue-800 mt-2 inline-block">
+            Go to Clients to generate your first report →
+          </Link>
         </div>
       )}
     </div>

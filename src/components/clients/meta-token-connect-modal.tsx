@@ -16,7 +16,7 @@ const STEPS = [
       label: 'Open Business Manager',
       url: 'https://business.facebook.com/settings/system-users',
     },
-    tip: 'Make sure you're logged in as an Admin of your Business Manager.',
+    tip: "Make sure you're logged in as an Admin of your Business Manager.",
   },
   {
     title: 'Create a system user',

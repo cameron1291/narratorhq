@@ -11,6 +11,9 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import {
+  Dialog, DialogContent, DialogTitle,
+} from '@/components/ui/dialog'
 
 interface Props {
   client: {
@@ -40,6 +43,8 @@ export function ClientSettingsPanel({ client }: Props) {
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false)
+  const [archiving, setArchiving] = useState(false)
 
   function set(field: string, value: string) {
     setForm(f => ({ ...f, [field]: value }))
@@ -66,7 +71,7 @@ export function ClientSettingsPanel({ client }: Props) {
   }
 
   async function handleArchive() {
-    if (!confirm(`Archive ${client.name}? They will no longer receive reports.`)) return
+    setArchiving(true)
     await supabase.from('clients').update({ is_archived: true }).eq('id', client.id)
     router.push('/clients')
     router.refresh()
@@ -136,10 +141,32 @@ export function ClientSettingsPanel({ client }: Props) {
       <div>
         <h4 className="text-sm font-semibold text-gray-700 mb-1">Danger zone</h4>
         <p className="text-xs text-gray-500 mb-3">Archiving stops all report generation for this client.</p>
-        <Button type="button" variant="outline" className="text-red-600 border-red-300 hover:bg-red-50" onClick={handleArchive}>
+        <Button type="button" variant="outline" className="text-red-600 border-red-300 hover:bg-red-50" onClick={() => setShowArchiveDialog(true)}>
           Archive client
         </Button>
       </div>
+
+      <Dialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogTitle>Archive {client.name}?</DialogTitle>
+          <p className="text-sm text-gray-600 mt-1">
+            This will stop all report generation and remove them from your client list. You can unarchive at any time from your database.
+          </p>
+          <div className="flex gap-2 mt-4">
+            <Button
+              variant="destructive"
+              className="flex-1"
+              disabled={archiving}
+              onClick={handleArchive}
+            >
+              {archiving ? 'Archiving…' : 'Archive client'}
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={() => setShowArchiveDialog(false)}>
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </form>
   )
 }

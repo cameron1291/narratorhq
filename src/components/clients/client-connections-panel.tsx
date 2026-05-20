@@ -73,6 +73,7 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
   }
 
   return (
+    <>
     <div className="space-y-3">
       <p className="text-sm text-gray-500 mb-4">
         Connect data sources to start generating reports. GA4 is required; Google Ads and Meta are optional but recommended.
@@ -181,5 +182,6 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
         onClose={() => setShowMetaModal(false)}
       />
     )}
+    </>
   )
 }
