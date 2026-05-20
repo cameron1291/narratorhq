@@ -29,20 +29,36 @@ export async function GET(request: NextRequest) {
   let propertyId: string | null = null
   let propertyName: string | null = null
 
-  // For GA4: discover the first available property
+  // For GA4: discover the first available property via accounts → properties
   if (state.platform === 'ga4' && tokens.access_token) {
     try {
       oauthClient.setCredentials(tokens)
       const { google } = await import('googleapis')
       const analyticsAdmin = google.analyticsadmin({ version: 'v1beta', auth: oauthClient })
-      const { data } = await analyticsAdmin.properties.list({ filter: 'parent:accounts/-' })
-      const firstProp = data.properties?.[0]
-      if (firstProp) {
-        propertyId = firstProp.name?.replace('properties/', '') ?? null
-        propertyName = firstProp.displayName ?? null
+      const { data: accountsData } = await analyticsAdmin.accounts.list()
+      const accounts = accountsData.accounts ?? []
+      if (accounts.length === 0) {
+        return NextResponse.redirect(new URL(`/clients/${state.clientId}?ga4_debug=${encodeURIComponent('accounts_empty')}`, request.url))
       }
-    } catch {
-      // non-fatal — user can set property manually later
+      for (const account of accounts) {
+        if (!account.name) continue
+        const { data: propsData } = await analyticsAdmin.properties.list({
+          filter: `parent:${account.name}`,
+        })
+        const firstProp = propsData.properties?.[0]
+        if (firstProp) {
+          propertyId = firstProp.name?.replace('properties/', '') ?? null
+          propertyName = firstProp.displayName ?? null
+          break
+        }
+      }
+      if (!propertyId) {
+        return NextResponse.redirect(new URL(`/clients/${state.clientId}?ga4_debug=${encodeURIComponent('props_empty:' + accounts.map(a => a.name).join(','))}`, request.url))
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      console.error('[GA4 callback] property discovery failed:', msg)
+      return NextResponse.redirect(new URL(`/clients/${state.clientId}?ga4_debug=${encodeURIComponent(msg)}`, request.url))
     }
   }
 
