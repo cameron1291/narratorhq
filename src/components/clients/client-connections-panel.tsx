@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { CheckCircle2, AlertCircle, Link2, RefreshCw, Unlink, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { MetaTokenConnectModal } from './meta-token-connect-modal'
 
 interface Connection {
   id: string
@@ -46,8 +47,13 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
   const connected = new Map(connections.map(c => [c.platform, c]))
   const [disconnecting, setDisconnecting] = useState<string | null>(null)
   const [confirmPlatform, setConfirmPlatform] = useState<string | null>(null)
+  const [showMetaModal, setShowMetaModal] = useState(false)
 
   function handleConnect(platform: string) {
+    if (platform === 'meta_ads') {
+      setShowMetaModal(true)
+      return
+    }
     window.location.href = `/api/connections/${platform}/authorize?clientId=${clientId}`
   }
 
@@ -168,5 +174,12 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
         )
       })}
     </div>
+
+    {showMetaModal && (
+      <MetaTokenConnectModal
+        clientId={clientId}
+        onClose={() => setShowMetaModal(false)}
+      />
+    )}
   )
 }
