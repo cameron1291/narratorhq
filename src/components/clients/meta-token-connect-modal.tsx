@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ExternalLink, ChevronRight, ChevronLeft, CheckCircle2, Copy, Check } from 'lucide-react'
+import { toast } from 'sonner'
 
 const APP_ID = '2198866694213454'
 
@@ -96,6 +97,7 @@ export function MetaTokenConnectModal({ clientId, onClose }: Props) {
         setError(data.error ?? 'Connection failed. Please try again.')
         return
       }
+      toast.success('Meta Ads connected successfully')
       onClose()
       router.refresh()
     } finally {

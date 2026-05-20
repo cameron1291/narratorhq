@@ -6,6 +6,7 @@ import { CheckCircle2, AlertCircle, Link2, RefreshCw, Unlink, AlertTriangle } fr
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MetaTokenConnectModal } from './meta-token-connect-modal'
+import { toast } from 'sonner'
 
 interface Connection {
   id: string
@@ -60,11 +61,15 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
   async function handleDisconnect(platform: string) {
     setDisconnecting(platform)
     try {
-      await fetch(`/api/connections/${platform}/disconnect`, {
+      const res = await fetch(`/api/connections/${platform}/disconnect`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clientId }),
       })
+      if (res.ok) {
+        const labels: Record<string, string> = { ga4: 'Google Analytics 4', google_ads: 'Google Ads', meta_ads: 'Meta Ads' }
+        toast.success(`${labels[platform] ?? platform} disconnected`)
+      }
       router.refresh()
     } finally {
       setDisconnecting(null)

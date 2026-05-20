@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 import type { NarrativeSection } from '@/lib/normalization/types'
 
 const SECTION_LABELS: Record<NarrativeSection['section'], string> = {
@@ -250,6 +251,10 @@ export function ReportApproval({
     const res = await fetch(`/api/reports/${reportId}/send`, { method: 'POST' })
     if (res.ok) {
       setStatus('sent')
+      toast.success('Report sent to client')
+    } else {
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      toast.error(data.error ?? 'Failed to send report — please try again')
     }
     setSending(false)
   }
