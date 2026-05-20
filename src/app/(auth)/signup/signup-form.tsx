@@ -59,34 +59,26 @@ export default function SignupForm() {
       return
     }
 
-    const { data: agency, error: agencyError } = await supabase
-      .from('agencies')
-      .insert({ name: agencyName })
-      .select('id')
-      .single()
+    // Normal signup: use server API route to bypass RLS for agency creation
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, fullName: name, agencyName }),
+    })
 
-    if (agencyError || !agency) {
-      setError('Failed to create agency. Please try again.')
+    const data = await res.json()
+
+    if (!res.ok) {
+      setError(data.error ?? 'Failed to create account. Please try again.')
       setLoading(false)
       return
     }
 
-    const { error: signupError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          agency_id: agency.id,
-          role: 'owner',
-          full_name: name,
-        },
-      },
-    })
-
-    if (signupError) {
-      await supabase.from('agencies').delete().eq('id', agency.id)
-      setError(signupError.message)
-      setLoading(false)
+    // Sign in after account created
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+    if (signInError) {
+      setError('Account created — please sign in.')
+      router.push('/login')
       return
     }
 
