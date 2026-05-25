@@ -148,7 +148,7 @@ export default function HomePage() {
           writes the performance narrative, and delivers white-labeled reports — so your team
           stops spending 20 hours a month on copy-paste.
         </p>
-        <div className="flex items-center justify-center gap-4 mt-8">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
           <Link
             href="/signup"
             className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-base"
@@ -156,8 +156,14 @@ export default function HomePage() {
             Start free trial
             <ArrowRight className="h-4 w-4" />
           </Link>
-          <span className="text-sm text-gray-400">14 days free, then from £149/mo</span>
+          <Link
+            href="/demo"
+            className="flex items-center gap-2 text-gray-700 border border-gray-200 bg-white px-6 py-3 rounded-lg font-semibold hover:border-gray-300 hover:bg-gray-50 transition-colors text-base"
+          >
+            See a live demo
+          </Link>
         </div>
+        <p className="text-sm text-gray-400 mt-4">14 days free, then from £149/mo · No credit card required</p>
       </section>
 
       {/* Pain stats */}
