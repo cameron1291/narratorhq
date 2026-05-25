@@ -7,7 +7,14 @@ import { cn } from '@/lib/utils'
 
 const BRAND_COLOR = '#2563eb'
 
-const DEMO_SECTIONS = [
+const DEMO_SECTIONS: {
+  section: string
+  content: string
+  confidence: 'high' | 'medium' | 'low'
+  isApproved: boolean
+  editedContent: string | null
+  supportingMetrics: string[]
+}[] = [
   {
     section: 'overview' as const,
     content: "April was Meridian's strongest month in 2026 — organic sessions up 18% and paid CPA down to £28.50, the lowest since Q3 2025. The content refresh across the garden furniture category drove 40% of the organic growth. One area to watch: branded search volume dipped 8% following the end of the March awareness campaign — we've outlined the plan below.",
