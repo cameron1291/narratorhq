@@ -30,7 +30,15 @@ export function GenerateReportButton({ clientId, hasGa4 }: GenerateReportButtonP
   const [startDate, setStartDate] = useState(defaults.start)
   const [endDate, setEndDate] = useState(defaults.end)
 
+  const today = new Date().toISOString().split('T')[0]
+  const dateError = startDate > endDate
+    ? 'Start date must be before end date'
+    : endDate > today
+    ? 'End date cannot be in the future'
+    : null
+
   async function generate() {
+    if (dateError) return
     setLoading(true)
     setError(null)
     try {
@@ -83,10 +91,10 @@ export function GenerateReportButton({ clientId, hasGa4 }: GenerateReportButtonP
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
+          {(error || dateError) && (
+            <p className="text-sm text-red-600">{error ?? dateError}</p>
           )}
-          <Button onClick={generate} disabled={loading} className="w-full">
+          <Button onClick={generate} disabled={loading || !!dateError} className="w-full">
             {loading
               ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Generating…</>
               : 'Generate'

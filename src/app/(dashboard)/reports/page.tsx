@@ -89,11 +89,17 @@ export default async function ReportsPage() {
       )}
 
       {(!reports || reports.length === 0) && (
-        <div className="text-center py-16 text-gray-400">
-          <FileText className="h-8 w-8 mx-auto mb-3 opacity-40" />
-          <p className="text-sm">No reports yet.</p>
-          <Link href="/clients" className="text-sm text-blue-600 hover:text-blue-800 mt-2 inline-block">
-            Go to Clients to generate your first report →
+        <div className="text-center py-16 max-w-sm mx-auto">
+          <FileText className="h-10 w-10 mx-auto mb-4 text-gray-300" />
+          <p className="text-sm font-medium text-gray-700 mb-1">No reports yet</p>
+          <p className="text-sm text-gray-500 mb-4">
+            Reports are generated automatically on your configured schedule, or you can trigger one manually at any time from a client page.
+          </p>
+          <Link
+            href="/clients"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg px-4 py-2 transition-colors"
+          >
+            Go to Clients →
           </Link>
         </div>
       )}

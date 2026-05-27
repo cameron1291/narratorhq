@@ -77,12 +77,12 @@ export function AgencySettingsPanel({ agency }: AgencySettingsPanelProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="professional">Professional</SelectItem>
-            <SelectItem value="conversational">Conversational</SelectItem>
-            <SelectItem value="data-heavy">Data-heavy</SelectItem>
+            <SelectItem value="professional">Professional — clear, structured, agency-polished</SelectItem>
+            <SelectItem value="conversational">Conversational — friendly, plain English, no jargon</SelectItem>
+            <SelectItem value="data-heavy">Data-heavy — metrics-led, minimal narrative</SelectItem>
           </SelectContent>
         </Select>
-        <p className="text-xs text-gray-500">Can be overridden per client</p>
+        <p className="text-xs text-gray-500">Applied to all clients by default. Can be overridden per client.</p>
       </div>
 
       <Button onClick={save} disabled={saving || !name.trim()}>

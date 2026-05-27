@@ -54,6 +54,7 @@ function SectionCard({ reportId, section, originalContent, onUpdate }: SectionCa
     onUpdate(section.section, { editedContent: newContent !== section.content ? newContent : null })
     setSaving(false)
     setEditing(false)
+    toast.success('Section saved')
   }
 
   async function toggleApprove() {
@@ -344,8 +345,19 @@ export function ReportApproval({
           {showMetricsSummary ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
         {showMetricsSummary && (
-          <div className="px-4 pb-4 text-xs text-gray-500 font-mono border-t border-gray-100">
-            <p className="mt-3 italic">Metrics data is stored in the report record. Open the report details for full breakdown.</p>
+          <div className="px-4 pb-4 border-t border-gray-100">
+            <div className="mt-3 space-y-2">
+              {sections.map(s => s.supportingMetrics.length > 0 && (
+                <div key={s.section} className="flex items-start gap-2">
+                  <span className="text-xs font-medium text-gray-500 w-24 shrink-0 pt-0.5">{SECTION_LABELS[s.section]}</span>
+                  <div className="flex flex-wrap gap-1">
+                    {s.supportingMetrics.map(m => (
+                      <span key={m} className="text-xs text-gray-600 bg-gray-100 rounded px-1.5 py-0.5 font-mono">{m}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -150,7 +150,7 @@ export function ClientSettingsPanel({ client }: Props) {
         <DialogContent className="max-w-sm">
           <DialogTitle>Archive {client.name}?</DialogTitle>
           <p className="text-sm text-gray-600 mt-1">
-            This will stop all report generation and remove them from your client list. You can unarchive at any time from your database.
+            This will pause all report generation and hide {client.name} from your active client list. No data is deleted — you can restore the client at any time from the archived clients view in Settings.
           </p>
           <div className="flex gap-2 mt-4">
             <Button

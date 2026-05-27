@@ -46,6 +46,8 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
   const [newType, setNewType] = useState<string>('note')
   const [newInstruction, setNewInstruction] = useState('')
   const [saving, setSaving] = useState(false)
+  const [confirmDeleteContext, setConfirmDeleteContext] = useState<string | null>(null)
+  const [confirmDeleteInstruction, setConfirmDeleteInstruction] = useState<string | null>(null)
 
   const activeItems = contextItems.filter(i => i.is_active)
   const activeInstructions = instructions.filter(i => i.is_active)
@@ -100,15 +102,23 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
           )}
           {activeItems.map(item => (
             <div key={item.id} className="flex items-start justify-between p-3 bg-white border rounded-lg">
-              <div className="flex items-start gap-3">
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${TYPE_LABELS[item.context_type]?.color ?? 'bg-gray-100'}`}>
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${TYPE_LABELS[item.context_type]?.color ?? 'bg-gray-100'}`}>
                   {TYPE_LABELS[item.context_type]?.label ?? item.context_type}
                 </span>
                 <p className="text-sm text-gray-700">{item.content}</p>
               </div>
-              <button onClick={() => removeContext(item.id)} className="text-gray-400 hover:text-red-500 ml-2 shrink-0">
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              {confirmDeleteContext === item.id ? (
+                <div className="flex items-center gap-1 ml-2 shrink-0">
+                  <button onClick={() => removeContext(item.id)} className="text-xs text-red-600 hover:text-red-700 font-medium">Remove</button>
+                  <span className="text-gray-300">·</span>
+                  <button onClick={() => setConfirmDeleteContext(null)} className="text-xs text-gray-500 hover:text-gray-700">Cancel</button>
+                </div>
+              ) : (
+                <button onClick={() => setConfirmDeleteContext(item.id)} className="text-gray-400 hover:text-red-500 ml-2 shrink-0">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -151,10 +161,18 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
           )}
           {activeInstructions.map(inst => (
             <div key={inst.id} className="flex items-center justify-between p-3 bg-white border rounded-lg">
-              <p className="text-sm text-gray-700">{inst.instruction}</p>
-              <button onClick={() => removeInstruction(inst.id)} className="text-gray-400 hover:text-red-500 ml-2 shrink-0">
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              <p className="text-sm text-gray-700 flex-1 min-w-0">{inst.instruction}</p>
+              {confirmDeleteInstruction === inst.id ? (
+                <div className="flex items-center gap-1 ml-2 shrink-0">
+                  <button onClick={() => removeInstruction(inst.id)} className="text-xs text-red-600 hover:text-red-700 font-medium">Remove</button>
+                  <span className="text-gray-300">·</span>
+                  <button onClick={() => setConfirmDeleteInstruction(null)} className="text-xs text-gray-500 hover:text-gray-700">Cancel</button>
+                </div>
+              ) : (
+                <button onClick={() => setConfirmDeleteInstruction(inst.id)} className="text-gray-400 hover:text-red-500 ml-2 shrink-0">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
           ))}
         </div>
