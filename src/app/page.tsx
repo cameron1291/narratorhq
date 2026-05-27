@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle, Zap } from 'lucide-react'
+import { ArrowRight, CheckCircle, Circle, Zap, Shield, Info, AlertTriangle } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'NarratorHQ — Client Reporting Automation for Digital Marketing Agencies',
@@ -28,6 +28,22 @@ const PAIN_STATS = [
   { value: '£0', label: 'in billable revenue generated from that time' },
 ]
 
+const BEFORE_ITEMS = [
+  '90 minutes per client, every month, just writing the narrative',
+  '15 clients means losing an entire working day to reports',
+  'Inconsistent quality — depends who wrote it that week',
+  'Explaining anomalies is the hardest part and takes the longest',
+  'Reports go out late, which erodes client trust',
+]
+
+const AFTER_ITEMS = [
+  'Under 10 minutes per client to review, edit, and approve',
+  'First draft ready automatically — on your schedule',
+  'Consistent, strategic tone across every client report',
+  'Every anomaly detected and explained with data-backed reasoning',
+  'Reports out the same day data is ready',
+]
+
 const HOW_IT_WORKS = [
   {
     step: '1',
@@ -52,9 +68,9 @@ const HOW_IT_WORKS = [
 ]
 
 const PLANS = [
-  { name: 'Starter', price: '£149', limit: 'Up to 5 clients', highlighted: false },
-  { name: 'Growth', price: '£249', limit: 'Up to 15 clients', highlighted: true },
-  { name: 'Agency', price: '£399', limit: 'Unlimited clients', highlighted: false },
+  { name: 'Starter', price: '£149', limit: 'Up to 5 clients', highlighted: false, roi: 'Saves ~50 hrs/mo' },
+  { name: 'Growth', price: '£249', limit: 'Up to 15 clients', highlighted: true, roi: 'Saves ~150 hrs/mo' },
+  { name: 'Agency', price: '£399', limit: 'Unlimited clients', highlighted: false, roi: 'Unlimited savings' },
 ]
 
 const FEATURES = [
@@ -66,6 +82,60 @@ const FEATURES = [
   'Client memory: goals, promises, sensitivities',
   'Scheduled reports (weekly or monthly)',
   'Team roles: owner, admin, member',
+]
+
+const USE_CASES = [
+  {
+    title: 'Monthly SEO reports',
+    desc: 'Sessions, rankings, content performance — explained in plain English your client can share with their board.',
+  },
+  {
+    title: 'PPC performance updates',
+    desc: 'CPA, ROAS, campaign changes — the story behind the numbers, not just the numbers.',
+  },
+  {
+    title: 'Bad month explanations',
+    desc: "The hardest report to write. NarratorHQ explains what happened and what you're doing about it without losing client confidence.",
+  },
+  {
+    title: 'Ecommerce client reports',
+    desc: 'Multi-channel attribution explained clearly — no more conflicting numbers from GA4 vs Meta going unaddressed.',
+  },
+  {
+    title: 'Client renewals and QBRs',
+    desc: "Show the value you've delivered with a narrative that references goals set at the start of the engagement.",
+  },
+  {
+    title: 'New client onboarding',
+    desc: 'Set goals, sensitivities, and reporting tone once. Every report after that reflects the relationship.',
+  },
+]
+
+const GUARDRAILS = [
+  {
+    title: 'Nothing sends without your approval',
+    desc: 'Every report is a draft first. You review, edit if needed, and approve each section before anything goes to your client.',
+  },
+  {
+    title: 'Confidence scoring on every section',
+    desc: 'Each section is rated High / Review Recommended / Low Confidence so you know exactly where to spend your review time.',
+  },
+  {
+    title: 'Claims grounded in actual data',
+    desc: 'The model is instructed to only make statements directly supported by the numbers provided. No speculation without flagging it.',
+  },
+  {
+    title: 'Attribution differences disclosed',
+    desc: 'GA4 last-click and Meta 7-day click+view are never blended silently. Attribution models are explained in every report.',
+  },
+  {
+    title: 'Edit or regenerate any section',
+    desc: 'Click any sentence to rewrite it. Or regenerate with a specific instruction: "more cautious tone on the paid social section."',
+  },
+  {
+    title: 'Client memory keeps it accurate',
+    desc: 'Goals, sensitivities, and promises are stored per client. The system knows what was said last month and references it.',
+  },
 ]
 
 const FAQ = [
@@ -115,11 +185,15 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
       {/* Nav */}
       <nav className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-10">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/" className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors">NarratorHQ</Link>
           <div className="flex items-center gap-4">
+            <Link href="/report-example" className="text-sm text-gray-600 hover:text-gray-900 transition-colors hidden sm:block">
+              See a sample report
+            </Link>
             <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
               Sign in
             </Link>
@@ -144,9 +218,9 @@ export default function HomePage() {
           <span className="text-blue-600">Start sending them.</span>
         </h1>
         <p className="text-xl text-gray-500 mt-5 max-w-2xl mx-auto leading-relaxed">
-          NarratorHQ connects to your clients&apos; GA4, Google Ads, and Meta Ads accounts,
-          writes the performance narrative, and delivers white-labeled reports — so your team
-          stops spending 20 hours a month on copy-paste.
+          Your account managers are spending 20+ hours a month writing reports.
+          NarratorHQ writes the first draft automatically using GA4, Google Ads, and Meta data
+          — ready for approval in under 10 minutes per client.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
           <Link
@@ -157,10 +231,10 @@ export default function HomePage() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/demo"
+            href="/report-example"
             className="flex items-center gap-2 text-gray-700 border border-gray-200 bg-white px-6 py-3 rounded-lg font-semibold hover:border-gray-300 hover:bg-gray-50 transition-colors text-base"
           >
-            See a live demo
+            See a completed report
           </Link>
         </div>
         <p className="text-sm text-gray-400 mt-4">14 days free, then from £149/mo · No credit card required</p>
@@ -180,38 +254,172 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* What it does */}
+      {/* Before / After */}
       <section className="max-w-5xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">Not a dashboard. A narrative.</h2>
+          <h2 className="text-3xl font-bold text-gray-900">The same month. A very different Monday.</h2>
           <p className="text-gray-500 mt-3 max-w-xl mx-auto">
-            Your clients don&apos;t want more charts. They want to know if their money is working
-            and what you&apos;re doing about it. That&apos;s what NarratorHQ writes.
+            The reporting task doesn&apos;t go away — it just stops being something your team has to write from scratch.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-5">
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-7">
+            <h3 className="font-bold text-gray-900 mb-1">Without NarratorHQ</h3>
+            <p className="text-sm text-red-700 mb-5 font-medium">15 clients × 90 mins = full day lost, every month</p>
+            <ul className="space-y-3">
+              {BEFORE_ITEMS.map(item => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-gray-700">
+                  <span className="mt-0.5 h-4 w-4 rounded-full bg-red-200 text-red-700 text-xs flex items-center justify-center shrink-0 font-bold">✕</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-green-200 bg-green-50 p-7">
+            <h3 className="font-bold text-gray-900 mb-1">With NarratorHQ</h3>
+            <p className="text-sm text-green-700 mb-5 font-medium">15 clients × 10 mins = done before lunch</p>
+            <ul className="space-y-3">
+              {AFTER_ITEMS.map(item => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-gray-700">
+                  <CheckCircle className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* What it does — narrative example */}
+      <section className="bg-gray-50 border-y border-gray-100 py-20">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">Not a dashboard. A narrative.</h2>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+              Your clients don&apos;t want more charts. They want to know if their money is working
+              and what you&apos;re doing about it. That&apos;s what NarratorHQ writes.
+            </p>
+          </div>
+
+          {/* Example narrative */}
+          <div className="bg-gray-900 rounded-2xl p-8 text-white max-w-2xl mx-auto">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
+              <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+              <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
+              <span className="text-xs text-gray-500 ml-2">April 2026 — Thornton Kitchens</span>
+            </div>
+            <div className="space-y-4 text-sm leading-relaxed">
+              <p>
+                <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-1">Overview</span>
+                April was a strong month — organic sessions up 18% driven by your kitchen renovation content cluster finally gaining traction. CPA dropped from £42 to £35 as we cut two underperforming ad groups.
+              </p>
+              <p>
+                <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-1">Key observation</span>
+                Branded search volume is down 8% for the second consecutive month. This typically signals a brand awareness gap following reduced Display activity. We&apos;ve drafted a campaign to address this in May.
+              </p>
+              <p>
+                <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-1">Next steps</span>
+                Launch Display awareness campaign targeting in-market homeowners · Continue scaling the &apos;kitchen renovation ideas&apos; content cluster · Review mobile bid adjustments — mobile CPA is 34% above desktop
+              </p>
+            </div>
+          </div>
+
+          <p className="text-center mt-6">
+            <Link href="/report-example" className="text-sm text-blue-600 hover:underline font-medium">
+              See a complete example report — client view and approval queue →
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* Product UI preview — the approval queue */}
+      <section className="max-w-5xl mx-auto px-4 py-20">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-gray-900">Your approval queue</h2>
+          <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+            Every report arrives section by section. Confidence scores show where to look.
+            Edit anything in-line. Approve what looks good.
           </p>
         </div>
 
-        {/* Example narrative */}
-        <div className="bg-gray-900 rounded-2xl p-8 text-white max-w-2xl mx-auto">
-          <div className="flex items-center gap-2 mb-5">
-            <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
-            <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
-            <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
-            <span className="text-xs text-gray-500 ml-2">April 2025 — Thornton Kitchens</span>
+        <div className="max-w-2xl mx-auto">
+          {/* Queue header */}
+          <div className="bg-gray-50 border border-gray-200 rounded-t-xl px-5 py-3 flex items-center justify-between border-b-0">
+            <div>
+              <span className="text-sm font-semibold text-gray-900">Meridian Home &amp; Garden — April 2026</span>
+              <span className="text-xs text-gray-500 ml-3">6 sections</span>
+            </div>
+            <span className="text-xs text-gray-400">3 / 6 approved</span>
           </div>
-          <div className="space-y-4 text-sm leading-relaxed">
-            <p>
-              <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-1">Overview</span>
-              April was a strong month — organic sessions up 18% driven by your kitchen renovation content cluster finally gaining traction. CPA dropped from £42 to £35 as we cut two underperforming ad groups.
-            </p>
-            <p>
-              <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-1">Key observation</span>
-              Branded search volume is down 8% for the second consecutive month. This typically signals a brand awareness gap following reduced Display activity. We&apos;ve drafted a campaign to address this in May.
-            </p>
-            <p>
-              <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-1">Next steps</span>
-              Launch Display awareness campaign targeting in-market homeowners · Continue scaling the &apos;kitchen renovation ideas&apos; content cluster · Review mobile bid adjustments — mobile CPA is 34% above desktop
-            </p>
+
+          <div className="border border-gray-200 rounded-b-xl overflow-hidden space-y-0 divide-y divide-gray-100 bg-white">
+            {/* Approved section */}
+            <div className="p-4 bg-green-50/50">
+              <div className="flex items-center gap-2.5 mb-2">
+                <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+                <span className="text-sm font-semibold text-gray-900">Overview</span>
+                <span className="text-xs border rounded px-1.5 py-0.5 ml-auto text-green-700 bg-green-50 border-green-200">High confidence</span>
+              </div>
+              <p className="text-sm text-gray-600 pl-6 leading-relaxed line-clamp-2">April was Meridian&apos;s strongest month in 2026 — organic sessions up 18% and paid CPA down to £28.50, the lowest since Q3 last year...</p>
+            </div>
+
+            {/* Approved section */}
+            <div className="p-4 bg-green-50/50">
+              <div className="flex items-center gap-2.5 mb-2">
+                <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+                <span className="text-sm font-semibold text-gray-900">Organic Search</span>
+                <span className="text-xs border rounded px-1.5 py-0.5 ml-auto text-green-700 bg-green-50 border-green-200">High confidence</span>
+              </div>
+              <p className="text-sm text-gray-600 pl-6 leading-relaxed line-clamp-2">Organic search delivered 14,200 sessions — up 21% from March. &apos;garden sofas UK&apos; now ranks at position 3...</p>
+            </div>
+
+            {/* Review recommended */}
+            <div className="p-4">
+              <div className="flex items-center gap-2.5 mb-2">
+                <Circle className="h-4 w-4 text-gray-300 shrink-0" />
+                <span className="text-sm font-semibold text-gray-900">Paid Social</span>
+                <span className="text-xs border rounded px-1.5 py-0.5 ml-auto text-yellow-700 bg-yellow-50 border-yellow-200">
+                  <Info className="inline h-3 w-3 mr-0.5" />Review recommended
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 pl-6 leading-relaxed line-clamp-2">Meta delivered 84 conversions at £42 CPA. Lifestyle creative outperformed product-only by 34%...</p>
+              <div className="flex gap-1.5 mt-2.5 pl-6">
+                <button className="text-xs text-blue-600 border border-blue-200 bg-blue-50 rounded px-2 py-0.5 cursor-default">Edit inline</button>
+                <button className="text-xs text-gray-500 border border-gray-200 rounded px-2 py-0.5 cursor-default">Regenerate</button>
+                <button className="text-xs text-green-600 border border-green-200 bg-green-50 rounded px-2 py-0.5 ml-auto cursor-default">Approve ✓</button>
+              </div>
+            </div>
+
+            {/* Low confidence */}
+            <div className="p-4">
+              <div className="flex items-center gap-2.5 mb-2">
+                <Circle className="h-4 w-4 text-gray-300 shrink-0" />
+                <span className="text-sm font-semibold text-gray-900">Anomalies</span>
+                <span className="text-xs border rounded px-1.5 py-0.5 ml-auto text-red-700 bg-red-50 border-red-200">
+                  <AlertTriangle className="inline h-3 w-3 mr-0.5" />Low confidence — please review
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 pl-6 leading-relaxed line-clamp-2">Branded search volume dipped 8%. We have flagged this for your attention — further context may be needed...</p>
+              <div className="flex gap-1.5 mt-2.5 pl-6">
+                <button className="text-xs text-blue-600 border border-blue-200 bg-blue-50 rounded px-2 py-0.5 cursor-default">Edit inline</button>
+                <button className="text-xs text-gray-500 border border-gray-200 rounded px-2 py-0.5 cursor-default">Regenerate</button>
+                <button className="text-xs text-green-600 border border-green-200 bg-green-50 rounded px-2 py-0.5 ml-auto cursor-default">Approve ✓</button>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 bg-gray-50 flex items-center justify-between">
+              <span className="text-sm text-gray-500">3 / 6 sections approved</span>
+              <button className="text-sm bg-blue-600 text-white px-4 py-1.5 rounded-lg font-medium opacity-40 cursor-default">Approve report</button>
+            </div>
           </div>
+
+          <p className="text-center mt-4">
+            <Link href="/demo" className="text-sm text-blue-600 hover:underline">
+              Try the fully interactive demo →
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -263,12 +471,68 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* What agencies use this for */}
+      <section className="bg-gray-50 border-y border-gray-100 py-20">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">What agencies use NarratorHQ for</h2>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+              If you send regular performance updates to clients, NarratorHQ handles the writing.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {USE_CASES.map(uc => (
+              <div key={uc.title} className="bg-white rounded-xl border border-gray-200 p-5">
+                <h3 className="font-semibold text-gray-900 mb-2 text-sm">{uc.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{uc.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* AI guardrails / Trust */}
+      <section className="max-w-5xl mx-auto px-4 py-20">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 text-sm text-gray-600 bg-gray-100 border border-gray-200 rounded-full px-3 py-1 mb-5">
+            <Shield className="h-3.5 w-3.5" />
+            Built around human oversight
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900">The most important question agencies ask us</h2>
+          <p className="text-xl text-gray-500 mt-4 max-w-xl mx-auto">
+            &ldquo;What if it sends something wrong to my client?&rdquo;
+          </p>
+          <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+            It can&apos;t. Here&apos;s exactly what happens between generation and send.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {GUARDRAILS.map(g => (
+            <div key={g.title} className="border border-gray-200 rounded-xl p-5 bg-white">
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <Shield className="h-3.5 w-3.5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-sm mb-1">{g.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{g.desc}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Pricing */}
       <section className="bg-gray-50 border-y border-gray-100 py-20" id="pricing">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Simple pricing</h2>
             <p className="text-gray-500 mt-3">14-day free trial on every plan. No credit card required to start.</p>
+            <p className="text-sm text-gray-400 mt-1.5">
+              At £149/mo for 5 clients, you&apos;re paying £30 per client per month to reclaim 90 minutes per report.
+              At £25/hr, that&apos;s a 30× return.
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-3xl mx-auto">
             {PLANS.map(plan => (
@@ -288,6 +552,7 @@ export default function HomePage() {
                   {plan.price}<span className="text-base font-normal text-gray-500">/mo</span>
                 </p>
                 <p className="text-sm text-gray-500 mt-1">{plan.limit}</p>
+                <p className="text-xs text-green-600 font-medium mt-1">{plan.roi}</p>
                 <Link
                   href="/signup"
                   className={`mt-5 block text-center text-sm font-semibold py-2.5 rounded-lg transition-colors ${
@@ -324,13 +589,21 @@ export default function HomePage() {
           <p className="text-blue-100 mt-3 mb-8">
             Join agencies that have reclaimed 20+ hours a month. 14-day trial, no credit card.
           </p>
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors"
-          >
-            Start your free trial
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 bg-white text-blue-700 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors"
+            >
+              Start your free trial
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/report-example"
+              className="inline-flex items-center gap-2 text-white border border-blue-400 hover:border-blue-300 px-8 py-3 rounded-lg font-semibold transition-colors"
+            >
+              See a sample report
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -347,6 +620,8 @@ export default function HomePage() {
                 <p className="font-medium text-gray-700 text-xs uppercase tracking-wider">Product</p>
                 <div className="space-y-1.5">
                   <Link href="/#pricing" className="block hover:text-gray-900 transition-colors">Pricing</Link>
+                  <Link href="/report-example" className="block hover:text-gray-900 transition-colors">Sample report</Link>
+                  <Link href="/demo" className="block hover:text-gray-900 transition-colors">Interactive demo</Link>
                   <Link href="/signup" className="block hover:text-gray-900 transition-colors">Start free trial</Link>
                   <Link href="/login" className="block hover:text-gray-900 transition-colors">Sign in</Link>
                 </div>
@@ -356,6 +631,7 @@ export default function HomePage() {
                 <div className="space-y-1.5">
                   <Link href="/blog/how-to-automate-client-marketing-reports" className="block hover:text-gray-900 transition-colors">How to automate reports</Link>
                   <Link href="/blog/agencyanalytics-alternative" className="block hover:text-gray-900 transition-colors">AgencyAnalytics alternative</Link>
+                  <Link href="/blog/dashthis-alternative" className="block hover:text-gray-900 transition-colors">DashThis alternative</Link>
                 </div>
               </div>
               <div className="space-y-2">
