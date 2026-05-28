@@ -231,14 +231,28 @@ export default function HomePage() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/report-example"
+            href="/sample-report"
             className="flex items-center gap-2 text-gray-700 border border-gray-200 bg-white px-6 py-3 rounded-lg font-semibold hover:border-gray-300 hover:bg-gray-50 transition-colors text-base"
           >
-            See a completed report
+            Download sample report
           </Link>
         </div>
         <p className="text-sm text-gray-400 mt-4">14 days free, then from £149/mo · No credit card required</p>
       </section>
+
+      {/* Video section — replace LOOM_URL below once recorded */}
+      {/* To add: record a 90-second Loom at loom.com, paste the embed URL below */}
+      {/* LOOM_URL = '' — leave empty until recorded, section auto-hides */}
+      {(false) && (
+        <section className="max-w-4xl mx-auto px-4 pb-16">
+          <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-200">
+            <div className="aspect-video bg-gray-900 flex items-center justify-center">
+              {/* Replace with: <iframe src="LOOM_EMBED_URL" className="w-full h-full" allowFullScreen /> */}
+              <p className="text-gray-500 text-sm">Video placeholder</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Pain stats */}
       <section className="bg-gray-50 border-y border-gray-100 py-12">

@@ -6,6 +6,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${base}/report-example`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/sample-report`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${base}/sample-report/bad-month`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/demo`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog/how-to-automate-client-marketing-reports`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/blog/agencyanalytics-alternative`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
