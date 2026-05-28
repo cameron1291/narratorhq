@@ -2,10 +2,45 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
-import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X } from 'lucide-react'
+import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X, Brain, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const BRAND_COLOR = '#2563eb'
+
+const CLIENT_MEMORY = [
+  {
+    type: 'promise',
+    label: 'Promise',
+    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    content: 'Fix the mobile CPC issue — mobile CPA is currently 41% above desktop',
+    resolved: true,
+    resolvedIn: 'Paid Search',
+  },
+  {
+    type: 'goal',
+    label: 'Goal',
+    color: 'bg-green-100 text-green-800 border-green-200',
+    content: '100 qualified leads per month by end of Q2 2026',
+    resolved: false,
+    resolvedIn: null,
+  },
+  {
+    type: 'sensitivity',
+    label: 'Sensitivity',
+    color: 'bg-amber-100 text-amber-800 border-amber-200',
+    content: 'Client hates jargon — always use plain English, explain any acronyms',
+    resolved: false,
+    resolvedIn: null,
+  },
+  {
+    type: 'note',
+    label: 'Note',
+    color: 'bg-gray-100 text-gray-700 border-gray-200',
+    content: 'Decision maker is the CFO, not the marketing lead — always lead with ROI and business outcomes',
+    resolved: false,
+    resolvedIn: null,
+  },
+]
 
 const DEMO_SECTIONS: {
   section: string
@@ -14,6 +49,7 @@ const DEMO_SECTIONS: {
   isApproved: boolean
   editedContent: string | null
   supportingMetrics: string[]
+  promiseKept?: string
 }[] = [
   {
     section: 'overview' as const,
@@ -33,11 +69,12 @@ const DEMO_SECTIONS: {
   },
   {
     section: 'paid_search' as const,
-    content: "Google Ads delivered 187 conversions at a CPA of £28.50 — down from £34.20 in March, an improvement of 17%. ROAS improved to 4.2x (from 3.6x). We cut three underperforming ad groups targeting broad match gardening terms that were generating clicks but no conversions. Budget has been reallocated to the retargeting campaign which is converting at £18 CPA.",
+    content: "Google Ads delivered 187 conversions at a CPA of £28.50 — down from £34.20 in March, an improvement of 17%. ROAS improved to 4.2x (from 3.6x).\n\nAs we committed last month, we applied bid modifier adjustments to mobile campaigns. Mobile CPA has improved from 41% above desktop to 23% above desktop — meaningful progress, and we'll continue tightening this in May.\n\nWe also cut three underperforming ad groups targeting broad match gardening terms that were generating clicks but no conversions. That budget has been reallocated to the retargeting campaign, which is now converting at a CPA of £18.",
     confidence: 'high' as const,
     isApproved: true,
     editedContent: null,
-    supportingMetrics: ['CPA £28.50 (-17%)', 'ROAS 4.2x', 'Spend £3,240'],
+    supportingMetrics: ['CPA £28.50 (-17%)', 'ROAS 4.2x', 'Spend £3,240', 'Mobile CPA improved'],
+    promiseKept: 'Fix mobile CPC issue',
   },
   {
     section: 'paid_social' as const,
@@ -108,6 +145,51 @@ function SignupPrompt({ onClose }: SignupPromptProps) {
           <p className="text-xs text-gray-400">No credit card required</p>
         </div>
       </div>
+    </div>
+  )
+}
+
+function ClientMemoryPanel() {
+  const [expanded, setExpanded] = useState(true)
+
+  return (
+    <div className="rounded-xl border border-purple-200 bg-purple-50 overflow-hidden">
+      <button
+        className="w-full flex items-center gap-2.5 px-4 py-3 text-left hover:bg-purple-100/50 transition-colors"
+        onClick={() => setExpanded(v => !v)}
+      >
+        <Brain className="h-4 w-4 text-purple-600 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <span className="text-sm font-semibold text-purple-900">Client memory — Meridian Home &amp; Garden</span>
+          <span className="text-xs text-purple-600 ml-2">Fed into this report automatically</span>
+        </div>
+        <ChevronRight className={cn('h-4 w-4 text-purple-400 transition-transform', expanded && 'rotate-90')} />
+      </button>
+
+      {expanded && (
+        <div className="px-4 pb-4 space-y-2 border-t border-purple-200">
+          <p className="text-xs text-purple-600 pt-3 pb-1">
+            These items were stored from previous reports and conversations. The AI reads them before generating every section.
+          </p>
+          {CLIENT_MEMORY.map((item, i) => (
+            <div key={i} className="flex items-start gap-2.5 bg-white rounded-lg p-3 border border-purple-100">
+              <span className={`text-xs font-semibold px-1.5 py-0.5 rounded border shrink-0 mt-0.5 ${item.color}`}>
+                {item.label}
+              </span>
+              <p className="text-sm text-gray-700 flex-1">{item.content}</p>
+              {item.resolved && (
+                <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 shrink-0 flex items-center gap-1 mt-0.5">
+                  <CheckCircle className="h-3 w-3" />
+                  Addressed in {item.resolvedIn}
+                </span>
+              )}
+            </div>
+          ))}
+          <p className="text-xs text-purple-500 pt-1">
+            Promises, goals, sensitivities, and notes persist across every report. They&apos;re never lost when the account manager changes.
+          </p>
+        </div>
+      )}
     </div>
   )
 }
@@ -198,8 +280,12 @@ export default function DemoPage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Demo Report</p>
-            <h1 className="text-xl font-bold text-gray-900">Meridian Home & Garden</h1>
+            <h1 className="text-xl font-bold text-gray-900">Meridian Home &amp; Garden</h1>
             <p className="text-sm text-gray-500 mt-0.5">April 2026 · {DEMO_SECTIONS.length} sections · Generated in 28 seconds</p>
+            <p className="text-xs text-purple-600 mt-1.5 flex items-center gap-1">
+              <Brain className="h-3 w-3" />
+              4 client memory items used · 1 promise referenced and resolved
+            </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-sm text-gray-500">{approvedCount}/{DEMO_SECTIONS.length} approved</span>
@@ -221,6 +307,9 @@ export default function DemoPage() {
             )}
           </div>
         </div>
+
+        {/* Client Memory Panel */}
+        <ClientMemoryPanel />
 
         {/* Quick approve */}
         {!allApproved && (
@@ -273,6 +362,13 @@ export default function DemoPage() {
                   {wasEdited && (
                     <span className="text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5">
                       Edited
+                    </span>
+                  )}
+
+                  {section.promiseKept && (
+                    <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 flex items-center gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      Promise kept
                     </span>
                   )}
 
