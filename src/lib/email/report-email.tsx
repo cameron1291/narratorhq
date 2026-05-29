@@ -6,6 +6,7 @@ const SECTION_LABELS: Record<NarrativeSection['section'], string> = {
   organic: 'Organic',
   paid_search: 'Paid Search',
   paid_social: 'Paid Social',
+  tiktok: 'TikTok Ads',
   anomalies: 'Key Observations',
   next_steps: 'Next Steps',
 }

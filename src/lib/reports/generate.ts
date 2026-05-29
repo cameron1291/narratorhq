@@ -9,7 +9,7 @@ export interface ClientReportContext {
   sensitivities: string[] // things never to mention or frame negatively
   reusableInstructions: string[] // e.g. "always mention the team by name", "never use the word unfortunately"
   previousNarrativeSummary: string | null // one-paragraph summary of what was said last month
-  connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads')[]
+  connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads' | 'tiktok_ads')[]
 }
 
 export interface GenerateReportInput {
@@ -97,6 +97,7 @@ function sectionsRequired(context: ClientReportContext, anomalies: Anomaly[]): N
   const sections: NarrativeSection['section'][] = ['overview', 'organic']
   if (context.connectedPlatforms.includes('google_ads')) sections.push('paid_search')
   if (context.connectedPlatforms.includes('meta_ads')) sections.push('paid_social')
+  if (context.connectedPlatforms.includes('tiktok_ads')) sections.push('tiktok')
   if (anomalies.length > 0) sections.push('anomalies')
   sections.push('next_steps')
   return sections
@@ -132,6 +133,7 @@ export async function generateNarrative(input: GenerateReportInput): Promise<Nar
     organic: 'Organic and direct traffic: what drove sessions up or down, which channels performed, conversion rate from organic.',
     paid_search: 'Google Ads performance: spend efficiency, CPA/ROAS movement, what worked and what didn\'t. Be specific about bid strategy or audience changes if CPA moved.',
     paid_social: 'Meta Ads performance: reach, engagement, ROAS, spend efficiency. Explain any creative or audience changes that drove the result.',
+    tiktok: 'TikTok Ads performance: spend, CTR, CPA, top-performing creatives. Note the 7-day click + 1-day view attribution window when discussing conversions.',
     anomalies: 'Explain each anomaly directly. State the divergence, the most likely cause (cite the supporting data), and what action is being taken. If the cause is unclear, say so.',
     next_steps: 'Maximum 3 bullet points. Concrete actions the agency will take next month. Each bullet should reference a specific metric or outcome it targets.',
   }

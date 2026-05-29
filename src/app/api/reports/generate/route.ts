@@ -3,6 +3,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { fetchGA4Metrics } from '@/lib/google/ga4'
 import { fetchGoogleAdsMetrics } from '@/lib/google/ads'
 import { fetchMetaAdsMetrics } from '@/lib/meta/ads'
+import { fetchTikTokAdsMetrics } from '@/lib/tiktok/ads'
 import { buildComparison, detectAnomalies } from '@/lib/normalization/anomalies'
 import { generateNarrative } from '@/lib/reports/generate'
 import type { ClientReportContext } from '@/lib/reports/generate'
@@ -207,6 +208,19 @@ export async function POST(request: NextRequest) {
       } catch { /* non-fatal */ }
     }
 
+    const tiktokConnection = connections?.find(c => c.platform === 'tiktok_ads')
+    if (tiktokConnection?.property_id) {
+      try {
+        const tiktok = await fetchTikTokAdsMetrics(
+          { access_token: tiktokConnection.access_token },
+          tiktokConnection.property_id,
+          period.start,
+          period.end
+        )
+        results.push(tiktok)
+      } catch { /* non-fatal */ }
+    }
+
     if (results.length === 0) return {}
 
     // Merge: sum spend, impressions, clicks; merge channel breakdowns; combine attribution notes
@@ -275,9 +289,10 @@ export async function POST(request: NextRequest) {
   const anomalies = detectAnomalies(comparison)
 
   // Build client context for the prompt
-  const connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads')[] = ['ga4']
+  const connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads' | 'tiktok_ads')[] = ['ga4']
   if (connections?.find(c => c.platform === 'google_ads')) connectedPlatforms.push('google_ads')
   if (connections?.find(c => c.platform === 'meta_ads')) connectedPlatforms.push('meta_ads')
+  if (connections?.find(c => c.platform === 'tiktok_ads')) connectedPlatforms.push('tiktok_ads')
 
   const effectiveTone = (client.tone_override ?? agency?.tone ?? 'professional') as ClientReportContext['tone']
 

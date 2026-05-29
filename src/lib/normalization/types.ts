@@ -14,7 +14,7 @@ export interface CanonicalMetrics {
   // Conversions
   conversions: number
   conversionRate: number | null
-  conversionSource: 'ga4' | 'google_ads' | 'meta_ads'
+  conversionSource: 'ga4' | 'google_ads' | 'meta_ads' | 'tiktok_ads'
 
   // Paid (null if platform not connected)
   spend: number | null
@@ -72,7 +72,7 @@ export interface Anomaly {
 
 // Structured narrative section output from Claude
 export interface NarrativeSection {
-  section: 'overview' | 'organic' | 'paid_search' | 'paid_social' | 'anomalies' | 'next_steps'
+  section: 'overview' | 'organic' | 'paid_search' | 'paid_social' | 'tiktok' | 'anomalies' | 'next_steps'
   content: string
   confidence: 'high' | 'medium' | 'low'
   supportingMetrics: string[]
