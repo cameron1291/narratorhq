@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlusCircle } from 'lucide-react'
+import { PlusCircle, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,9 +18,12 @@ import {
 
 interface Props {
   agencyId: string
+  clientCount: number
+  clientLimit: number
 }
 
-export function AddClientDialog({ agencyId }: Props) {
+export function AddClientDialog({ agencyId, clientCount, clientLimit }: Props) {
+  const atLimit = clientCount >= clientLimit
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -67,14 +71,34 @@ export function AddClientDialog({ agencyId }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>
+      <DialogTrigger render={<Button disabled={atLimit} />}>
         <PlusCircle className="h-4 w-4 mr-2" />
         Add client
       </DialogTrigger>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add a client</DialogTitle>
+          <DialogTitle>{atLimit ? 'Client limit reached' : 'Add a client'}</DialogTitle>
         </DialogHeader>
+        {atLimit ? (
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-gray-600">
+              You&apos;re using all <strong>{clientLimit}</strong> client slots on your current plan.
+              Upgrade to add more clients.
+            </p>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700">
+              <p className="font-medium text-gray-900 mb-1">Current plan</p>
+              <p>{clientCount} of {clientLimit} clients used</p>
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+              <Link href="/settings#billing">
+                <Button type="button">
+                  Upgrade plan <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Client name *</Label>
@@ -149,6 +173,7 @@ export function AddClientDialog({ agencyId }: Props) {
             </Button>
           </div>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   )

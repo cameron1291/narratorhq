@@ -35,7 +35,11 @@ export default async function ClientsPage() {
             {clients?.length ?? 0} of {agency?.client_limit ?? 5} on your plan
           </p>
         </div>
-        <AddClientDialog agencyId={agencyUser?.agency_id ?? ''} />
+        <AddClientDialog
+          agencyId={agencyUser?.agency_id ?? ''}
+          clientCount={clients?.length ?? 0}
+          clientLimit={agency?.client_limit ?? 5}
+        />
       </div>
 
       {!clients?.length ? (
@@ -45,7 +49,11 @@ export default async function ClientsPage() {
           <p className="text-sm text-gray-500 mt-1 mb-6 max-w-sm">
             Connect a client&apos;s GA4 and ad accounts to start generating automated reports.
           </p>
-          <AddClientDialog agencyId={agencyUser?.agency_id ?? ''} />
+          <AddClientDialog
+            agencyId={agencyUser?.agency_id ?? ''}
+            clientCount={clients?.length ?? 0}
+            clientLimit={agency?.client_limit ?? 5}
+          />
         </div>
       ) : (
         <div className="grid gap-3">
@@ -75,6 +83,9 @@ export default async function ClientsPage() {
                   )}
                   {platforms.includes('meta_ads') && (
                     <Badge variant="outline" className="text-xs">Meta</Badge>
+                  )}
+                  {platforms.includes('tiktok_ads') && (
+                    <Badge variant="outline" className="text-xs">TikTok</Badge>
                   )}
                   {!platforms.length && (
                     <Badge variant="outline" className="text-xs text-amber-600 border-amber-300">

@@ -6,6 +6,7 @@ import { CheckCircle2, AlertCircle, Link2, RefreshCw, Unlink, AlertTriangle } fr
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MetaTokenConnectModal } from './meta-token-connect-modal'
+import { TikTokTokenConnectModal } from './tiktok-token-connect-modal'
 import { toast } from 'sonner'
 
 interface Connection {
@@ -41,6 +42,12 @@ const PLATFORMS = [
     description: 'Paid social: spend, reach, conversions',
     required: false,
   },
+  {
+    key: 'tiktok_ads',
+    label: 'TikTok Ads',
+    description: 'Paid social: spend, impressions, CTR, CPA',
+    required: false,
+  },
 ]
 
 export function ClientConnectionsPanel({ clientId, connections }: Props) {
@@ -49,10 +56,15 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
   const [disconnecting, setDisconnecting] = useState<string | null>(null)
   const [confirmPlatform, setConfirmPlatform] = useState<string | null>(null)
   const [showMetaModal, setShowMetaModal] = useState(false)
+  const [showTikTokModal, setShowTikTokModal] = useState(false)
 
   function handleConnect(platform: string) {
     if (platform === 'meta_ads') {
       setShowMetaModal(true)
+      return
+    }
+    if (platform === 'tiktok_ads') {
+      setShowTikTokModal(true)
       return
     }
     window.location.href = `/api/connections/${platform}/authorize?clientId=${clientId}`
@@ -67,7 +79,7 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
         body: JSON.stringify({ clientId }),
       })
       if (res.ok) {
-        const labels: Record<string, string> = { ga4: 'Google Analytics 4', google_ads: 'Google Ads', meta_ads: 'Meta Ads' }
+        const labels: Record<string, string> = { ga4: 'Google Analytics 4', google_ads: 'Google Ads', meta_ads: 'Meta Ads', tiktok_ads: 'TikTok Ads' }
         toast.success(`${labels[platform] ?? platform} disconnected`)
       }
       router.refresh()
@@ -185,6 +197,13 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
       <MetaTokenConnectModal
         clientId={clientId}
         onClose={() => setShowMetaModal(false)}
+      />
+    )}
+
+    {showTikTokModal && (
+      <TikTokTokenConnectModal
+        clientId={clientId}
+        onClose={() => setShowTikTokModal(false)}
       />
     )}
     </>
