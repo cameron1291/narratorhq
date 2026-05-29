@@ -3,7 +3,12 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { encrypt } from '@/lib/encryption'
 
 export async function POST(request: NextRequest) {
-  const { clientId, token } = await request.json()
+  let clientId: string, token: string
+  try {
+    ;({ clientId, token } = await request.json())
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
 
   if (!clientId || !token) {
     return NextResponse.json({ error: 'Missing clientId or token' }, { status: 400 })

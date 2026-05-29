@@ -34,8 +34,23 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;')
 }
 
+function safeBrandColor(color: string): string {
+  return /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : '#2563eb'
+}
+
 function buildHtml(input: SendReportEmailInput): string {
-  const { clientName, periodLabel, agencyName, brandColor, sections, reportViewUrl } = input
+  const {
+    clientName: rawClientName,
+    periodLabel: rawPeriodLabel,
+    agencyName: rawAgencyName,
+    brandColor: rawBrandColor,
+    sections,
+    reportViewUrl,
+  } = input
+  const clientName = escapeHtml(rawClientName)
+  const periodLabel = escapeHtml(rawPeriodLabel)
+  const agencyName = escapeHtml(rawAgencyName)
+  const brandColor = safeBrandColor(rawBrandColor)
 
   const sectionHtml = sections
     .filter(s => s.section !== 'next_steps')
@@ -57,7 +72,7 @@ function buildHtml(input: SendReportEmailInput): string {
         What We're Doing Next
       </h3>
       <p style="font-size: 15px; line-height: 1.7; color: #374151; margin: 0;">
-        ${(nextSteps.editedContent ?? nextSteps.content).replace(/\n/g, '<br>')}
+        ${escapeHtml(nextSteps.editedContent ?? nextSteps.content).replace(/\n/g, '<br>')}
       </p>
     </div>
   ` : ''

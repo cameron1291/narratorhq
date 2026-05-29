@@ -24,7 +24,12 @@ export async function POST(request: NextRequest, { params }: Params) {
     .single()
   if (!clientRow) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const body: { instruction?: string } = await request.json()
+  let body: { instruction?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   if (!body.instruction?.trim()) {
     return NextResponse.json({ error: 'instruction required' }, { status: 400 })
   }

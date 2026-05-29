@@ -23,7 +23,12 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'Cannot modify your own role' }, { status: 409 })
   }
 
-  const body: { role: 'admin' | 'member' } = await request.json()
+  let body: { role: 'admin' | 'member' }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   if (!body.role || !['admin', 'member'].includes(body.role)) {
     return NextResponse.json({ error: 'Invalid role' }, { status: 400 })
   }

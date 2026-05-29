@@ -2,7 +2,12 @@ import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request) {
-  const { email, password, fullName, agencyName } = await request.json()
+  let email: string, password: string, fullName: string, agencyName: string
+  try {
+    ;({ email, password, fullName, agencyName } = await request.json())
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
 
   if (!email || !password || !fullName || !agencyName) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })

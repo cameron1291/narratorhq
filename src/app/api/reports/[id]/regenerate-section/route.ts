@@ -19,7 +19,12 @@ export async function POST(request: NextRequest, { params }: Params) {
     .single()
   if (!agencyUser) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const body: { section: string; instruction?: string } = await request.json()
+  let body: { section: string; instruction?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   if (!body.section) return NextResponse.json({ error: 'section required' }, { status: 400 })
 
   const { data: report } = await supabase

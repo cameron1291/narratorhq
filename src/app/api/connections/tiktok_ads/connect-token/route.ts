@@ -3,7 +3,12 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { encrypt } from '@/lib/encryption'
 
 export async function POST(request: NextRequest) {
-  const { clientId, token, advertiserId } = await request.json()
+  let clientId: string, token: string, advertiserId: string
+  try {
+    ;({ clientId, token, advertiserId } = await request.json())
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
 
   if (!clientId || !token || !advertiserId) {
     return NextResponse.json({ error: 'Missing clientId, token, or advertiserId' }, { status: 400 })
@@ -12,6 +17,21 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data: agencyUser } = await supabase
+    .from('agency_users')
+    .select('agency_id')
+    .eq('id', user.id)
+    .single()
+  if (!agencyUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data: clientRow } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('id', clientId)
+    .eq('agency_id', agencyUser.agency_id)
+    .single()
+  if (!clientRow) return NextResponse.json({ error: 'Client not found' }, { status: 404 })
 
   // Validate token + advertiser ID against TikTok Marketing API
   const res = await fetch(

@@ -7,7 +7,12 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const body: { plan: keyof typeof PLANS } = await request.json()
+  let body: { plan: keyof typeof PLANS }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   const plan = PLANS[body.plan]
   if (!plan) return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
 

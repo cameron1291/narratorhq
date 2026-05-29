@@ -31,7 +31,12 @@ export async function POST(request: NextRequest, { params }: Params) {
   const owned = await verifyOwnership(id, user.id)
   if (!owned) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const body: { context_type?: string; content?: string } = await request.json()
+  let body: { context_type?: string; content?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   const validTypes = ['promise', 'sensitivity', 'goal', 'note']
   if (!body.content?.trim() || !body.context_type || !validTypes.includes(body.context_type)) {
     return NextResponse.json({ error: 'content and valid context_type required' }, { status: 400 })

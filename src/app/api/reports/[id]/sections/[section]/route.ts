@@ -27,7 +27,12 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   if (!report) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (report.status === 'sent') return NextResponse.json({ error: 'Report already sent' }, { status: 409 })
 
-  const body: { editedContent?: string; isApproved?: boolean } = await request.json()
+  let body: { editedContent?: string; isApproved?: boolean }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
 
   if (typeof body.editedContent === 'string' && body.editedContent.length > 10000) {
     return NextResponse.json({ error: 'Content too long (max 10,000 characters)' }, { status: 400 })

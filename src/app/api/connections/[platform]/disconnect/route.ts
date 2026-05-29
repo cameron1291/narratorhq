@@ -6,7 +6,12 @@ export async function POST(
   { params }: { params: Promise<{ platform: string }> }
 ) {
   const { platform } = await params
-  const { clientId } = await request.json()
+  let clientId: string
+  try {
+    ;({ clientId } = await request.json())
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
 
   if (!clientId) {
     return NextResponse.json({ error: 'Missing clientId' }, { status: 400 })

@@ -16,7 +16,12 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const body: { name?: string; brandColor?: string; tone?: string; logoUrl?: string | null } = await request.json()
+  let body: { name?: string; brandColor?: string; tone?: string; logoUrl?: string | null }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   const updates: Record<string, string | null> = {}
 
   if (body.name?.trim()) updates.name = body.name.trim()

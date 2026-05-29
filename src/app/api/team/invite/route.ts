@@ -17,7 +17,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Only owners and admins can invite team members' }, { status: 403 })
   }
 
-  const body: { email: string; role: 'admin' | 'member' } = await request.json()
+  let body: { email: string; role: 'admin' | 'member' }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  }
   const email = body.email?.trim().toLowerCase()
   if (!email || !body.role) {
     return NextResponse.json({ error: 'email and role required' }, { status: 400 })
