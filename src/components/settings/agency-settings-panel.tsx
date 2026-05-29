@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,6 +20,7 @@ interface AgencySettingsPanelProps {
 }
 
 export function AgencySettingsPanel({ agency }: AgencySettingsPanelProps) {
+  const router = useRouter()
   const [name, setName] = useState(agency.name)
   const [brandColor, setBrandColor] = useState(agency.brand_color ?? '#2563eb')
   const [tone, setTone] = useState(agency.tone ?? 'professional')
@@ -27,7 +29,25 @@ export function AgencySettingsPanel({ agency }: AgencySettingsPanelProps) {
   const [logoError, setLogoError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  async function handleDeleteAccount() {
+    setDeleting(true)
+    setDeleteError(null)
+    const res = await fetch('/api/account', { method: 'DELETE' })
+    const data = await res.json()
+    if (!res.ok) {
+      setDeleteError(data.error ?? 'Failed to delete account. Please try again.')
+      setDeleting(false)
+      return
+    }
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+  }
 
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -210,6 +230,51 @@ export function AgencySettingsPanel({ agency }: AgencySettingsPanelProps) {
       <Button onClick={save} disabled={saving || !name.trim()}>
         {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save changes'}
       </Button>
+
+      {/* Danger zone */}
+      <div className="pt-6 border-t border-red-100">
+        <h3 className="text-sm font-semibold text-red-700 mb-1">Danger zone</h3>
+        <p className="text-xs text-gray-500 mb-3">
+          Permanently delete your account and all associated data. This cannot be undone.
+        </p>
+        {deleteError && (
+          <p className="text-xs text-red-600 mb-2">{deleteError}</p>
+        )}
+        {!deleteConfirm ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+            onClick={() => setDeleteConfirm(true)}
+          >
+            Delete account
+          </Button>
+        ) : (
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-red-700">
+              Are you sure? This will delete all your clients, reports, and data permanently.
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting…' : 'Yes, delete everything'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setDeleteConfirm(false); setDeleteError(null) }}
+                disabled={deleting}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

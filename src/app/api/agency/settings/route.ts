@@ -20,7 +20,7 @@ export async function PATCH(request: NextRequest) {
   const updates: Record<string, string | null> = {}
 
   if (body.name?.trim()) updates.name = body.name.trim()
-  if (body.brandColor?.startsWith('#')) updates.brand_color = body.brandColor
+  if (body.brandColor && /^#[0-9A-Fa-f]{6}$/.test(body.brandColor)) updates.brand_color = body.brandColor
   if (body.tone && ['professional', 'conversational', 'data-heavy'].includes(body.tone)) {
     updates.tone = body.tone
   }

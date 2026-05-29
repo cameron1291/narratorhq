@@ -17,6 +17,24 @@ export async function GET(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.redirect(new URL('/login', request.url))
 
+  // Verify the client belongs to the caller's agency before redirecting to OAuth
+  const { data: agencyUser } = await supabase
+    .from('agency_users')
+    .select('agency_id')
+    .eq('id', user.id)
+    .single()
+
+  if (agencyUser) {
+    const { data: clientRow } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('id', clientId)
+      .eq('agency_id', agencyUser.agency_id)
+      .single()
+
+    if (!clientRow) return NextResponse.redirect(new URL('/clients', request.url))
+  }
+
   // State encodes platform + clientId so the callback knows what to store
   const state = Buffer.from(JSON.stringify({ platform, clientId, userId: user.id })).toString('base64')
 

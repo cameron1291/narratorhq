@@ -12,10 +12,13 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { data: agencyUser } = await supabase
     .from('agency_users')
-    .select('agency_id')
+    .select('agency_id, role')
     .eq('id', user.id)
     .single()
   if (!agencyUser) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!['owner', 'admin'].includes(agencyUser.role)) {
+    return NextResponse.json({ error: 'Only owners and admins can approve reports' }, { status: 403 })
+  }
 
   const { data: report } = await supabase
     .from('reports')

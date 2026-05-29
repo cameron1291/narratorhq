@@ -28,6 +28,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   if (report.status === 'sent') return NextResponse.json({ error: 'Report already sent' }, { status: 409 })
 
   const body: { editedContent?: string; isApproved?: boolean } = await request.json()
+
+  if (typeof body.editedContent === 'string' && body.editedContent.length > 10000) {
+    return NextResponse.json({ error: 'Content too long (max 10,000 characters)' }, { status: 400 })
+  }
+
   const sections = (report.narrative_sections as NarrativeSection[]) ?? []
 
   const updated = sections.map(s => {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getOAuthClient } from '@/lib/google/oauth'
+import { encrypt } from '@/lib/encryption'
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code')
@@ -83,8 +84,8 @@ export async function GET(request: NextRequest) {
     platform: state.platform,
     property_id: propertyId,
     property_name: propertyName,
-    access_token: tokens.access_token!,
-    refresh_token: tokens.refresh_token ?? null,
+    access_token: encrypt(tokens.access_token!),
+    refresh_token: tokens.refresh_token ? encrypt(tokens.refresh_token) : null,
     token_expiry: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
     is_active: true,
     connected_at: new Date().toISOString(),

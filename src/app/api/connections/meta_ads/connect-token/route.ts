@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { encrypt } from '@/lib/encryption'
 
 export async function POST(request: NextRequest) {
   const { clientId, token } = await request.json()
@@ -11,6 +12,24 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Verify the client belongs to the caller's agency
+  const { data: agencyUser } = await supabase
+    .from('agency_users')
+    .select('agency_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!agencyUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { data: clientRow } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('id', clientId)
+    .eq('agency_id', agencyUser.agency_id)
+    .single()
+
+  if (!clientRow) return NextResponse.json({ error: 'Client not found' }, { status: 404 })
 
   // Validate token + discover ad account by calling Meta API
   const res = await fetch(
@@ -48,7 +67,7 @@ export async function POST(request: NextRequest) {
       platform: 'meta_ads',
       property_id: adAccountId,
       property_name: adAccountName,
-      access_token: token,
+      access_token: encrypt(token),
       refresh_token: null,
       token_expiry: null, // system user tokens don't expire
       is_active: true,

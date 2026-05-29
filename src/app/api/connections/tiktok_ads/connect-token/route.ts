@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { encrypt } from '@/lib/encryption'
 
 export async function POST(request: NextRequest) {
   const { clientId, token, advertiserId } = await request.json()
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
       platform: 'tiktok_ads',
       property_id: account.advertiser_id,
       property_name: account.name,
-      access_token: token,
+      access_token: encrypt(token),
       refresh_token: null,
       token_expiry: null,
       is_active: true,

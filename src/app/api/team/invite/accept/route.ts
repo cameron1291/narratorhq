@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
     id: user.id,
     agency_id: invite.agency_id,
     role: invite.role,
+    full_name: user.user_metadata?.full_name ?? null,
   })
 
   // Mark invite accepted

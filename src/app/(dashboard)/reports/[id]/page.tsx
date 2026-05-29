@@ -40,7 +40,7 @@ export default async function ReportPage({
 
   const { data: report } = await supabase
     .from('reports')
-    .select('id, client_id, status, period_start, period_end, narrative_sections, original_narrative, created_at')
+    .select('id, client_id, status, period_start, period_end, narrative_sections, original_narrative, created_at, share_token')
     .eq('id', id)
     .eq('agency_id', agencyUser.agency_id)
     .single()
@@ -109,6 +109,7 @@ export default async function ReportPage({
         initialSections={sections}
         originalSections={originalSections}
         status={report.status}
+        shareToken={(report as { share_token?: string }).share_token}
       />
     </div>
   )

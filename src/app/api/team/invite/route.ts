@@ -22,6 +22,9 @@ export async function POST(request: NextRequest) {
   if (!email || !body.role) {
     return NextResponse.json({ error: 'email and role required' }, { status: 400 })
   }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+  }
 
   const { data: agency } = await supabase
     .from('agencies')
@@ -89,8 +92,12 @@ export async function POST(request: NextRequest) {
       text: `You've been invited to join ${agencyName} on NarratorHQ.\n\nAccept here: ${inviteUrl}\n\nThis invite expires in 7 days.`,
     })
   } catch {
-    // Non-fatal — invite is created, email failed
-    return NextResponse.json({ ok: true, warning: 'Invite created but email failed to send' })
+    // Non-fatal — invite row exists; surface the URL so the sender can share it manually
+    return NextResponse.json({
+      ok: true,
+      warning: 'Invite created but the email failed to send. Share this link manually:',
+      inviteUrl,
+    })
   }
 
   return NextResponse.json({ ok: true })

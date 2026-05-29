@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { discoverMetaAdAccountId } from '@/lib/meta/ads'
+import { encrypt } from '@/lib/encryption'
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code')
@@ -67,8 +68,8 @@ export async function GET(request: NextRequest) {
     platform: 'meta_ads',
     property_id: account?.id ?? null,
     property_name: account?.name ?? null,
-    access_token: accessToken,
-    refresh_token: null, // Meta uses long-lived tokens, no refresh token
+    access_token: encrypt(accessToken),
+    refresh_token: null,
     token_expiry: tokenExpiry,
     is_active: true,
     connected_at: new Date().toISOString(),

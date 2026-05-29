@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info } from 'lucide-react'
+import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, Copy, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -216,6 +216,7 @@ interface ReportApprovalProps {
   initialSections: NarrativeSection[]
   originalSections: NarrativeSection[]
   status: string
+  shareToken?: string
 }
 
 export function ReportApproval({
@@ -225,6 +226,7 @@ export function ReportApproval({
   initialSections,
   originalSections,
   status: initialStatus,
+  shareToken,
 }: ReportApprovalProps) {
   const router = useRouter()
   const [sections, setSections] = useState(initialSections)
@@ -274,9 +276,28 @@ export function ReportApproval({
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-sm text-gray-500">{approvedCount}/{sections.length} approved</span>
           {status === 'sent' ? (
-            <span className="text-sm font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
-              Sent
-            </span>
+            <div className="flex items-center gap-2">
+              {shareToken && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const url = `${window.location.origin}/r/${shareToken}`
+                    navigator.clipboard.writeText(url).then(() => toast.success('Report link copied'))
+                  }}
+                >
+                  <Copy className="h-3.5 w-3.5 mr-1.5" />
+                  Copy link
+                </Button>
+              )}
+              <Button size="sm" variant="outline" onClick={sendReport} disabled={sending}>
+                <Send className="h-3.5 w-3.5 mr-1.5" />
+                {sending ? 'Sending…' : 'Resend'}
+              </Button>
+              <span className="text-sm font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-full px-3 py-1">
+                Sent
+              </span>
+            </div>
           ) : status === 'approved' ? (
             <Button onClick={sendReport} disabled={sending} variant="default">
               {sending ? 'Sending…' : 'Send to client'}

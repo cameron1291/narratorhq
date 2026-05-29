@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
   const { data: agency } = await supabase
     .from('agencies')
-    .select('id, name, stripe_customer_id')
+    .select('id, name, stripe_customer_id, trial_ends_at')
     .eq('id', agencyUser.agency_id)
     .single()
   if (!agency) return NextResponse.json({ error: 'Agency not found' }, { status: 404 })
@@ -42,14 +42,22 @@ export async function POST(request: NextRequest) {
       .eq('id', agency.id)
   }
 
+  // Honor remaining trial days — don't grant a fresh 14-day trial to someone who already had one
+  let trialDays: number | undefined
+  if (agency.trial_ends_at) {
+    const remaining = Math.floor((new Date(agency.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    if (remaining > 0) trialDays = remaining
+  }
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL!
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
     payment_method_types: ['card'],
     mode: 'subscription',
     line_items: [{ price: plan.priceId, quantity: 1 }],
+    allow_promotion_codes: true,
     subscription_data: {
-      trial_period_days: 14,
+      ...(trialDays !== undefined ? { trial_period_days: trialDays } : {}),
       metadata: { agency_id: agency.id, plan: body.plan },
     },
     success_url: `${appUrl}/settings?billing=success`,

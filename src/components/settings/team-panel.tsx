@@ -43,6 +43,7 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
   const [inviting, setInviting] = useState(false)
   const [inviteError, setInviteError] = useState<string | null>(null)
   const [inviteSuccess, setInviteSuccess] = useState(false)
+  const [inviteManualUrl, setInviteManualUrl] = useState<string | null>(null)
   const [removeTarget, setRemoveTarget] = useState<Member | null>(null)
   const [removing, setRemoving] = useState(false)
 
@@ -59,12 +60,17 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: inviteEmail.trim().toLowerCase(), role: inviteRole }),
     })
-    const data = await res.json() as { ok?: boolean; error?: string; warning?: string }
+    const data = await res.json() as { ok?: boolean; error?: string; warning?: string; inviteUrl?: string }
 
     if (res.ok) {
       setInviteEmail('')
       setInviteSuccess(true)
-      setTimeout(() => setInviteSuccess(false), 3000)
+      if (data.inviteUrl) {
+        // Email failed — show manual link
+        setInviteManualUrl(data.inviteUrl)
+      } else {
+        setTimeout(() => setInviteSuccess(false), 3000)
+      }
     } else {
       setInviteError(data.error ?? 'Failed to send invite')
     }
@@ -197,6 +203,12 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
             </Button>
           </div>
           {inviteError && <p className="text-sm text-red-600 mt-2">{inviteError}</p>}
+          {inviteManualUrl && (
+            <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-xs text-amber-800 font-medium mb-1">Email delivery failed — share this link manually:</p>
+              <code className="text-xs text-amber-900 break-all">{inviteManualUrl}</code>
+            </div>
+          )}
           <p className="text-xs text-gray-400 mt-2">Invite link valid for 7 days. Admins can invite and manage members. Owners can manage admins.</p>
         </section>
       )}

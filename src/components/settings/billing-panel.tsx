@@ -33,10 +33,11 @@ const PLANS = [
 interface BillingPanelProps {
   currentPlan: string
   hasSubscription: boolean
+  stripeCustomerId: string | null
   trialEndsAt: string | null
 }
 
-export function BillingPanel({ currentPlan, hasSubscription, trialEndsAt }: BillingPanelProps) {
+export function BillingPanel({ currentPlan, hasSubscription, stripeCustomerId, trialEndsAt }: BillingPanelProps) {
   const [loading, setLoading] = useState<string | null>(null)
 
   const trialDaysLeft = trialEndsAt
@@ -76,7 +77,7 @@ export function BillingPanel({ currentPlan, hasSubscription, trialEndsAt }: Bill
         </div>
       )}
 
-      {hasSubscription && (
+      {(hasSubscription || !!stripeCustomerId) && (
         <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3">
           <div>
             <p className="text-sm font-medium text-green-800 capitalize">

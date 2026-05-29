@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     .from('clients')
     .select(`
       id, agency_id, report_frequency,
-      agencies!inner ( plan ),
+      agencies!inner ( plan, trial_ends_at ),
       data_connections ( platform, is_active )
     `)
     .eq('is_archived', false)
@@ -58,10 +58,11 @@ export async function GET(request: NextRequest) {
   let queued = 0
 
   for (const client of clients) {
-    const agencyArr = client.agencies as unknown as { plan: string }[] | null
+    const agencyArr = client.agencies as unknown as { plan: string; trial_ends_at: string | null }[] | null
     const agency = Array.isArray(agencyArr) ? agencyArr[0] : agencyArr
-    // Skip cancelled or trial agencies (trial agencies get reports — it's the trial)
-    if (agency?.plan === 'cancelled') continue
+    const activePaidPlan = ['starter', 'growth', 'agency'].includes(agency?.plan ?? '')
+    const validTrial = agency?.plan === 'trial' && agency.trial_ends_at && new Date(agency.trial_ends_at) > today
+    if (!activePaidPlan && !validTrial) continue
 
     const period = getReportPeriod(client.report_frequency, today)
     if (!period) continue

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { PlusCircle, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,12 +16,12 @@ import {
 } from '@/components/ui/select'
 
 interface Props {
-  agencyId: string
+  agencyId?: string
   clientCount: number
   clientLimit: number
 }
 
-export function AddClientDialog({ agencyId, clientCount, clientLimit }: Props) {
+export function AddClientDialog({ clientCount, clientLimit }: Props) {
   const atLimit = clientCount >= clientLimit
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -47,19 +46,22 @@ export function AddClientDialog({ agencyId, clientCount, clientLimit }: Props) {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-    const { error } = await supabase.from('clients').insert({
-      agency_id: agencyId as string,
-      name: form.name,
-      industry: form.industry || null,
-      report_email: form.reportEmail || null,
-      report_frequency: form.reportFrequency,
-      goals: form.goals || null,
-      custom_instructions: form.customInstructions || null,
+    const res = await fetch('/api/clients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: form.name,
+        industry: form.industry,
+        reportEmail: form.reportEmail,
+        reportFrequency: form.reportFrequency,
+        goals: form.goals,
+        customInstructions: form.customInstructions,
+      }),
     })
 
-    if (error) {
-      setError(error.message)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      setError(data.error ?? 'Failed to add client')
       setLoading(false)
       return
     }

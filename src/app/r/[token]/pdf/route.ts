@@ -58,7 +58,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
 
   const filename = `${clientName} - ${periodLabel} Report.pdf`
 
-  return new NextResponse(pdfBuffer, {
+  return new NextResponse(new Uint8Array(pdfBuffer), {
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',

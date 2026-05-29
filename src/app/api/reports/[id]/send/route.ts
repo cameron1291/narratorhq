@@ -14,10 +14,13 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { data: agencyUser } = await supabase
     .from('agency_users')
-    .select('agency_id')
+    .select('agency_id, role')
     .eq('id', user.id)
     .single()
   if (!agencyUser) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!['owner', 'admin'].includes(agencyUser.role)) {
+    return NextResponse.json({ error: 'Only owners and admins can send reports' }, { status: 403 })
+  }
 
   const { data: report } = await supabase
     .from('reports')
@@ -27,7 +30,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     .single()
 
   if (!report) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  if (report.status !== 'approved') {
+  if (report.status !== 'approved' && report.status !== 'sent') {
     return NextResponse.json({ error: 'Report must be approved before sending' }, { status: 409 })
   }
 
@@ -43,9 +46,15 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { data: agency } = await supabase
     .from('agencies')
-    .select('name, brand_color, logo_url')
+    .select('name, brand_color, logo_url, plan, trial_ends_at')
     .eq('id', agencyUser.agency_id)
     .single()
+
+  const activePaidPlan = ['starter', 'growth', 'agency'].includes(agency?.plan ?? '')
+  const validTrial = agency?.plan === 'trial' && agency.trial_ends_at && new Date(agency.trial_ends_at) > new Date()
+  if (!activePaidPlan && !validTrial) {
+    return NextResponse.json({ error: 'Your trial has expired. Upgrade to continue sending reports.' }, { status: 402 })
+  }
 
   const sections = (report.narrative_sections ?? []) as NarrativeSection[]
   const metrics = (report.raw_metrics as { current: CanonicalMetrics })?.current

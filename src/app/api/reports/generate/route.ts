@@ -8,6 +8,7 @@ import { buildComparison, detectAnomalies } from '@/lib/normalization/anomalies'
 import { generateNarrative } from '@/lib/reports/generate'
 import type { ClientReportContext } from '@/lib/reports/generate'
 import type { CanonicalMetrics } from '@/lib/normalization/types'
+import { decrypt } from '@/lib/encryption'
 
 function previousPeriod(start: string, end: string): { start: string; end: string } {
   const s = new Date(start)
@@ -81,11 +82,37 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Client not found' }, { status: 404 })
   }
 
+  // Prevent duplicate generation: reject if a report for this period was created in the last 10 minutes
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+  const { data: recentReport } = await supabase
+    .from('reports')
+    .select('id, status')
+    .eq('client_id', clientId)
+    .eq('period_start', startDate)
+    .eq('period_end', endDate)
+    .gte('created_at', tenMinutesAgo)
+    .maybeSingle()
+
+  if (recentReport) {
+    return NextResponse.json(
+      { error: 'A report for this period was recently generated', reportId: recentReport.id },
+      { status: 429 }
+    )
+  }
+
   const { data: agency } = await supabase
     .from('agencies')
-    .select('tone')
+    .select('tone, plan, trial_ends_at, stripe_subscription_id')
     .eq('id', client.agency_id)
     .single()
+
+  if (!isCron) {
+    const activePaidPlan = ['starter', 'growth', 'agency'].includes(agency?.plan ?? '')
+    const validTrial = agency?.plan === 'trial' && agency.trial_ends_at && new Date(agency.trial_ends_at) > new Date()
+    if (!activePaidPlan && !validTrial) {
+      return NextResponse.json({ error: 'Your trial has expired. Upgrade to continue generating reports.' }, { status: 402 })
+    }
+  }
 
   // Load data connections
   const { data: connections } = await supabase
@@ -98,6 +125,17 @@ export async function POST(request: NextRequest) {
   if (!ga4Connection?.property_id) {
     return NextResponse.json({ error: 'GA4 not connected for this client' }, { status: 422 })
   }
+
+  // Decrypt tokens before use (handles both encrypted enc: and legacy plaintext)
+  const decryptedConnections = connections?.map(c => ({
+    ...c,
+    access_token: c.access_token ? decrypt(c.access_token) : c.access_token,
+    refresh_token: c.refresh_token ? decrypt(c.refresh_token) : c.refresh_token,
+  })) ?? []
+  const decryptedGa4 = decryptedConnections.find(c => c.platform === 'ga4')!
+  const decryptedAds = decryptedConnections.find(c => c.platform === 'google_ads')
+  const decryptedMeta = decryptedConnections.find(c => c.platform === 'meta_ads')
+  const decryptedTiktok = decryptedConnections.find(c => c.platform === 'tiktok_ads')
 
   // Load client context (goals, sensitivities, promises, notes)
   const { data: contextItems } = await supabase
@@ -147,21 +185,21 @@ export async function POST(request: NextRequest) {
     ;[currentMetrics, previousMetrics] = await Promise.all([
       fetchGA4Metrics(
         {
-          access_token: ga4Connection.access_token,
-          refresh_token: ga4Connection.refresh_token,
-          token_expiry: ga4Connection.token_expiry,
+          access_token: decryptedGa4.access_token,
+          refresh_token: decryptedGa4.refresh_token,
+          token_expiry: decryptedGa4.token_expiry,
         },
-        ga4Connection.property_id,
+        decryptedGa4.property_id,
         startDate,
         endDate
       ),
       fetchGA4Metrics(
         {
-          access_token: ga4Connection.access_token,
-          refresh_token: ga4Connection.refresh_token,
-          token_expiry: ga4Connection.token_expiry,
+          access_token: decryptedGa4.access_token,
+          refresh_token: decryptedGa4.refresh_token,
+          token_expiry: decryptedGa4.token_expiry,
         },
-        ga4Connection.property_id,
+        decryptedGa4.property_id,
         prev.start,
         prev.end
       ),
@@ -177,18 +215,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch GA4 data' }, { status: 502 })
   }
 
-  // Merge paid platform data into the canonical metrics
-  const adsConnection = connections?.find(c => c.platform === 'google_ads')
-  const metaConnection = connections?.find(c => c.platform === 'meta_ads')
-
   async function fetchPaidMetrics(period: { start: string; end: string }): Promise<Partial<CanonicalMetrics>> {
     const results: Partial<CanonicalMetrics>[] = []
 
-    if (adsConnection?.property_id) {
+    if (decryptedAds?.property_id) {
       try {
         const ads = await fetchGoogleAdsMetrics(
-          { access_token: adsConnection.access_token, refresh_token: adsConnection.refresh_token! },
-          adsConnection.property_id,
+          { access_token: decryptedAds.access_token, refresh_token: decryptedAds.refresh_token! },
+          decryptedAds.property_id,
           period.start,
           period.end
         )
@@ -196,11 +230,11 @@ export async function POST(request: NextRequest) {
       } catch { /* non-fatal */ }
     }
 
-    if (metaConnection?.property_id) {
+    if (decryptedMeta?.property_id) {
       try {
         const meta = await fetchMetaAdsMetrics(
-          { access_token: metaConnection.access_token },
-          metaConnection.property_id,
+          { access_token: decryptedMeta.access_token },
+          decryptedMeta.property_id,
           period.start,
           period.end
         )
@@ -208,12 +242,11 @@ export async function POST(request: NextRequest) {
       } catch { /* non-fatal */ }
     }
 
-    const tiktokConnection = connections?.find(c => c.platform === 'tiktok_ads')
-    if (tiktokConnection?.property_id) {
+    if (decryptedTiktok?.property_id) {
       try {
         const tiktok = await fetchTikTokAdsMetrics(
-          { access_token: tiktokConnection.access_token },
-          tiktokConnection.property_id,
+          { access_token: decryptedTiktok.access_token },
+          decryptedTiktok.property_id,
           period.start,
           period.end
         )

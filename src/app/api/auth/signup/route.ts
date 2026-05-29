@@ -10,10 +10,11 @@ export async function POST(request: Request) {
 
   const supabase = createServiceClient()
 
-  // 1. Create agency
+  // 1. Create agency with 14-day trial
+  const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
   const { data: agency, error: agencyError } = await supabase
     .from('agencies')
-    .insert({ name: agencyName })
+    .insert({ name: agencyName, plan: 'trial', trial_ends_at: trialEndsAt, client_limit: 5 })
     .select('id')
     .single()
 
@@ -21,11 +22,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to create agency' }, { status: 500 })
   }
 
-  // 2. Create auth user (trigger may or may not insert agency_users)
+  // 2. Create auth user — email_confirm: false sends Supabase verification email.
+  // The verification link redirects to the Site URL configured in your Supabase project settings.
+  // Set Redirect URLs in Supabase Dashboard > Authentication > URL Configuration to include
+  // {NEXT_PUBLIC_APP_URL}/auth/callback
   const { data: userData, error: userError } = await supabase.auth.admin.createUser({
     email,
     password,
-    email_confirm: true,
+    email_confirm: false,
     user_metadata: { agency_id: agency.id, role: 'owner', full_name: fullName },
   })
 

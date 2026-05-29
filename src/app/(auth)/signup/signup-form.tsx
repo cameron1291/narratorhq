@@ -71,16 +71,8 @@ export default function SignupForm() {
       return
     }
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-
-    if (signInError) {
-      setError(signInError.message)
-      setLoading(false)
-      return
-    }
-
-    router.push('/clients')
-    router.refresh()
+    // Account created — user must verify email before signing in
+    router.push('/verify-email')
   }
 
   return (
