@@ -21,7 +21,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { data: report } = await supabase
     .from('reports')
-    .select('id, client_id, agency_id, status, period_start, period_end, narrative_sections, raw_metrics, anomalies')
+    .select('id, client_id, agency_id, status, period_start, period_end, narrative_sections, raw_metrics, anomalies, share_token')
     .eq('id', id)
     .eq('agency_id', agencyUser.agency_id)
     .single()
@@ -77,6 +77,21 @@ export async function POST(request: NextRequest, { params }: Params) {
     // PDF generation failure is non-fatal — send without attachment
   }
 
+  // Ensure the report has a share token — generate one if missing
+  let shareToken = (report as { share_token?: string }).share_token
+  if (!shareToken) {
+    const { data: updated } = await supabase
+      .from('reports')
+      .update({ share_token: crypto.randomUUID() })
+      .eq('id', id)
+      .select('share_token')
+      .single()
+    shareToken = updated?.share_token ?? undefined
+  }
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://narratorhq.com'
+  const reportViewUrl = shareToken ? `${appUrl}/r/${shareToken}` : undefined
+
   // Send email
   // fromEmail must be a Resend-verified sender — agencies configure this in settings
   // Default to a narratorhq.com sender until white-label is configured
@@ -94,6 +109,7 @@ export async function POST(request: NextRequest, { params }: Params) {
       brandColor,
       sections,
       pdfBuffer,
+      reportViewUrl,
     })
   } catch (err) {
     return NextResponse.json(
