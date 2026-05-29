@@ -29,7 +29,7 @@ export default function SampleReportPage() {
       {/* Nav — hidden on print */}
       <nav className="print:hidden bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 h-13 flex items-center justify-between">
-          <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-9 w-auto" /></Link>
+          <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-14 w-auto" /></Link>
           <div className="flex items-center gap-4">
             <Link href="/report-example" className="text-sm text-gray-600 hover:text-gray-900">Interactive preview</Link>
             <Link href="/signup" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
