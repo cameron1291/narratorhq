@@ -62,9 +62,10 @@ export async function POST(request: NextRequest, { params }: Params) {
     .eq('client_id', report.client_id)
     .eq('is_active', true)
 
-  const connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads')[] = ['ga4']
+  const connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads' | 'tiktok_ads')[] = ['ga4']
   if (connections?.find(c => c.platform === 'google_ads')) connectedPlatforms.push('google_ads')
   if (connections?.find(c => c.platform === 'meta_ads')) connectedPlatforms.push('meta_ads')
+  if (connections?.find(c => c.platform === 'tiktok_ads')) connectedPlatforms.push('tiktok_ads')
 
   const metrics = report.raw_metrics as { current: Parameters<typeof generateNarrative>[0]['comparison']['current']; previous: Parameters<typeof generateNarrative>[0]['comparison']['previous'] }
 
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   }
 
   // Build a minimal comparison from stored raw_metrics
-  const { buildComparison, detectAnomalies } = await import('@/lib/normalization/anomalies')
+  const { buildComparison } = await import('@/lib/normalization/anomalies')
   const changes = buildComparison(metrics.current, metrics.previous)
   const comparison = { current: metrics.current, previous: metrics.previous, changes }
   const anomalies = report.anomalies as Parameters<typeof generateNarrative>[0]['anomalies']

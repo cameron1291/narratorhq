@@ -43,7 +43,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const { data: agency } = await supabase
     .from('agencies')
-    .select('name, brand_color')
+    .select('name, brand_color, logo_url')
     .eq('id', agencyUser.agency_id)
     .single()
 
@@ -66,6 +66,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   try {
     pdfBuffer = await generateReportPdf({
       agencyName,
+      agencyLogo: agency?.logo_url,
       brandColor,
       clientName: client.name,
       periodLabel,

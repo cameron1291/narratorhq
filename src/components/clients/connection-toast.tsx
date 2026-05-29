@@ -8,6 +8,7 @@ const CONNECTED_LABELS: Record<string, string> = {
   ga4: 'Google Analytics 4',
   google_ads: 'Google Ads',
   meta_ads: 'Meta Ads',
+  tiktok_ads: 'TikTok Ads',
 }
 
 export function ConnectionToast() {
