@@ -1,10 +1,26 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { ReportApproval } from '@/components/reports/report-approval'
 import { GeneratingPoller } from '@/components/reports/generating-poller'
 import type { NarrativeSection } from '@/lib/normalization/types'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+  const { data: report } = await supabase
+    .from('reports')
+    .select('period_start, clients(name)')
+    .eq('id', id)
+    .single()
+  if (!report) return { title: 'Report — NarratorHQ' }
+  const clientArr = report.clients as { name: string }[] | null
+  const clientName = Array.isArray(clientArr) ? clientArr[0]?.name : (clientArr as { name: string } | null)?.name
+  const start = new Date(report.period_start)
+  const period = start.toLocaleString('en-GB', { month: 'long', year: 'numeric' })
+  return { title: `${clientName ?? 'Report'} · ${period} — NarratorHQ` }
+}
 
 export default async function ReportPage({
   params,

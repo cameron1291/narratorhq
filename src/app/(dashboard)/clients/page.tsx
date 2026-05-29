@@ -1,10 +1,12 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { PlusCircle, Users } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { AddClientDialog } from '@/components/clients/add-client-dialog'
+
+export const metadata: Metadata = { title: 'Clients — NarratorHQ' }
 
 export default async function ClientsPage() {
   const supabase = await createClient()
@@ -47,7 +49,7 @@ export default async function ClientsPage() {
           <Users className="h-12 w-12 text-gray-300 mb-4" />
           <h2 className="text-lg font-semibold text-gray-700">Add your first client</h2>
           <p className="text-sm text-gray-500 mt-1 mb-6 max-w-sm">
-            Connect a client&apos;s GA4 and ad accounts to start generating automated reports.
+            Connect a client&apos;s GA4 and ad accounts, set their goals and context — then generate your first narrative report in minutes.
           </p>
           <AddClientDialog
             agencyId={agencyUser?.agency_id ?? ''}

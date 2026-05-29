@@ -1,7 +1,10 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { CheckCircle, Clock, AlertCircle, Send, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
+
+export const metadata: Metadata = { title: 'Reports — NarratorHQ' }
 
 const STATUS_CONFIG = {
   generating: { label: 'Generating', icon: Clock, color: 'text-blue-600 bg-blue-50 border-blue-200' },

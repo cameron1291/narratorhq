@@ -1,5 +1,8 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+export const metadata: Metadata = { title: 'Settings — NarratorHQ' }
 import { AgencySettingsPanel } from '@/components/settings/agency-settings-panel'
 import { BillingPanel } from '@/components/settings/billing-panel'
 import { TeamPanel } from '@/components/settings/team-panel'

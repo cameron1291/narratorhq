@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlusCircle, ArrowRight } from 'lucide-react'
+import { PlusCircle, ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -71,7 +71,12 @@ export function AddClientDialog({ agencyId, clientCount, clientLimit }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button disabled={atLimit} />}>
+      <DialogTrigger render={
+        <Button
+          disabled={atLimit}
+          title={atLimit ? `You've reached the ${clientLimit}-client limit on your plan — upgrade to add more` : undefined}
+        />
+      }>
         <PlusCircle className="h-4 w-4 mr-2" />
         Add client
       </DialogTrigger>
@@ -169,7 +174,8 @@ export function AddClientDialog({ agencyId, clientCount, clientLimit }: Props) {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Adding...' : 'Add client'}
+              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {loading ? 'Adding client…' : 'Add client'}
             </Button>
           </div>
         </form>

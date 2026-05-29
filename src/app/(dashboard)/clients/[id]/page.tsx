@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -10,6 +11,13 @@ import { ConnectionToast } from '@/components/clients/connection-toast'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Suspense } from 'react'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+  const { data } = await supabase.from('clients').select('name').eq('id', id).single()
+  return { title: data?.name ? `${data.name} — NarratorHQ` : 'Client — NarratorHQ' }
+}
 
 export default async function ClientDetailPage({
   params,

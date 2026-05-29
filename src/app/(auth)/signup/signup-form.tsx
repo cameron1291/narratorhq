@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 
 export default function SignupForm() {
   const router = useRouter()
@@ -21,10 +22,6 @@ export default function SignupForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (inviteEmail) setEmail(inviteEmail)
-  }, [inviteEmail])
 
   const isInvite = !!inviteToken
 
@@ -87,16 +84,19 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="absolute top-4 left-4">
         <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 transition-colors flex items-center gap-1">
-          ← NarratorHQ
+          ← Back to site
         </Link>
       </div>
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">NarratorHQ</CardTitle>
-          <CardDescription>
+        <CardHeader className="text-center pb-4">
+          <Link href="/" className="inline-block mb-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="NarratorHQ" className="h-10 w-auto mx-auto" />
+          </Link>
+          <CardDescription className="text-base">
             {isInvite
               ? 'Create your account to join the team'
               : 'Start your 14-day free trial — no credit card required'
@@ -156,6 +156,7 @@ export default function SignupForm() {
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
+              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {loading
                 ? 'Creating account…'
                 : isInvite ? 'Join team' : 'Start free trial'

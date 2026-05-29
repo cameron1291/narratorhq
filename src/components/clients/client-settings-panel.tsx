@@ -132,7 +132,7 @@ export function ClientSettingsPanel({ client }: Props) {
 
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={saving}>
-          {saving ? 'Saving...' : saved ? 'Saved ✓' : 'Save changes'}
+          {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save changes'}
         </Button>
       </div>
 

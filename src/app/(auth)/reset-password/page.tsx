@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
@@ -28,16 +29,20 @@ export default function ResetPasswordPage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle>Check your email</CardTitle>
+          <CardHeader className="text-center pb-4">
+            <Link href="/" className="inline-block mb-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="NarratorHQ" className="h-10 w-auto mx-auto" />
+            </Link>
+            <p className="text-lg font-semibold text-gray-900">Check your email</p>
             <CardDescription>
-              We&apos;ve sent a password reset link to {email}
+              We&apos;ve sent a password reset link to <strong>{email}</strong>
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link href="/login" className="text-blue-600 hover:underline text-sm">
+            <Link href="/login" className="text-blue-600 hover:underline text-sm font-medium">
               Back to sign in
             </Link>
           </CardContent>
@@ -47,15 +52,19 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="absolute top-4 left-4">
         <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
           ← Back to sign in
         </Link>
       </div>
       <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>Reset password</CardTitle>
+        <CardHeader className="text-center pb-4">
+          <Link href="/" className="inline-block mb-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="NarratorHQ" className="h-10 w-auto mx-auto" />
+          </Link>
+          <p className="text-lg font-semibold text-gray-900">Reset your password</p>
           <CardDescription>Enter your email and we&apos;ll send a reset link</CardDescription>
         </CardHeader>
         <CardContent>
@@ -65,13 +74,16 @@ export default function ResetPasswordPage() {
               <Input
                 id="email"
                 type="email"
+                placeholder="you@agency.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Sending...' : 'Send reset link'}
+              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {loading ? 'Sending…' : 'Send reset link'}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm">
