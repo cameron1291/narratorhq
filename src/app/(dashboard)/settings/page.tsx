@@ -20,7 +20,7 @@ export default async function SettingsPage() {
   const [agencyResult, membersResult, invitesResult] = await Promise.all([
     supabase
       .from('agencies')
-      .select('id, name, brand_color, tone, plan, stripe_subscription_id, trial_ends_at, client_limit')
+      .select('id, name, brand_color, tone, plan, stripe_subscription_id, trial_ends_at, client_limit, logo_url')
       .eq('id', agencyUser.agency_id)
       .single(),
     supabase

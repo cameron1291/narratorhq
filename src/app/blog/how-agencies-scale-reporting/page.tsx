@@ -18,7 +18,7 @@ export default function BlogPost() {
     <div className="min-h-screen bg-white">
       <nav className="border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="font-bold text-gray-900">NarratorHQ</Link>
+          <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-9 w-auto" /></Link>
           <Link href="/signup" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
             Start free trial
           </Link>
@@ -101,7 +101,7 @@ export default function BlogPost() {
 
       <footer className="border-t border-gray-100 py-8 mt-8">
         <div className="max-w-3xl mx-auto px-4 flex items-center justify-between text-sm text-gray-400">
-          <Link href="/" className="font-semibold text-gray-600">NarratorHQ</Link>
+          <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-6 w-auto" /></Link>
           <span>© {new Date().getFullYear()} NarratorHQ</span>
         </div>
       </footer>

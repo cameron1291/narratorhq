@@ -189,7 +189,7 @@ export default function HomePage() {
       {/* Nav */}
       <nav className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-10">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors">NarratorHQ</Link>
+          <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-9 w-auto" /></Link>
           <div className="flex items-center gap-4">
             <Link href="/report-example" className="text-sm text-gray-600 hover:text-gray-900 transition-colors hidden sm:block">
               See a sample report
@@ -626,7 +626,7 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-8">
             <div>
-              <p className="font-bold text-gray-900 mb-1">NarratorHQ</p>
+              <img src="/logo.png" alt="NarratorHQ" className="h-10 w-auto mb-1" />
               <p className="text-sm text-gray-400 max-w-xs">Client reporting automation for digital marketing agencies.</p>
             </div>
             <div className="flex flex-wrap gap-x-10 gap-y-4 text-sm text-gray-500">

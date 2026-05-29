@@ -42,8 +42,10 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
     )}>
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
-          <Link href="/clients" className="font-bold text-lg tracking-tight hover:text-blue-300 transition-colors">
-            NarratorHQ
+          <Link href="/clients">
+            <div className="bg-white rounded-lg px-2 py-0.5">
+              <img src="/logo.png" alt="NarratorHQ" className="h-7 w-auto" />
+            </div>
           </Link>
         )}
         <Button

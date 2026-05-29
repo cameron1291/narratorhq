@@ -101,7 +101,7 @@ export default function ReportExamplePage() {
       {/* Nav */}
       <nav className="border-b border-gray-100 bg-white/95 backdrop-blur sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors">NarratorHQ</Link>
+          <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-9 w-auto" /></Link>
           <div className="flex items-center gap-4">
             <Link href="/demo" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Try interactive demo</Link>
             <Link href="/signup" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
