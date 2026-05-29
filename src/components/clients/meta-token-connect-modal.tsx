@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ExternalLink, ChevronRight, ChevronLeft, CheckCircle2, Copy, Check } from 'lucide-react'
 import { toast } from 'sonner'
 
-const APP_ID = '2198866694213454'
+const APP_ID = process.env.NEXT_PUBLIC_META_APP_ID ?? '2198866694213454'
 
 const STEPS = [
   {

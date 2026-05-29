@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -10,11 +10,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 
+const AUTH_ERRORS: Record<string, string> = {
+  auth_callback_failed: 'The verification link has expired or is invalid. Please try signing in again.',
+}
+
 export default function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const errorParam = searchParams.get('error')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [error, setError] = useState(errorParam ? (AUTH_ERRORS[errorParam] ?? 'An error occurred. Please try again.') : '')
   const [loading, setLoading] = useState(false)
 
   async function handleLogin(e: React.FormEvent) {

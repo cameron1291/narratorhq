@@ -33,7 +33,7 @@ export default async function ReportsPage() {
     `)
     .eq('agency_id', agencyUser.agency_id)
     .order('created_at', { ascending: false })
-    .limit(50)
+    .limit(200)
 
   type ReportRow = NonNullable<typeof reports>[number]
 

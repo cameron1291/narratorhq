@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { PlusCircle, Trash2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
@@ -40,7 +39,6 @@ interface Props {
 
 export function ClientContextPanel({ clientId, contextItems, instructions }: Props) {
   const router = useRouter()
-  const supabase = createClient()
 
   const [newContent, setNewContent] = useState('')
   const [newType, setNewType] = useState<string>('note')
@@ -55,10 +53,10 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
   async function addContext() {
     if (!newContent.trim()) return
     setSaving(true)
-    await supabase.from('client_context').insert({
-      client_id: clientId,
-      context_type: newType,
-      content: newContent.trim(),
+    await fetch(`/api/clients/${clientId}/context`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ context_type: newType, content: newContent.trim() }),
     })
     setNewContent('')
     setSaving(false)
@@ -68,9 +66,10 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
   async function addInstruction() {
     if (!newInstruction.trim()) return
     setSaving(true)
-    await supabase.from('report_instructions').insert({
-      client_id: clientId,
-      instruction: newInstruction.trim(),
+    await fetch(`/api/clients/${clientId}/instructions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ instruction: newInstruction.trim() }),
     })
     setNewInstruction('')
     setSaving(false)
@@ -78,12 +77,12 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
   }
 
   async function removeContext(id: string) {
-    await supabase.from('client_context').update({ is_active: false }).eq('id', id)
+    await fetch(`/api/clients/${clientId}/context/${id}`, { method: 'DELETE' })
     router.refresh()
   }
 
   async function removeInstruction(id: string) {
-    await supabase.from('report_instructions').update({ is_active: false }).eq('id', id)
+    await fetch(`/api/clients/${clientId}/instructions/${id}`, { method: 'DELETE' })
     router.refresh()
   }
 

@@ -136,7 +136,7 @@ export function BillingPanel({ currentPlan, hasSubscription, stripeCustomerId, t
                   onClick={() => startCheckout(plan.key)}
                   disabled={!!loading}
                 >
-                  {loading === plan.key ? 'Opening…' : hasSubscription ? 'Switch plan' : 'Start free trial'}
+                  {loading === plan.key ? 'Opening…' : hasSubscription ? 'Switch plan' : currentPlan === 'cancelled' ? 'Reactivate' : 'Start free trial'}
                 </Button>
               )}
             </div>

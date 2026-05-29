@@ -74,9 +74,16 @@ export async function POST(request: NextRequest, { params }: Params) {
     ...(body.instruction ? [`For the ${body.section} section specifically: ${body.instruction}`] : []),
   ]
 
+  const periodStart = new Date(report.period_start)
+  const periodEnd = new Date(report.period_end)
+  const sameMonth = periodStart.getMonth() === periodEnd.getMonth() && periodStart.getFullYear() === periodEnd.getFullYear()
+  const reportPeriodLabel = sameMonth
+    ? periodStart.toLocaleString('en-GB', { month: 'long', year: 'numeric' })
+    : `${periodStart.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} – ${periodEnd.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
+
   const context: ClientReportContext = {
     clientName: client?.name ?? '',
-    reportPeriodLabel: report.period_start,
+    reportPeriodLabel,
     tone: (client?.tone_override ?? agency?.tone ?? 'professional') as ClientReportContext['tone'],
     goals: [
       ...(client?.goals ? [client.goals] : []),

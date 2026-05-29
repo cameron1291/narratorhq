@@ -12,7 +12,8 @@ export async function fetchGA4Metrics(
   tokens: TokenSet,
   propertyId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
+  onTokenRefresh?: (t: { access_token: string; refresh_token?: string | null; token_expiry?: string | null }) => Promise<void>
 ): Promise<Omit<CanonicalMetrics, 'spend' | 'impressions' | 'clicks' | 'ctr' | 'cpc' | 'cpa' | 'roas' | 'revenue'>> {
   const oauthClient = getOAuthClient()
   oauthClient.setCredentials({
@@ -21,10 +22,15 @@ export async function fetchGA4Metrics(
     expiry_date: tokens.token_expiry ? new Date(tokens.token_expiry).getTime() : undefined,
   })
 
-  // Auto-refresh if expired
-  if (tokens.token_expiry && new Date(tokens.token_expiry) < new Date()) {
-    await oauthClient.refreshAccessToken()
-  }
+  // Capture any token refresh so we can persist the new credentials
+  let refreshedTokens: { access_token: string; refresh_token?: string | null; token_expiry?: string | null } | null = null
+  oauthClient.on('tokens', (newTokens) => {
+    refreshedTokens = {
+      access_token: newTokens.access_token ?? tokens.access_token,
+      refresh_token: newTokens.refresh_token ?? tokens.refresh_token ?? null,
+      token_expiry: newTokens.expiry_date ? new Date(newTokens.expiry_date).toISOString() : null,
+    }
+  })
 
   const analyticsData = google.analyticsdata({ version: 'v1beta', auth: oauthClient })
 
@@ -80,6 +86,10 @@ export async function fetchGA4Metrics(
     conversions: parseFloat(r.metricValues?.[1]?.value ?? '0'),
     spend: null,
   }))
+
+  if (refreshedTokens && onTokenRefresh) {
+    await onTokenRefresh(refreshedTokens)
+  }
 
   return {
     period: { start: startDate, end: endDate },

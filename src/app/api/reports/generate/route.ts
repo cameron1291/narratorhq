@@ -8,7 +8,7 @@ import { buildComparison, detectAnomalies } from '@/lib/normalization/anomalies'
 import { generateNarrative } from '@/lib/reports/generate'
 import type { ClientReportContext } from '@/lib/reports/generate'
 import type { CanonicalMetrics } from '@/lib/normalization/types'
-import { decrypt } from '@/lib/encryption'
+import { decrypt, encrypt } from '@/lib/encryption'
 
 function previousPeriod(start: string, end: string): { start: string; end: string } {
   const s = new Date(start)
@@ -182,28 +182,33 @@ export async function POST(request: NextRequest) {
 
   let currentMetrics, previousMetrics
   try {
-    ;[currentMetrics, previousMetrics] = await Promise.all([
-      fetchGA4Metrics(
-        {
-          access_token: decryptedGa4.access_token,
-          refresh_token: decryptedGa4.refresh_token,
-          token_expiry: decryptedGa4.token_expiry,
-        },
-        decryptedGa4.property_id,
-        startDate,
-        endDate
-      ),
-      fetchGA4Metrics(
-        {
-          access_token: decryptedGa4.access_token,
-          refresh_token: decryptedGa4.refresh_token,
-          token_expiry: decryptedGa4.token_expiry,
-        },
-        decryptedGa4.property_id,
-        prev.start,
-        prev.end
-      ),
-    ])
+    // Run sequentially so a token refresh from the first call is available to the second
+    let freshGa4AccessToken = decryptedGa4.access_token
+    const ga4TokenSet = {
+      access_token: decryptedGa4.access_token,
+      refresh_token: decryptedGa4.refresh_token,
+      token_expiry: decryptedGa4.token_expiry,
+    }
+    currentMetrics = await fetchGA4Metrics(
+      ga4TokenSet,
+      decryptedGa4.property_id,
+      startDate,
+      endDate,
+      async (newTokens) => {
+        freshGa4AccessToken = newTokens.access_token
+        await supabase.from('data_connections').update({
+          access_token: encrypt(newTokens.access_token),
+          ...(newTokens.refresh_token ? { refresh_token: encrypt(newTokens.refresh_token) } : {}),
+          ...(newTokens.token_expiry ? { token_expiry: newTokens.token_expiry } : {}),
+        }).eq('client_id', clientId).eq('platform', 'ga4')
+      }
+    )
+    previousMetrics = await fetchGA4Metrics(
+      { ...ga4TokenSet, access_token: freshGa4AccessToken },
+      decryptedGa4.property_id,
+      prev.start,
+      prev.end
+    )
   } catch (err) {
     await supabase
       .from('reports')

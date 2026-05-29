@@ -45,11 +45,18 @@ export default function SignupForm() {
         return
       }
 
-      await fetch('/api/team/invite/accept', {
+      const acceptRes = await fetch('/api/team/invite/accept', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: inviteToken }),
       })
+
+      if (!acceptRes.ok) {
+        const data = await acceptRes.json().catch(() => ({})) as { error?: string }
+        setError(data.error ?? 'Failed to join team. Contact the person who invited you.')
+        setLoading(false)
+        return
+      }
 
       router.push('/clients')
       router.refresh()

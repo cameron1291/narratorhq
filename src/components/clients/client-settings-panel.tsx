@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -30,7 +29,6 @@ interface Props {
 
 export function ClientSettingsPanel({ client }: Props) {
   const router = useRouter()
-  const supabase = createClient()
 
   const [form, setForm] = useState({
     name: client.name,
@@ -55,15 +53,19 @@ export function ClientSettingsPanel({ client }: Props) {
     e.preventDefault()
     setSaving(true)
 
-    await supabase.from('clients').update({
-      name: form.name,
-      industry: form.industry || null,
-      report_email: form.reportEmail || null,
-      report_frequency: form.reportFrequency,
-      tone_override: form.toneOverride === 'inherit' ? null : form.toneOverride,
-      custom_instructions: form.customInstructions || null,
-      goals: form.goals || null,
-    }).eq('id', client.id)
+    await fetch(`/api/clients/${client.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: form.name,
+        industry: form.industry || null,
+        report_email: form.reportEmail || null,
+        report_frequency: form.reportFrequency,
+        tone_override: form.toneOverride === 'inherit' ? null : form.toneOverride,
+        custom_instructions: form.customInstructions || null,
+        goals: form.goals || null,
+      }),
+    })
 
     setSaving(false)
     setSaved(true)
@@ -72,7 +74,11 @@ export function ClientSettingsPanel({ client }: Props) {
 
   async function handleArchive() {
     setArchiving(true)
-    await supabase.from('clients').update({ is_archived: true }).eq('id', client.id)
+    await fetch(`/api/clients/${client.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_archived: true }),
+    })
     router.push('/clients')
     router.refresh()
   }
@@ -150,7 +156,7 @@ export function ClientSettingsPanel({ client }: Props) {
         <DialogContent className="max-w-sm">
           <DialogTitle>Archive {client.name}?</DialogTitle>
           <p className="text-sm text-gray-600 mt-1">
-            This will pause all report generation and hide {client.name} from your active client list. No data is deleted — you can restore the client at any time from the archived clients view in Settings.
+            This will pause all report generation and hide {client.name} from your active client list. No data is deleted. Contact support to restore an archived client.
           </p>
           <div className="flex gap-2 mt-4">
             <Button

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { ReportApproval } from '@/components/reports/report-approval'
-import { GeneratingPoller } from '@/components/reports/generating-poller'
+import { GeneratingView } from '@/components/reports/generating-view'
 import type { NarrativeSection } from '@/lib/normalization/types'
 import Link from 'next/link'
 
@@ -64,16 +64,7 @@ export default async function ReportPage({
     : `${start.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
 
   if (report.status === 'generating') {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-12 text-center">
-        <GeneratingPoller />
-        <div className="inline-flex items-center gap-2 text-gray-600">
-          <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          Generating report…
-        </div>
-        <p className="text-sm text-gray-400 mt-2">This usually takes 10–15 seconds.</p>
-      </div>
-    )
+    return <GeneratingView clientId={report.client_id} />
   }
 
   if (report.status === 'failed') {

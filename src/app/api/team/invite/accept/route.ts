@@ -23,6 +23,9 @@ export async function POST(request: NextRequest) {
   if (new Date(invite.expires_at) < new Date()) {
     return NextResponse.json({ error: 'Invite expired' }, { status: 410 })
   }
+  if (user.email !== invite.email) {
+    return NextResponse.json({ error: 'This invite was sent to a different email address' }, { status: 403 })
+  }
 
   // Check user isn't already in this agency
   const { data: existing } = await service
