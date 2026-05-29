@@ -32,14 +32,6 @@ export async function POST(request: NextRequest) {
     .eq('id', agencyUser.agency_id)
     .single()
 
-  // Check if user is already a member
-  const { data: existing } = await supabase
-    .from('agency_users')
-    .select('id')
-    .eq('agency_id', agencyUser.agency_id)
-
-  // Can't easily query by email here — would need a join with auth.users
-  // Instead just check for a pending invite
   const { data: existingInvite } = await supabase
     .from('agency_invites')
     .select('id')

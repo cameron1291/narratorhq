@@ -22,7 +22,7 @@ async function syncSubscription(subscription: Stripe.Subscription) {
   await supabase
     .from('agencies')
     .update({
-      stripe_subscription_id: subscription.id,
+      stripe_subscription_id: isActive ? subscription.id : null,
       plan: isActive ? planConfig.plan : 'cancelled',
       client_limit: isActive ? planConfig.clientLimit : 0,
     })

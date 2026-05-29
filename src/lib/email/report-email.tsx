@@ -25,6 +25,15 @@ export interface SendReportEmailInput {
   reportViewUrl?: string
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function buildHtml(input: SendReportEmailInput): string {
   const { clientName, periodLabel, agencyName, brandColor, sections, reportViewUrl } = input
 
@@ -36,7 +45,7 @@ function buildHtml(input: SendReportEmailInput): string {
           ${SECTION_LABELS[s.section]}
         </h3>
         <p style="font-size: 15px; line-height: 1.7; color: #374151; margin: 0;">
-          ${(s.editedContent ?? s.content).replace(/\n/g, '<br>')}
+          ${escapeHtml(s.editedContent ?? s.content).replace(/\n/g, '<br>')}
         </p>
       </div>
     `).join('')
@@ -118,7 +127,7 @@ export async function sendReportEmail(input: SendReportEmailInput): Promise<stri
   const resend = getResendClient()
 
   const attachments = input.pdfBuffer
-    ? [{ filename: `${input.clientName} - ${input.periodLabel} Report.pdf`, content: input.pdfBuffer }]
+    ? [{ filename: `${input.clientName} - ${input.periodLabel} Report.pdf`, content: input.pdfBuffer, content_type: 'application/pdf' }]
     : []
 
   const { data, error } = await resend.emails.send({

@@ -27,21 +27,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'This invite was sent to a different email address' }, { status: 403 })
   }
 
-  // Check user isn't already in this agency
-  const { data: existing } = await service
+  // Check if user already belongs to any agency (one user = one agency)
+  const { data: anyMembership } = await service
     .from('agency_users')
-    .select('id')
+    .select('agency_id')
     .eq('id', user.id)
-    .eq('agency_id', invite.agency_id)
     .single()
 
-  if (existing) {
-    // Already a member — mark invite accepted anyway
-    await service
-      .from('agency_invites')
-      .update({ accepted_at: new Date().toISOString() })
-      .eq('id', invite.id)
-    return NextResponse.json({ ok: true })
+  if (anyMembership) {
+    if (anyMembership.agency_id === invite.agency_id) {
+      // Already a member of this agency — mark accepted and return ok
+      await service.from('agency_invites').update({ accepted_at: new Date().toISOString() }).eq('id', invite.id)
+      return NextResponse.json({ ok: true })
+    }
+    return NextResponse.json(
+      { error: 'Your account already belongs to another agency. Contact support to transfer.' },
+      { status: 409 }
+    )
   }
 
   // Add to agency

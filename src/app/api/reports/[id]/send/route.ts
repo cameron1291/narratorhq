@@ -62,7 +62,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const start = new Date(report.period_start)
   const end = new Date(report.period_end)
-  const sameMonth = start.getMonth() === end.getMonth()
+  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()
   const periodLabel = sameMonth
     ? start.toLocaleString('en-GB', { month: 'long', year: 'numeric' })
     : `${start.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-GB', { month: 'short', day: 'numeric', year: 'numeric' })}`
