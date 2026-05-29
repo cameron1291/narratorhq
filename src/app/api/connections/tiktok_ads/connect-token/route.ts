@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
   if (!clientId || !token || !advertiserId) {
     return NextResponse.json({ error: 'Missing clientId, token, or advertiserId' }, { status: 400 })
   }
+  if (!/^\d+$/.test(advertiserId)) {
+    return NextResponse.json({ error: 'Invalid advertiser ID — must be numeric' }, { status: 400 })
+  }
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

@@ -4,8 +4,13 @@ import type { NarrativeSection } from '@/lib/normalization/types'
 
 type Params = { params: Promise<{ id: string; section: string }> }
 
+const VALID_SECTIONS = new Set(['overview', 'organic', 'paid_search', 'paid_social', 'tiktok', 'anomalies', 'next_steps'])
+
 export async function PATCH(request: NextRequest, { params }: Params) {
   const { id, section } = await params
+  if (!VALID_SECTIONS.has(section)) {
+    return NextResponse.json({ error: 'Invalid section' }, { status: 400 })
+  }
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -37,9 +37,11 @@ export async function POST(request: NextRequest) {
   if (!clientRow) return NextResponse.json({ error: 'Client not found' }, { status: 404 })
 
   // Validate token + discover ad account by calling Meta API
-  const res = await fetch(
-    `https://graph.facebook.com/v19.0/me/adaccounts?fields=id,name,account_status&limit=1&access_token=${token}`
-  )
+  const metaUrl = new URL('https://graph.facebook.com/v19.0/me/adaccounts')
+  metaUrl.searchParams.set('fields', 'id,name,account_status')
+  metaUrl.searchParams.set('limit', '1')
+  metaUrl.searchParams.set('access_token', token)
+  const res = await fetch(metaUrl.toString())
 
   if (!res.ok) {
     return NextResponse.json({ error: 'Invalid token — Meta API rejected it. Check the token and try again.' }, { status: 422 })
