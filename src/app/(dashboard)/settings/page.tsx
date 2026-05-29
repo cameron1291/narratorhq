@@ -10,9 +10,9 @@ import { TeamPanel } from '@/components/settings/team-panel'
 export default async function SettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ expired?: string; billing?: string }>
+  searchParams: Promise<{ expired?: string; cancelled?: string; billing?: string }>
 }) {
-  const { expired, billing } = await searchParams
+  const { expired, cancelled, billing } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
@@ -51,7 +51,7 @@ export default async function SettingsPage({
   const members = (membersResult.data ?? []) as { id: string; full_name: string | null; role: string; created_at: string }[]
   const pendingInvites = (invitesResult.data ?? []) as { id: string; email: string; role: string; expires_at: string }[]
 
-  const defaultTab = expired === '1' ? 'billing' : 'agency'
+  const defaultTab = (expired === '1' || cancelled === '1') ? 'billing' : 'agency'
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
@@ -60,6 +60,12 @@ export default async function SettingsPage({
       {expired === '1' && (
         <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4 text-sm text-red-800">
           <strong>Your trial has expired.</strong> Upgrade to a paid plan below to continue using NarratorHQ.
+        </div>
+      )}
+
+      {cancelled === '1' && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 text-sm text-amber-800">
+          <strong>Your subscription has been cancelled.</strong> Reactivate below to continue generating and sending reports.
         </div>
       )}
 

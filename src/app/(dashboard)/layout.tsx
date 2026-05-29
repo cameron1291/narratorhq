@@ -33,12 +33,14 @@ export default async function DashboardLayout({
       agency?.trial_ends_at != null &&
       new Date(agency.trial_ends_at) < new Date()
 
-    if (trialExpired) {
+    const planCancelled = agency?.plan === 'cancelled'
+
+    if (trialExpired || planCancelled) {
       const headersList = await headers()
       const pathname = headersList.get('x-pathname') ?? ''
       // Allow settings so users can upgrade; redirect everything else
       if (!pathname.startsWith('/settings')) {
-        redirect('/settings?expired=1')
+        redirect(trialExpired ? '/settings?expired=1' : '/settings?cancelled=1')
       }
     }
   }

@@ -32,10 +32,19 @@ export async function POST(request: NextRequest) {
 
   const { data: agency } = await supabase
     .from('agencies')
-    .select('client_limit')
+    .select('plan, trial_ends_at, client_limit')
     .eq('id', agencyUser.agency_id)
     .single()
   if (!agency) return NextResponse.json({ error: 'Agency not found' }, { status: 404 })
+
+  const activePaidPlan = ['starter', 'growth', 'agency'].includes(agency.plan)
+  const validTrial = agency.plan === 'trial' && agency.trial_ends_at && new Date(agency.trial_ends_at) > new Date()
+  if (!activePaidPlan && !validTrial) {
+    return NextResponse.json(
+      { error: agency.plan === 'cancelled' ? 'Reactivate your subscription to add more clients.' : 'Your trial has expired. Upgrade to add more clients.' },
+      { status: 402 }
+    )
+  }
 
   const { count } = await supabase
     .from('clients')

@@ -104,7 +104,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   const { buildComparison } = await import('@/lib/normalization/anomalies')
   const changes = buildComparison(metrics.current, metrics.previous)
   const comparison = { current: metrics.current, previous: metrics.previous, changes }
-  const anomalies = report.anomalies as Parameters<typeof generateNarrative>[0]['anomalies']
+  const anomalies = ((report.anomalies ?? []) as Parameters<typeof generateNarrative>[0]['anomalies'])
 
   // Generate only the requested section by overriding connectedPlatforms to exclude others
   const freshSections = await generateNarrative({ comparison, anomalies, context })

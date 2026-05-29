@@ -24,7 +24,9 @@ async function syncSubscription(subscription: Stripe.Subscription) {
     .update({
       stripe_subscription_id: isActive ? subscription.id : null,
       plan: isActive ? planConfig.plan : 'cancelled',
-      client_limit: isActive ? planConfig.clientLimit : 0,
+      // Preserve the plan's client limit so existing clients remain visible;
+      // new client creation is blocked by the plan status check in /api/clients
+      client_limit: planConfig.clientLimit,
     })
     .eq('id', agencyId)
 }
