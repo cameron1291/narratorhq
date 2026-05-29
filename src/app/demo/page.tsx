@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X, Brain, ChevronRight } from 'lucide-react'
+import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X, Brain, ChevronRight, Wifi } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const BRAND_COLOR = '#2563eb'
@@ -42,6 +42,89 @@ const CLIENT_MEMORY = [
   },
 ]
 
+const PLATFORMS = [
+  {
+    key: 'ga4',
+    label: 'Google Analytics 4',
+    shortLabel: 'GA4',
+    status: 'live' as const,
+    lastSync: '2 min ago',
+    color: 'text-orange-600 bg-orange-50 border-orange-200',
+    dot: 'bg-orange-500',
+  },
+  {
+    key: 'google_ads',
+    label: 'Google Ads',
+    shortLabel: 'Google Ads',
+    status: 'live' as const,
+    lastSync: '2 min ago',
+    color: 'text-blue-600 bg-blue-50 border-blue-200',
+    dot: 'bg-blue-500',
+  },
+  {
+    key: 'meta_ads',
+    label: 'Meta Ads',
+    shortLabel: 'Meta Ads',
+    status: 'live' as const,
+    lastSync: '2 min ago',
+    color: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+    dot: 'bg-indigo-500',
+  },
+  {
+    key: 'tiktok_ads',
+    label: 'TikTok Ads',
+    shortLabel: 'TikTok Ads',
+    status: 'live' as const,
+    lastSync: '2 min ago',
+    color: 'text-gray-900 bg-gray-50 border-gray-300',
+    dot: 'bg-gray-900',
+  },
+  {
+    key: 'microsoft_ads',
+    label: 'Microsoft Ads',
+    shortLabel: 'Microsoft Ads',
+    status: 'soon' as const,
+    lastSync: null,
+    color: 'text-gray-400 bg-gray-50 border-gray-200',
+    dot: 'bg-gray-300',
+  },
+  {
+    key: 'linkedin_ads',
+    label: 'LinkedIn Ads',
+    shortLabel: 'LinkedIn Ads',
+    status: 'soon' as const,
+    lastSync: null,
+    color: 'text-gray-400 bg-gray-50 border-gray-200',
+    dot: 'bg-gray-300',
+  },
+]
+
+const SECTION_SOURCE: Record<string, { key: string; label: string; color: string }[]> = {
+  overview: [
+    { key: 'ga4', label: 'GA4', color: 'text-orange-600 bg-orange-50 border-orange-200' },
+    { key: 'google_ads', label: 'Google Ads', color: 'text-blue-600 bg-blue-50 border-blue-200' },
+    { key: 'meta_ads', label: 'Meta', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+    { key: 'tiktok_ads', label: 'TikTok', color: 'text-gray-900 bg-gray-50 border-gray-300' },
+  ],
+  organic: [
+    { key: 'ga4', label: 'GA4', color: 'text-orange-600 bg-orange-50 border-orange-200' },
+  ],
+  paid_search: [
+    { key: 'google_ads', label: 'Google Ads', color: 'text-blue-600 bg-blue-50 border-blue-200' },
+  ],
+  paid_social: [
+    { key: 'meta_ads', label: 'Meta', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
+  ],
+  tiktok: [
+    { key: 'tiktok_ads', label: 'TikTok', color: 'text-gray-900 bg-gray-50 border-gray-300' },
+  ],
+  anomalies: [
+    { key: 'ga4', label: 'GA4', color: 'text-orange-600 bg-orange-50 border-orange-200' },
+    { key: 'google_ads', label: 'Google Ads', color: 'text-blue-600 bg-blue-50 border-blue-200' },
+  ],
+  next_steps: [],
+}
+
 const DEMO_SECTIONS: {
   section: string
   content: string
@@ -52,62 +135,71 @@ const DEMO_SECTIONS: {
   promiseKept?: string
 }[] = [
   {
-    section: 'overview' as const,
-    content: "April was Meridian's strongest month in 2026 — organic sessions up 18% and paid CPA down to £28.50, the lowest since Q3 2025. The content refresh across the garden furniture category drove 40% of the organic growth. One area to watch: branded search volume dipped 8% following the end of the March awareness campaign — we've outlined the plan below.",
-    confidence: 'high' as const,
+    section: 'overview',
+    content: "April was Meridian's strongest month in 2026 — organic sessions up 18%, paid CPA down to £28.50, and TikTok Ads delivered its first profitable month with a CPA of £38. The content refresh across the garden furniture category drove 40% of the organic growth. One area to watch: branded search volume dipped 8% following the end of the March awareness campaign — we've outlined the plan below.",
+    confidence: 'high',
     isApproved: true,
     editedContent: null,
-    supportingMetrics: ['Sessions +18%', 'CPA £28.50', 'ROAS 4.2x'],
+    supportingMetrics: ['Sessions +18%', 'CPA £28.50', 'ROAS 4.2x', 'TikTok CPA £38'],
   },
   {
-    section: 'organic' as const,
+    section: 'organic',
     content: "Organic search delivered 14,200 sessions — up 21% from March and the channel's best performance this year. The 'outdoor furniture 2026' content cluster gained significant traction, contributing 3,100 sessions. Four target keywords moved from positions 8–12 into the top 5, with 'garden sofas UK' now ranking at position 3. Conversion rate from organic held at 1.4%, generating 199 goal completions.",
-    confidence: 'high' as const,
+    confidence: 'high',
     isApproved: true,
     editedContent: null,
     supportingMetrics: ['Organic sessions 14,200', 'Position 3 for garden sofas UK', 'Conversions 199'],
   },
   {
-    section: 'paid_search' as const,
+    section: 'paid_search',
     content: "Google Ads delivered 187 conversions at a CPA of £28.50 — down from £34.20 in March, an improvement of 17%. ROAS improved to 4.2x (from 3.6x).\n\nAs we committed last month, we applied bid modifier adjustments to mobile campaigns. Mobile CPA has improved from 41% above desktop to 23% above desktop — meaningful progress, and we'll continue tightening this in May.\n\nWe also cut three underperforming ad groups targeting broad match gardening terms that were generating clicks but no conversions. That budget has been reallocated to the retargeting campaign, which is now converting at a CPA of £18.",
-    confidence: 'high' as const,
+    confidence: 'high',
     isApproved: true,
     editedContent: null,
     supportingMetrics: ['CPA £28.50 (-17%)', 'ROAS 4.2x', 'Spend £3,240', 'Mobile CPA improved'],
     promiseKept: 'Fix mobile CPC issue',
   },
   {
-    section: 'paid_social' as const,
+    section: 'paid_social',
     content: "Meta delivered 84 conversions at a CPA of £42, broadly flat from March's £44. The spring creative set — lifestyle imagery of garden spaces — outperformed the product-only creative by 34% on CTR. We're scaling the lifestyle set and testing a video variant in May. Note: Meta figures reflect 7-day click attribution — direct comparison with GA4 will show different conversion counts.",
-    confidence: 'medium' as const,
+    confidence: 'medium',
     isApproved: false,
     editedContent: null,
     supportingMetrics: ['CPA £42', 'Spend £1,800', 'CTR +34% on lifestyle creative'],
   },
   {
-    section: 'anomalies' as const,
+    section: 'tiktok',
+    content: "TikTok Ads delivered 62 conversions at a CPA of £38 — down from £52 in March as the spring creative set gained traction. This is the first month TikTok has hit a sub-£40 CPA, making it a viable performance channel alongside Meta.\n\nThe 'garden transformation' video (15-second format) drove a CTR of 2.8%, significantly above the platform average of 1.1%. We scaled this creative mid-month and it now accounts for 68% of TikTok spend. The product carousel format underperformed and has been paused.\n\nNote: TikTok figures reflect a 7-day click, 1-day view attribution window.",
+    confidence: 'high',
+    isApproved: false,
+    editedContent: null,
+    supportingMetrics: ['CPA £38 (-27%)', 'CTR 2.8%', 'Spend £1,200', '62 conversions'],
+  },
+  {
+    section: 'anomalies',
     content: "Branded search volume dipped 8% in the second half of April, consistent with the pattern we see when above-the-line brand activity goes quiet. The March email campaign drove a branded search spike that has now normalised. This is expected and not a cause for concern — if it continues through May, we would recommend a small Display budget to maintain brand visibility.",
-    confidence: 'medium' as const,
+    confidence: 'medium',
     isApproved: false,
     editedContent: null,
     supportingMetrics: ['Branded search -8%', 'Post-campaign normalisation'],
   },
   {
-    section: 'next_steps' as const,
-    content: "1. Launch the video creative test on Meta by 10 May. 2. Publish three remaining articles in the outdoor furniture content cluster — expected to drive a further 1,500 organic sessions by end of May. 3. Apply bid modifier adjustments to mobile campaigns in Google Ads — mobile CPA is currently 23% above desktop, with room to improve through audience layering.",
-    confidence: 'high' as const,
+    section: 'next_steps',
+    content: "1. Scale the TikTok 'garden transformation' video creative — test a 30-second cut by 10 May. 2. Launch the Meta video creative test by 10 May. 3. Publish three remaining articles in the outdoor furniture content cluster — expected to drive a further 1,500 organic sessions by end of May. 4. Continue mobile bid modifier work in Google Ads — mobile CPA is 23% above desktop, with room to improve through audience layering.",
+    confidence: 'high',
     isApproved: false,
     editedContent: null,
-    supportingMetrics: ['3 actions', 'Mobile CPA 23% above desktop'],
+    supportingMetrics: ['4 actions', 'Mobile CPA 23% above desktop'],
   },
 ]
 
 const SECTION_LABELS: Record<string, string> = {
   overview: 'Overview',
-  organic: 'Organic',
-  paid_search: 'Paid Search',
-  paid_social: 'Paid Social',
-  anomalies: 'Anomalies',
+  organic: 'Organic Search',
+  paid_search: 'Google Ads',
+  paid_social: 'Meta Ads',
+  tiktok: 'TikTok Ads',
+  anomalies: 'Anomalies & Insights',
   next_steps: 'Next Steps',
 }
 
@@ -117,11 +209,7 @@ const CONFIDENCE_CONFIG = {
   low: { label: 'Low confidence — please review carefully', color: 'text-red-700 bg-red-50 border-red-200' },
 }
 
-interface SignupPromptProps {
-  onClose: () => void
-}
-
-function SignupPrompt({ onClose }: SignupPromptProps) {
+function SignupPrompt({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl p-8 relative">
@@ -134,7 +222,7 @@ function SignupPrompt({ onClose }: SignupPromptProps) {
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Ready to send your first report?</h2>
           <p className="text-gray-500 text-sm mb-6">
-            Connect your GA4, Google Ads and Meta accounts. Your first real report generates in under 30 seconds.
+            Connect GA4, Google Ads, Meta and TikTok. Your first real report generates in under 30 seconds.
           </p>
           <Link
             href="/signup"
@@ -143,6 +231,45 @@ function SignupPrompt({ onClose }: SignupPromptProps) {
             Start 14-day free trial
           </Link>
           <p className="text-xs text-gray-400">No credit card required</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ConnectedSourcesPanel() {
+  const live = PLATFORMS.filter(p => p.status === 'live')
+  const soon = PLATFORMS.filter(p => p.status === 'soon')
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
+        <Wifi className="h-4 w-4 text-green-500" />
+        <span className="text-sm font-semibold text-gray-900">Connected data sources</span>
+        <span className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 ml-1">
+          {live.length} live
+        </span>
+        <span className="text-xs text-gray-400 ml-auto">Last sync: 2 min ago</span>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {live.map(p => (
+            <div key={p.key} className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 ${p.color}`}>
+              <span className={`h-2 w-2 rounded-full shrink-0 ${p.dot} animate-pulse`} />
+              <div className="min-w-0">
+                <p className="text-xs font-semibold truncate">{p.shortLabel}</p>
+                <p className="text-xs opacity-70">Live</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400">Coming soon:</span>
+          {soon.map(p => (
+            <span key={p.key} className="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">
+              {p.shortLabel}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -276,7 +403,11 @@ export default function DemoPage() {
       </nav>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-        {/* Header */}
+
+        {/* Connected sources */}
+        <ConnectedSourcesPanel />
+
+        {/* Report header */}
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Demo Report</p>
@@ -330,6 +461,7 @@ export default function DemoPage() {
             const wasEdited = state.editedContent !== null
             const displayContent = state.editedContent ?? state.content
             const isRegening = regenSection === section.section
+            const sources = SECTION_SOURCE[section.section] ?? []
 
             return (
               <div
@@ -340,7 +472,7 @@ export default function DemoPage() {
                 )}
               >
                 {/* Section header */}
-                <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 flex-wrap">
                   <button
                     onClick={() => toggleApprove(section.section)}
                     className={cn(
@@ -359,6 +491,13 @@ export default function DemoPage() {
                     {SECTION_LABELS[section.section]}
                   </span>
 
+                  {/* Platform source tags */}
+                  {sources.map(src => (
+                    <span key={src.key} className={`text-xs border rounded px-1.5 py-0.5 font-medium ${src.color}`}>
+                      {src.label}
+                    </span>
+                  ))}
+
                   {wasEdited && (
                     <span className="text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5">
                       Edited
@@ -368,7 +507,7 @@ export default function DemoPage() {
                   {section.promiseKept && (
                     <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 flex items-center gap-1">
                       <CheckCircle className="h-3 w-3" />
-                      Promise kept
+                      Promise kept ✓
                     </span>
                   )}
 
@@ -486,30 +625,74 @@ export default function DemoPage() {
             className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             onClick={() => setShowMetrics(v => !v)}
           >
-            Raw metrics reference
+            Raw metrics reference — all sources
             {showMetrics ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
           {showMetrics && (
             <div className="px-4 pb-4 border-t border-gray-100">
-              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="mt-4 space-y-4">
                 {[
-                  { label: 'Sessions', value: '24,847', change: '+18%' },
-                  { label: 'Conversions', value: '312', change: '+22%' },
-                  { label: 'Paid CPA', value: '£28.50', change: '-17%' },
-                  { label: 'ROAS', value: '4.2x', change: '+0.6x' },
-                  { label: 'Organic sessions', value: '14,200', change: '+21%' },
-                  { label: 'Google Ads spend', value: '£3,240', change: '' },
-                  { label: 'Meta spend', value: '£1,800', change: '' },
-                  { label: 'Total conversions', value: '471', change: '+19%' },
-                ].map(m => (
-                  <div key={m.label} className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-xs text-gray-500 mb-1">{m.label}</p>
-                    <p className="text-sm font-semibold text-gray-900">{m.value}</p>
-                    {m.change && (
-                      <p className={cn('text-xs font-medium mt-0.5', m.change.startsWith('-') && m.label !== 'Paid CPA' ? 'text-red-600' : 'text-green-600')}>
-                        {m.change}
-                      </p>
-                    )}
+                  {
+                    source: 'GA4',
+                    color: 'text-orange-600',
+                    metrics: [
+                      { label: 'Total sessions', value: '24,847', change: '+18%' },
+                      { label: 'Conversions', value: '199', change: '+22%' },
+                      { label: 'Organic sessions', value: '14,200', change: '+21%' },
+                      { label: 'Branded search', value: '-8%', change: '' },
+                    ],
+                  },
+                  {
+                    source: 'Google Ads',
+                    color: 'text-blue-600',
+                    metrics: [
+                      { label: 'Spend', value: '£3,240', change: '' },
+                      { label: 'Conversions', value: '187', change: '+14%' },
+                      { label: 'CPA', value: '£28.50', change: '-17%' },
+                      { label: 'ROAS', value: '4.2x', change: '+0.6x' },
+                    ],
+                  },
+                  {
+                    source: 'Meta Ads',
+                    color: 'text-indigo-600',
+                    metrics: [
+                      { label: 'Spend', value: '£1,800', change: '' },
+                      { label: 'Conversions', value: '84', change: '+2%' },
+                      { label: 'CPA', value: '£42', change: '-5%' },
+                      { label: 'CTR', value: '2.1%', change: '+34%' },
+                    ],
+                  },
+                  {
+                    source: 'TikTok Ads',
+                    color: 'text-gray-900',
+                    metrics: [
+                      { label: 'Spend', value: '£1,200', change: '' },
+                      { label: 'Conversions', value: '62', change: '+19%' },
+                      { label: 'CPA', value: '£38', change: '-27%' },
+                      { label: 'CTR', value: '2.8%', change: '+154%' },
+                    ],
+                  },
+                ].map(group => (
+                  <div key={group.source}>
+                    <p className={`text-xs font-semibold mb-2 ${group.color}`}>{group.source}</p>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {group.metrics.map(m => (
+                        <div key={m.label} className="bg-gray-50 rounded-lg p-3">
+                          <p className="text-xs text-gray-500 mb-1">{m.label}</p>
+                          <p className="text-sm font-semibold text-gray-900">{m.value}</p>
+                          {m.change && (
+                            <p className={cn(
+                              'text-xs font-medium mt-0.5',
+                              m.change.startsWith('-') && !['CPA', 'Branded search'].includes(m.label)
+                                ? 'text-red-600'
+                                : 'text-green-600'
+                            )}>
+                              {m.change}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -521,7 +704,7 @@ export default function DemoPage() {
         <div className="bg-blue-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-xl font-bold mb-2">Ready to do this for your clients?</h2>
           <p className="text-blue-100 text-sm mb-6 max-w-sm mx-auto">
-            Connect GA4 in under 2 minutes. Your first real report generates automatically. 14-day free trial, no credit card.
+            Connect GA4, Google Ads, Meta and TikTok in minutes. Your first real report generates automatically. 14-day free trial, no credit card.
           </p>
           <Link
             href="/signup"
