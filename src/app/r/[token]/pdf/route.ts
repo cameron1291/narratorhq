@@ -57,12 +57,14 @@ export async function GET(_request: NextRequest, { params }: Params) {
   }
 
   const filename = `${clientName} - ${periodLabel} Report.pdf`
+  const asciiFilename = filename.replace(/[^\x20-\x7E]/g, '_')
+  const encodedFilename = encodeURIComponent(filename)
 
   return new NextResponse(new Uint8Array(pdfBuffer), {
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Disposition': `attachment; filename="${asciiFilename}"; filename*=UTF-8''${encodedFilename}`,
       'Content-Length': pdfBuffer.length.toString(),
     },
   })

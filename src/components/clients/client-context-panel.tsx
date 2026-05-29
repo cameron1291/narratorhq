@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { PlusCircle, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
@@ -53,36 +54,54 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
   async function addContext() {
     if (!newContent.trim()) return
     setSaving(true)
-    await fetch(`/api/clients/${clientId}/context`, {
+    const res = await fetch(`/api/clients/${clientId}/context`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ context_type: newType, content: newContent.trim() }),
     })
-    setNewContent('')
     setSaving(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      toast.error(data.error ?? 'Failed to save — please try again')
+      return
+    }
+    setNewContent('')
     router.refresh()
   }
 
   async function addInstruction() {
     if (!newInstruction.trim()) return
     setSaving(true)
-    await fetch(`/api/clients/${clientId}/instructions`, {
+    const res = await fetch(`/api/clients/${clientId}/instructions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ instruction: newInstruction.trim() }),
     })
-    setNewInstruction('')
     setSaving(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      toast.error(data.error ?? 'Failed to save — please try again')
+      return
+    }
+    setNewInstruction('')
     router.refresh()
   }
 
   async function removeContext(id: string) {
-    await fetch(`/api/clients/${clientId}/context/${id}`, { method: 'DELETE' })
+    const res = await fetch(`/api/clients/${clientId}/context/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+      toast.error('Failed to remove — please try again')
+      return
+    }
     router.refresh()
   }
 
   async function removeInstruction(id: string) {
-    await fetch(`/api/clients/${clientId}/instructions/${id}`, { method: 'DELETE' })
+    const res = await fetch(`/api/clients/${clientId}/instructions/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+      toast.error('Failed to remove — please try again')
+      return
+    }
     router.refresh()
   }
 

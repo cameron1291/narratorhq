@@ -47,25 +47,34 @@ function SectionCard({ reportId, section, originalContent, onUpdate }: SectionCa
   async function saveEdit() {
     setSaving(true)
     const newContent = editText.trim()
-    await fetch(`/api/reports/${reportId}/sections/${section.section}`, {
+    const res = await fetch(`/api/reports/${reportId}/sections/${section.section}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ editedContent: newContent !== section.content ? newContent : null }),
     })
-    onUpdate(section.section, { editedContent: newContent !== section.content ? newContent : null })
     setSaving(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      toast.error(data.error ?? 'Failed to save — please try again')
+      return
+    }
+    onUpdate(section.section, { editedContent: newContent !== section.content ? newContent : null })
     setEditing(false)
     toast.success('Section saved')
   }
 
   async function toggleApprove() {
     const next = !section.isApproved
-    await fetch(`/api/reports/${reportId}/sections/${section.section}`, {
+    const res = await fetch(`/api/reports/${reportId}/sections/${section.section}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isApproved: next }),
     })
-    onUpdate(section.section, { isApproved: next })
+    if (res.ok) {
+      onUpdate(section.section, { isApproved: next })
+    } else {
+      toast.error('Failed to update — please try again')
+    }
   }
 
   async function regenerate() {
@@ -81,6 +90,9 @@ function SectionCard({ reportId, section, originalContent, onUpdate }: SectionCa
       onUpdate(section.section, { ...data.section, isApproved: false, editedContent: null })
       setEditText(data.section.content)
       setRegenInstruction('')
+    } else {
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      toast.error(data.error ?? 'Regeneration failed — please try again')
     }
     setRegenerating(false)
   }
@@ -244,10 +256,15 @@ export function ReportApproval({
 
   async function approveAll() {
     setApproving(true)
-    await fetch(`/api/reports/${reportId}/approve`, { method: 'POST' })
-    setStatus('approved')
+    const res = await fetch(`/api/reports/${reportId}/approve`, { method: 'POST' })
+    if (res.ok) {
+      setStatus('approved')
+      router.refresh()
+    } else {
+      const data = await res.json().catch(() => ({})) as { error?: string }
+      toast.error(data.error ?? 'Failed to approve — please try again')
+    }
     setApproving(false)
-    router.refresh()
   }
 
   async function sendReport() {
@@ -318,17 +335,18 @@ export function ReportApproval({
       {status === 'draft' && !allApproved && (
         <button
           onClick={async () => {
-            // Mark all sections approved in state
             const all = sections.map(s => ({ ...s, isApproved: true }))
             setSections(all)
-            // Persist each
-            await Promise.all(all.map(s =>
+            const results = await Promise.all(all.map(s =>
               fetch(`/api/reports/${reportId}/sections/${s.section}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isApproved: true }),
               })
             ))
+            if (results.some(r => !r.ok)) {
+              toast.error('Some sections failed to save — please refresh and try again')
+            }
           }}
           className="w-full text-sm text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-300 rounded-lg py-2 transition-colors bg-blue-50 hover:bg-blue-100"
         >
