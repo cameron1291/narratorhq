@@ -25,7 +25,7 @@ export default function TermsPage() {
 
       <main className="max-w-3xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Terms of Service</h1>
-        <p className="text-sm text-gray-500 mb-10">Last updated: 20 May 2026</p>
+        <p className="text-sm text-gray-500 mb-10">Last updated: 30 May 2026</p>
 
         <div className="prose prose-gray max-w-none space-y-8 text-gray-700">
           <section>
@@ -40,9 +40,11 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">2. Description of service</h2>
             <p>
-              NarratorHQ is a client reporting automation platform for digital marketing agencies. It connects
-              to advertising and analytics platforms on your behalf, generates performance narratives using AI,
-              and delivers white-labeled reports to your clients.
+              NarratorHQ is a client reporting automation platform for digital marketing agencies. It integrates
+              with Google Ads, Google Analytics 4 (GA4), and Meta Ads through authorised APIs to pull campaign
+              performance data, generate written performance narrative reports using AI, and deliver white-labeled
+              reports to agency clients via email. All data access to third-party platforms is read-only and used
+              solely for report generation on behalf of the authorising agency.
             </p>
           </section>
 
@@ -72,15 +74,35 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Your data and third-party platforms</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Third-party platform integrations</h2>
             <p>
-              By connecting a third-party platform (Google Analytics, Google Ads, Meta Ads), you authorise
-              NarratorHQ to access data from that platform on your behalf. You are responsible for ensuring
-              you have the right to grant this access for each client account you connect.
+              NarratorHQ integrates with the following platforms via their official APIs to retrieve performance
+              data for report generation:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mt-3 mb-3">
+              <li><strong>Google Analytics 4</strong> — via the Google Analytics Data API (read-only, <code>analytics.readonly</code> scope)</li>
+              <li><strong>Google Ads</strong> — via the Google Ads API (read-only reporting access, <code>adwords</code> scope)</li>
+              <li><strong>Meta Ads</strong> — via the Meta Marketing API (read-only, <code>ads_read</code> scope)</li>
+            </ul>
+            <p>
+              By connecting a third-party platform, you authorise NarratorHQ to access data from that platform
+              on your behalf, strictly for the purpose of generating client reports. You are responsible for
+              ensuring you have the right to grant this access for each client account you connect. Our use of
+              data received from Google APIs complies with the{' '}
+              <a
+                href="https://developers.google.com/terms/api-services-user-data-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                Google API Services User Data Policy
+              </a>
+              , including the Limited Use requirements.
             </p>
             <p className="mt-3">
               You retain ownership of all data you bring to the Service. We do not sell your data or your
-              clients&apos; data to third parties.
+              clients&apos; data to third parties. You can revoke platform access at any time from within the
+              app or directly from the respective platform&apos;s account settings.
             </p>
           </section>
 
