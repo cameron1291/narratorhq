@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { createClient } from '@/lib/supabase/client'
 import { Upload, X } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface AgencySettingsPanelProps {
   agency: {
@@ -81,36 +82,45 @@ export function AgencySettingsPanel({ agency }: AgencySettingsPanelProps) {
 
     const { data: urlData } = supabase.storage.from('agency-logos').getPublicUrl(path)
     const url = `${urlData.publicUrl}?t=${Date.now()}`
-    setLogoUrl(url)
 
-    await fetch('/api/agency/settings', {
+    const res = await fetch('/api/agency/settings', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ logoUrl: urlData.publicUrl }),
     })
-
+    if (!res.ok) {
+      toast.error('Failed to save logo — please try again')
+      setLogoUploading(false)
+      return
+    }
+    setLogoUrl(url)
     setLogoUploading(false)
   }
 
   async function removeLogo() {
-    setLogoUrl(null)
-    await fetch('/api/agency/settings', {
+    const res = await fetch('/api/agency/settings', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ logoUrl: null }),
     })
+    if (res.ok) setLogoUrl(null)
+    else toast.error('Failed to remove logo — please try again')
   }
 
   async function save() {
     setSaving(true)
-    await fetch('/api/agency/settings', {
+    const res = await fetch('/api/agency/settings', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, brandColor, tone }),
     })
     setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    if (res.ok) {
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } else {
+      toast.error('Failed to save settings — please try again')
+    }
   }
 
   return (

@@ -13,15 +13,23 @@ export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleReset(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
+    setError(null)
 
     const supabase = createClient()
-    await supabase.auth.resetPasswordForEmail(email, {
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/update-password`,
     })
+
+    if (resetError) {
+      setError(resetError.message)
+      setLoading(false)
+      return
+    }
 
     setSent(true)
     setLoading(false)
@@ -81,6 +89,11 @@ export default function ResetPasswordPage() {
                 autoComplete="email"
               />
             </div>
+            {error && (
+              <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {error}
+              </div>
+            )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {loading ? 'Sending…' : 'Send reset link'}

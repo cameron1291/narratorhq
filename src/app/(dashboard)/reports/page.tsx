@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, Clock, AlertCircle, Send, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -23,7 +24,7 @@ export default async function ReportsPage() {
     .eq('id', (await supabase.auth.getUser()).data.user?.id ?? '')
     .single()
 
-  if (!agencyUser) return null
+  if (!agencyUser) redirect('/login')
 
   const { data: reports } = await supabase
     .from('reports')
