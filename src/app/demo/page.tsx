@@ -1,11 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X, Brain, ChevronRight, Wifi } from 'lucide-react'
+import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X, Brain, ChevronRight, Wifi, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-const BRAND_COLOR = '#2563eb'
 
 const CLIENT_MEMORY = [
   {
@@ -14,7 +12,8 @@ const CLIENT_MEMORY = [
     color: 'bg-blue-100 text-blue-800 border-blue-200',
     content: 'Fix the mobile CPC issue — mobile CPA is currently 41% above desktop',
     resolved: true,
-    resolvedIn: 'Paid Search',
+    resolvedIn: 'Google Ads',
+    resolvedMonthsAgo: 1,
   },
   {
     type: 'goal',
@@ -23,6 +22,7 @@ const CLIENT_MEMORY = [
     content: '100 qualified leads per month by end of Q2 2026',
     resolved: false,
     resolvedIn: null,
+    resolvedMonthsAgo: null,
   },
   {
     type: 'sensitivity',
@@ -31,6 +31,7 @@ const CLIENT_MEMORY = [
     content: 'Client hates jargon — always use plain English, explain any acronyms',
     resolved: false,
     resolvedIn: null,
+    resolvedMonthsAgo: null,
   },
   {
     type: 'note',
@@ -39,64 +40,15 @@ const CLIENT_MEMORY = [
     content: 'Decision maker is the CFO, not the marketing lead — always lead with ROI and business outcomes',
     resolved: false,
     resolvedIn: null,
+    resolvedMonthsAgo: null,
   },
 ]
 
 const PLATFORMS = [
-  {
-    key: 'ga4',
-    label: 'Google Analytics 4',
-    shortLabel: 'GA4',
-    status: 'live' as const,
-    lastSync: '2 min ago',
-    color: 'text-orange-600 bg-orange-50 border-orange-200',
-    dot: 'bg-orange-500',
-  },
-  {
-    key: 'google_ads',
-    label: 'Google Ads',
-    shortLabel: 'Google Ads',
-    status: 'live' as const,
-    lastSync: '2 min ago',
-    color: 'text-blue-600 bg-blue-50 border-blue-200',
-    dot: 'bg-blue-500',
-  },
-  {
-    key: 'meta_ads',
-    label: 'Meta Ads',
-    shortLabel: 'Meta Ads',
-    status: 'live' as const,
-    lastSync: '2 min ago',
-    color: 'text-indigo-600 bg-indigo-50 border-indigo-200',
-    dot: 'bg-indigo-500',
-  },
-  {
-    key: 'tiktok_ads',
-    label: 'TikTok Ads',
-    shortLabel: 'TikTok Ads',
-    status: 'live' as const,
-    lastSync: '2 min ago',
-    color: 'text-gray-900 bg-gray-50 border-gray-300',
-    dot: 'bg-gray-900',
-  },
-  {
-    key: 'microsoft_ads',
-    label: 'Microsoft Ads',
-    shortLabel: 'Microsoft Ads',
-    status: 'soon' as const,
-    lastSync: null,
-    color: 'text-gray-400 bg-gray-50 border-gray-200',
-    dot: 'bg-gray-300',
-  },
-  {
-    key: 'linkedin_ads',
-    label: 'LinkedIn Ads',
-    shortLabel: 'LinkedIn Ads',
-    status: 'soon' as const,
-    lastSync: null,
-    color: 'text-gray-400 bg-gray-50 border-gray-200',
-    dot: 'bg-gray-300',
-  },
+  { key: 'ga4', label: 'GA4', status: 'live' as const, color: 'text-orange-600 bg-orange-50 border-orange-200', dot: 'bg-orange-500' },
+  { key: 'google_ads', label: 'Google Ads', status: 'live' as const, color: 'text-blue-600 bg-blue-50 border-blue-200', dot: 'bg-blue-500' },
+  { key: 'meta_ads', label: 'Meta Ads', status: 'live' as const, color: 'text-indigo-600 bg-indigo-50 border-indigo-200', dot: 'bg-indigo-500' },
+  { key: 'tiktok_ads', label: 'TikTok Ads', status: 'live' as const, color: 'text-gray-900 bg-gray-50 border-gray-300', dot: 'bg-gray-900' },
 ]
 
 const SECTION_SOURCE: Record<string, { key: string; label: string; color: string }[]> = {
@@ -106,18 +58,10 @@ const SECTION_SOURCE: Record<string, { key: string; label: string; color: string
     { key: 'meta_ads', label: 'Meta', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
     { key: 'tiktok_ads', label: 'TikTok', color: 'text-gray-900 bg-gray-50 border-gray-300' },
   ],
-  organic: [
-    { key: 'ga4', label: 'GA4', color: 'text-orange-600 bg-orange-50 border-orange-200' },
-  ],
-  paid_search: [
-    { key: 'google_ads', label: 'Google Ads', color: 'text-blue-600 bg-blue-50 border-blue-200' },
-  ],
-  paid_social: [
-    { key: 'meta_ads', label: 'Meta', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
-  ],
-  tiktok: [
-    { key: 'tiktok_ads', label: 'TikTok', color: 'text-gray-900 bg-gray-50 border-gray-300' },
-  ],
+  organic: [{ key: 'ga4', label: 'GA4', color: 'text-orange-600 bg-orange-50 border-orange-200' }],
+  paid_search: [{ key: 'google_ads', label: 'Google Ads', color: 'text-blue-600 bg-blue-50 border-blue-200' }],
+  paid_social: [{ key: 'meta_ads', label: 'Meta', color: 'text-indigo-600 bg-indigo-50 border-indigo-200' }],
+  tiktok: [{ key: 'tiktok_ads', label: 'TikTok', color: 'text-gray-900 bg-gray-50 border-gray-300' }],
   anomalies: [
     { key: 'ga4', label: 'GA4', color: 'text-orange-600 bg-orange-50 border-orange-200' },
     { key: 'google_ads', label: 'Google Ads', color: 'text-blue-600 bg-blue-50 border-blue-200' },
@@ -130,7 +74,6 @@ const DEMO_SECTIONS: {
   content: string
   confidence: 'high' | 'medium' | 'low'
   isApproved: boolean
-  editedContent: string | null
   supportingMetrics: string[]
   promiseKept?: string
 }[] = [
@@ -139,7 +82,6 @@ const DEMO_SECTIONS: {
     content: "April was Meridian's strongest month in 2026 — organic sessions up 18%, paid CPA down to £28.50, and TikTok Ads delivered its first profitable month with a CPA of £38. The content refresh across the garden furniture category drove 40% of the organic growth. One area to watch: branded search volume dipped 8% following the end of the March awareness campaign — we've outlined the plan below.",
     confidence: 'high',
     isApproved: true,
-    editedContent: null,
     supportingMetrics: ['Sessions +18%', 'CPA £28.50', 'ROAS 4.2x', 'TikTok CPA £38'],
   },
   {
@@ -147,7 +89,6 @@ const DEMO_SECTIONS: {
     content: "Organic search delivered 14,200 sessions — up 21% from March and the channel's best performance this year. The 'outdoor furniture 2026' content cluster gained significant traction, contributing 3,100 sessions. Four target keywords moved from positions 8–12 into the top 5, with 'garden sofas UK' now ranking at position 3. Conversion rate from organic held at 1.4%, generating 199 goal completions.",
     confidence: 'high',
     isApproved: true,
-    editedContent: null,
     supportingMetrics: ['Organic sessions 14,200', 'Position 3 for garden sofas UK', 'Conversions 199'],
   },
   {
@@ -155,16 +96,14 @@ const DEMO_SECTIONS: {
     content: "Google Ads delivered 187 conversions at a CPA of £28.50 — down from £34.20 in March, an improvement of 17%. ROAS improved to 4.2x (from 3.6x).\n\nAs we committed last month, we applied bid modifier adjustments to mobile campaigns. Mobile CPA has improved from 41% above desktop to 23% above desktop — meaningful progress, and we'll continue tightening this in May.\n\nWe also cut three underperforming ad groups targeting broad match gardening terms that were generating clicks but no conversions. That budget has been reallocated to the retargeting campaign, which is now converting at a CPA of £18.",
     confidence: 'high',
     isApproved: true,
-    editedContent: null,
     supportingMetrics: ['CPA £28.50 (-17%)', 'ROAS 4.2x', 'Spend £3,240', 'Mobile CPA improved'],
-    promiseKept: 'Fix mobile CPC issue',
+    promiseKept: 'Fix mobile CPC issue — mobile CPA is currently 41% above desktop',
   },
   {
     section: 'paid_social',
     content: "Meta delivered 84 conversions at a CPA of £42, broadly flat from March's £44. The spring creative set — lifestyle imagery of garden spaces — outperformed the product-only creative by 34% on CTR. We're scaling the lifestyle set and testing a video variant in May. Note: Meta figures reflect 7-day click attribution — direct comparison with GA4 will show different conversion counts.",
     confidence: 'medium',
     isApproved: false,
-    editedContent: null,
     supportingMetrics: ['CPA £42', 'Spend £1,800', 'CTR +34% on lifestyle creative'],
   },
   {
@@ -172,7 +111,6 @@ const DEMO_SECTIONS: {
     content: "TikTok Ads delivered 62 conversions at a CPA of £38 — down from £52 in March as the spring creative set gained traction. This is the first month TikTok has hit a sub-£40 CPA, making it a viable performance channel alongside Meta.\n\nThe 'garden transformation' video (15-second format) drove a CTR of 2.8%, significantly above the platform average of 1.1%. We scaled this creative mid-month and it now accounts for 68% of TikTok spend. The product carousel format underperformed and has been paused.\n\nNote: TikTok figures reflect a 7-day click, 1-day view attribution window.",
     confidence: 'high',
     isApproved: false,
-    editedContent: null,
     supportingMetrics: ['CPA £38 (-27%)', 'CTR 2.8%', 'Spend £1,200', '62 conversions'],
   },
   {
@@ -180,7 +118,6 @@ const DEMO_SECTIONS: {
     content: "Branded search volume dipped 8% in the second half of April, consistent with the pattern we see when above-the-line brand activity goes quiet. The March email campaign drove a branded search spike that has now normalised. This is expected and not a cause for concern — if it continues through May, we would recommend a small Display budget to maintain brand visibility.",
     confidence: 'medium',
     isApproved: false,
-    editedContent: null,
     supportingMetrics: ['Branded search -8%', 'Post-campaign normalisation'],
   },
   {
@@ -188,7 +125,6 @@ const DEMO_SECTIONS: {
     content: "1. Scale the TikTok 'garden transformation' video creative — test a 30-second cut by 10 May. 2. Launch the Meta video creative test by 10 May. 3. Publish three remaining articles in the outdoor furniture content cluster — expected to drive a further 1,500 organic sessions by end of May. 4. Continue mobile bid modifier work in Google Ads — mobile CPA is 23% above desktop, with room to improve through audience layering.",
     confidence: 'high',
     isApproved: false,
-    editedContent: null,
     supportingMetrics: ['4 actions', 'Mobile CPA 23% above desktop'],
   },
 ]
@@ -237,101 +173,50 @@ function SignupPrompt({ onClose }: { onClose: () => void }) {
   )
 }
 
-function ConnectedSourcesPanel() {
-  const live = PLATFORMS.filter(p => p.status === 'live')
-  const soon = PLATFORMS.filter(p => p.status === 'soon')
+// The "holy shit" callout — shown inside the Paid Search section
+function PromiseCallout({ promise }: { promise: string }) {
+  const [revealed, setRevealed] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setRevealed(true) },
+      { threshold: 0.7 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2">
-        <Wifi className="h-4 w-4 text-green-500" />
-        <span className="text-sm font-semibold text-gray-900">Connected data sources</span>
-        <span className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5 ml-1">
-          {live.length} live
-        </span>
-        <span className="text-xs text-gray-400 ml-auto">Last sync: 2 min ago</span>
-      </div>
-      <div className="p-4 space-y-3">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {live.map(p => (
-            <div key={p.key} className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 ${p.color}`}>
-              <span className={`h-2 w-2 rounded-full shrink-0 ${p.dot} animate-pulse`} />
-              <div className="min-w-0">
-                <p className="text-xs font-semibold truncate">{p.shortLabel}</p>
-                <p className="text-xs opacity-70">Live</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400">Coming soon:</span>
-          {soon.map(p => (
-            <span key={p.key} className="text-xs text-gray-400 bg-gray-50 border border-gray-200 rounded px-2 py-0.5">
-              {p.shortLabel}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function ClientMemoryPanel() {
-  const [expanded, setExpanded] = useState(true)
-
-  return (
-    <div className="rounded-xl border border-purple-200 bg-purple-50 overflow-hidden">
-      <button
-        className="w-full flex items-center gap-2.5 px-4 py-3 text-left hover:bg-purple-100/50 transition-colors"
-        onClick={() => setExpanded(v => !v)}
-      >
-        <Brain className="h-4 w-4 text-purple-600 shrink-0" />
-        <div className="flex-1 min-w-0">
-          <span className="text-sm font-semibold text-purple-900">Client memory — Meridian Home &amp; Garden</span>
-          <span className="text-xs text-purple-600 ml-2">Fed into this report automatically</span>
-        </div>
-        <ChevronRight className={cn('h-4 w-4 text-purple-400 transition-transform', expanded && 'rotate-90')} />
-      </button>
-
-      {expanded && (
-        <div className="px-4 pb-4 space-y-2 border-t border-purple-200">
-          <p className="text-xs text-purple-600 pt-3 pb-1">
-            These items were stored from previous reports and conversations. The AI reads them before generating every section.
-          </p>
-          {CLIENT_MEMORY.map((item, i) => (
-            <div key={i} className="flex items-start gap-2.5 bg-white rounded-lg p-3 border border-purple-100">
-              <span className={`text-xs font-semibold px-1.5 py-0.5 rounded border shrink-0 mt-0.5 ${item.color}`}>
-                {item.label}
-              </span>
-              <p className="text-sm text-gray-700 flex-1">{item.content}</p>
-              {item.resolved && (
-                <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 shrink-0 flex items-center gap-1 mt-0.5">
-                  <CheckCircle className="h-3 w-3" />
-                  Addressed in {item.resolvedIn}
-                </span>
-              )}
-            </div>
-          ))}
-          <p className="text-xs text-purple-500 pt-1">
-            Promises, goals, sensitivities, and notes persist across every report. They&apos;re never lost when the account manager changes.
-          </p>
-        </div>
+    <div
+      ref={ref}
+      className={cn(
+        'mb-4 rounded-lg border border-purple-200 bg-purple-50 p-3 transition-all duration-500',
+        revealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
       )}
+    >
+      <div className="flex items-start gap-2.5">
+        <Brain className="h-4 w-4 text-purple-500 shrink-0 mt-0.5" />
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold text-purple-800 mb-1">NarratorHQ remembered a promise from last month</p>
+          <p className="text-sm text-purple-900 italic">&ldquo;{promise}&rdquo;</p>
+          <div className="flex items-center gap-1.5 mt-2">
+            <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />
+            <p className="text-xs font-semibold text-emerald-700">Addressed in the section below — automatically</p>
+          </div>
+        </div>
+      </div>
     </div>
   )
-}
-
-interface SectionState {
-  isApproved: boolean
-  editedContent: string | null
-  content: string
 }
 
 export default function DemoPage() {
-  const [sectionStates, setSectionStates] = useState<Record<string, SectionState>>(
+  const [sectionStates, setSectionStates] = useState<Record<string, { isApproved: boolean; editedContent: string | null; content: string }>>(
     Object.fromEntries(DEMO_SECTIONS.map(s => [s.section, {
       isApproved: s.isApproved,
-      editedContent: s.editedContent,
+      editedContent: null,
       content: s.content,
     }]))
   )
@@ -340,15 +225,13 @@ export default function DemoPage() {
   const [showMetrics, setShowMetrics] = useState(false)
   const [showSignup, setShowSignup] = useState(false)
   const [regenSection, setRegenSection] = useState<string | null>(null)
+  const [memoryExpanded, setMemoryExpanded] = useState(false)
 
   const approvedCount = Object.values(sectionStates).filter(s => s.isApproved).length
   const allApproved = approvedCount === DEMO_SECTIONS.length
 
   function toggleApprove(section: string) {
-    setSectionStates(prev => ({
-      ...prev,
-      [section]: { ...prev[section], isApproved: !prev[section].isApproved }
-    }))
+    setSectionStates(prev => ({ ...prev, [section]: { ...prev[section], isApproved: !prev[section].isApproved } }))
   }
 
   function startEdit(section: string) {
@@ -362,19 +245,13 @@ export default function DemoPage() {
     const newContent = editText.trim()
     setSectionStates(prev => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        editedContent: newContent !== original ? newContent : null,
-        content: newContent,
-      }
+      [section]: { ...prev[section], editedContent: newContent !== original ? newContent : null, content: newContent },
     }))
     setEditingSection(null)
   }
 
   function approveAll() {
-    setSectionStates(prev => Object.fromEntries(
-      Object.entries(prev).map(([k, v]) => [k, { ...v, isApproved: true }])
-    ))
+    setSectionStates(prev => Object.fromEntries(Object.entries(prev).map(([k, v]) => [k, { ...v, isApproved: true }])))
   }
 
   return (
@@ -383,71 +260,110 @@ export default function DemoPage() {
 
       {/* Demo banner */}
       <div className="bg-blue-600 text-white text-center py-2.5 text-sm font-medium">
-        This is a live demo — all edits are local and not saved.{' '}
-        <Link href="/signup" className="underline hover:no-underline font-semibold">
-          Start your free trial →
-        </Link>
+        Interactive demo — edits are local only.{' '}
+        <Link href="/signup" className="underline hover:no-underline font-semibold">Start your free trial →</Link>
       </div>
 
       {/* Nav */}
       <nav className="bg-white border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-14 w-auto" /></Link>
-          <Link
-            href="/signup"
-            className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
+          <Link href="/signup" className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
             Start free trial
           </Link>
         </div>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
 
-        {/* Connected sources */}
-        <ConnectedSourcesPanel />
+        {/* Connected sources — compact */}
+        <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 flex items-center gap-3 flex-wrap">
+          <Wifi className="h-4 w-4 text-green-500 shrink-0" />
+          <span className="text-sm font-semibold text-gray-900">Data sources</span>
+          {PLATFORMS.map(p => (
+            <span key={p.key} className={`flex items-center gap-1.5 text-xs border rounded-full px-2.5 py-1 font-medium ${p.color}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${p.dot}`} />
+              {p.label}
+            </span>
+          ))}
+          <span className="text-xs text-gray-400 ml-auto">Last sync: 2 min ago</span>
+        </div>
 
         {/* Report header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Demo Report</p>
+            <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Demo Report · April 2026</p>
             <h1 className="text-xl font-bold text-gray-900">Meridian Home &amp; Garden</h1>
-            <p className="text-sm text-gray-500 mt-0.5">April 2026 · {DEMO_SECTIONS.length} sections · Generated in 28 seconds</p>
+            <p className="text-sm text-gray-500 mt-0.5">{DEMO_SECTIONS.length} sections · Generated in 28 seconds</p>
             <p className="text-xs text-purple-600 mt-1.5 flex items-center gap-1">
               <Brain className="h-3 w-3" />
-              4 client memory items used · 1 promise referenced and resolved
+              4 memory items used · 1 promise tracked and addressed
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-sm text-gray-500">{approvedCount}/{DEMO_SECTIONS.length} approved</span>
             {allApproved ? (
-              <button
-                onClick={() => setShowSignup(true)}
-                className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              >
+              <button onClick={() => setShowSignup(true)} className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
                 Send to client
               </button>
             ) : (
-              <button
-                disabled
-                title="Approve all sections first"
-                className="text-sm bg-gray-100 text-gray-400 px-4 py-2 rounded-lg font-medium cursor-not-allowed"
-              >
+              <button disabled className="text-sm bg-gray-100 text-gray-400 px-4 py-2 rounded-lg font-medium cursor-not-allowed">
                 Approve report
               </button>
             )}
           </div>
         </div>
 
-        {/* Client Memory Panel */}
-        <ClientMemoryPanel />
+        {/* ── CLIENT MEMORY PANEL ── */}
+        {/* Collapsed by default — teases 1 promise. Opens to show all 4 items. */}
+        <div className={cn(
+          'rounded-xl border overflow-hidden transition-all',
+          memoryExpanded ? 'border-purple-300 bg-purple-50' : 'border-purple-200 bg-purple-50 hover:border-purple-300'
+        )}>
+          <button
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
+            onClick={() => setMemoryExpanded(v => !v)}
+          >
+            <Brain className="h-4 w-4 text-purple-600 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-semibold text-purple-900">
+                What this AI remembered about Meridian
+              </span>
+              {!memoryExpanded && (
+                <span className="ml-2 text-xs text-purple-500">
+                  4 items · including 1 promise from last month
+                </span>
+              )}
+            </div>
+            <ChevronRight className={cn('h-4 w-4 text-purple-400 transition-transform shrink-0', memoryExpanded && 'rotate-90')} />
+          </button>
+
+          {memoryExpanded && (
+            <div className="px-4 pb-4 space-y-2 border-t border-purple-200">
+              <p className="text-xs text-purple-600 pt-3 pb-1">
+                These items were stored from previous reports. NarratorHQ reads them before writing every section — so nothing slips through the cracks.
+              </p>
+              {CLIENT_MEMORY.map((item, i) => (
+                <div key={i} className="flex items-start gap-2.5 bg-white rounded-lg p-3 border border-purple-100">
+                  <span className={`text-xs font-semibold px-1.5 py-0.5 rounded border shrink-0 mt-0.5 ${item.color}`}>
+                    {item.label}
+                  </span>
+                  <p className="text-sm text-gray-700 flex-1">{item.content}</p>
+                  {item.resolved && (
+                    <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 shrink-0 flex items-center gap-1 mt-0.5 whitespace-nowrap">
+                      <CheckCircle className="h-3 w-3" />
+                      Addressed in {item.resolvedIn}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Quick approve */}
         {!allApproved && (
-          <button
-            onClick={approveAll}
-            className="w-full text-sm text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-300 rounded-lg py-2 transition-colors bg-blue-50 hover:bg-blue-100"
-          >
+          <button onClick={approveAll} className="w-full text-sm text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-300 rounded-lg py-2 transition-colors bg-blue-50 hover:bg-blue-100">
             Approve all sections as written
           </button>
         )}
@@ -475,42 +391,24 @@ export default function DemoPage() {
                 <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 flex-wrap">
                   <button
                     onClick={() => toggleApprove(section.section)}
-                    className={cn(
-                      'shrink-0 transition-colors',
-                      state.isApproved ? 'text-green-500' : 'text-gray-300 hover:text-gray-400'
-                    )}
+                    className={cn('shrink-0 transition-colors', state.isApproved ? 'text-green-500' : 'text-gray-300 hover:text-gray-400')}
                     title={state.isApproved ? 'Approved — click to un-approve' : 'Click to approve'}
                   >
-                    {state.isApproved
-                      ? <CheckCircle className="h-5 w-5" />
-                      : <Circle className="h-5 w-5" />
-                    }
+                    {state.isApproved ? <CheckCircle className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
                   </button>
-
-                  <span className="font-semibold text-gray-900 text-sm">
-                    {SECTION_LABELS[section.section]}
-                  </span>
-
-                  {/* Platform source tags */}
+                  <span className="font-semibold text-gray-900 text-sm">{SECTION_LABELS[section.section]}</span>
                   {sources.map(src => (
-                    <span key={src.key} className={`text-xs border rounded px-1.5 py-0.5 font-medium ${src.color}`}>
-                      {src.label}
-                    </span>
+                    <span key={src.key} className={`text-xs border rounded px-1.5 py-0.5 font-medium ${src.color}`}>{src.label}</span>
                   ))}
-
                   {wasEdited && (
-                    <span className="text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5">
-                      Edited
-                    </span>
+                    <span className="text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5">Edited</span>
                   )}
-
                   {section.promiseKept && (
                     <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-1.5 py-0.5 flex items-center gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      Promise kept ✓
+                      <Sparkles className="h-3 w-3" />
+                      Promise addressed
                     </span>
                   )}
-
                   <span className={cn('text-xs border rounded px-1.5 py-0.5 ml-auto', confidence.color)}>
                     {section.confidence === 'low' && <AlertTriangle className="inline h-3 w-3 mr-1" />}
                     {section.confidence === 'medium' && <Info className="inline h-3 w-3 mr-1" />}
@@ -519,7 +417,13 @@ export default function DemoPage() {
                 </div>
 
                 {/* Content */}
-                <div className="px-4 py-4">
+                <div className="px-4 pt-4 pb-2">
+                  {/* ── THE "HOLY SHIT" MOMENT ── */}
+                  {/* For the paid_search section, show the stored promise inline BEFORE the narrative */}
+                  {section.promiseKept && !isEditing && (
+                    <PromiseCallout promise={section.promiseKept} />
+                  )}
+
                   {isEditing ? (
                     <div className="space-y-3">
                       <textarea
@@ -528,29 +432,13 @@ export default function DemoPage() {
                         className="w-full min-h-[120px] text-sm text-gray-800 leading-relaxed border border-blue-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
                         autoFocus
                       />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => saveEdit(section.section)}
-                          className="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => setEditingSection(null)}
-                          className="text-sm text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                        >
-                          Cancel
-                        </button>
+                      <div className="flex gap-2 pb-2">
+                        <button onClick={() => saveEdit(section.section)} className="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium hover:bg-blue-700 transition-colors">Save</button>
+                        <button onClick={() => setEditingSection(null)} className="text-sm text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">Cancel</button>
                         {wasEdited && (
                           <button
                             className="text-sm text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors ml-auto"
-                            onClick={() => {
-                              setSectionStates(prev => ({
-                                ...prev,
-                                [section.section]: { ...prev[section.section], editedContent: null, content: section.content }
-                              }))
-                              setEditingSection(null)
-                            }}
+                            onClick={() => { setSectionStates(prev => ({ ...prev, [section.section]: { ...prev[section.section], editedContent: null, content: section.content } })); setEditingSection(null) }}
                           >
                             Revert to original
                           </button>
@@ -559,7 +447,7 @@ export default function DemoPage() {
                     </div>
                   ) : (
                     <p
-                      className="text-sm text-gray-700 leading-relaxed cursor-text hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors whitespace-pre-wrap"
+                      className="text-sm text-gray-700 leading-relaxed cursor-text hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors whitespace-pre-wrap mb-2"
                       onClick={() => startEdit(section.section)}
                       title="Click to edit"
                     >
@@ -572,9 +460,7 @@ export default function DemoPage() {
                 {section.supportingMetrics.length > 0 && (
                   <div className="px-4 pb-3 flex flex-wrap gap-1">
                     {section.supportingMetrics.map(m => (
-                      <span key={m} className="text-xs text-gray-500 bg-gray-100 rounded px-1.5 py-0.5">
-                        {m}
-                      </span>
+                      <span key={m} className="text-xs text-gray-500 bg-gray-100 rounded px-1.5 py-0.5">{m}</span>
                     ))}
                   </div>
                 )}
@@ -589,28 +475,15 @@ export default function DemoPage() {
                         className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                       <div className="flex gap-2">
-                        <button
-                          onClick={() => setShowSignup(true)}
-                          className="flex items-center gap-1.5 text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-50 transition-colors"
-                        >
-                          <RefreshCw className="h-3 w-3" />
-                          Regenerate
+                        <button onClick={() => setShowSignup(true)} className="flex items-center gap-1.5 text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700 hover:bg-gray-50 transition-colors">
+                          <RefreshCw className="h-3 w-3" />Regenerate
                         </button>
-                        <button
-                          onClick={() => setRegenSection(null)}
-                          className="text-sm text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                        >
-                          Cancel
-                        </button>
+                        <button onClick={() => setRegenSection(null)} className="text-sm text-gray-500 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">Cancel</button>
                       </div>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => setRegenSection(section.section)}
-                      className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <RefreshCw className="h-3 w-3" />
-                      Regenerate section
+                    <button onClick={() => setRegenSection(section.section)} className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+                      <RefreshCw className="h-3 w-3" />Regenerate section
                     </button>
                   )}
                 </div>
@@ -625,53 +498,17 @@ export default function DemoPage() {
             className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             onClick={() => setShowMetrics(v => !v)}
           >
-            Raw metrics reference — all sources
+            Raw metrics — all sources
             {showMetrics ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
           {showMetrics && (
             <div className="px-4 pb-4 border-t border-gray-100">
               <div className="mt-4 space-y-4">
                 {[
-                  {
-                    source: 'GA4',
-                    color: 'text-orange-600',
-                    metrics: [
-                      { label: 'Total sessions', value: '24,847', change: '+18%' },
-                      { label: 'Conversions', value: '199', change: '+22%' },
-                      { label: 'Organic sessions', value: '14,200', change: '+21%' },
-                      { label: 'Branded search', value: '-8%', change: '' },
-                    ],
-                  },
-                  {
-                    source: 'Google Ads',
-                    color: 'text-blue-600',
-                    metrics: [
-                      { label: 'Spend', value: '£3,240', change: '' },
-                      { label: 'Conversions', value: '187', change: '+14%' },
-                      { label: 'CPA', value: '£28.50', change: '-17%' },
-                      { label: 'ROAS', value: '4.2x', change: '+0.6x' },
-                    ],
-                  },
-                  {
-                    source: 'Meta Ads',
-                    color: 'text-indigo-600',
-                    metrics: [
-                      { label: 'Spend', value: '£1,800', change: '' },
-                      { label: 'Conversions', value: '84', change: '+2%' },
-                      { label: 'CPA', value: '£42', change: '-5%' },
-                      { label: 'CTR', value: '2.1%', change: '+34%' },
-                    ],
-                  },
-                  {
-                    source: 'TikTok Ads',
-                    color: 'text-gray-900',
-                    metrics: [
-                      { label: 'Spend', value: '£1,200', change: '' },
-                      { label: 'Conversions', value: '62', change: '+19%' },
-                      { label: 'CPA', value: '£38', change: '-27%' },
-                      { label: 'CTR', value: '2.8%', change: '+154%' },
-                    ],
-                  },
+                  { source: 'GA4', color: 'text-orange-600', metrics: [{ label: 'Total sessions', value: '24,847', change: '+18%' }, { label: 'Conversions', value: '199', change: '+22%' }, { label: 'Organic sessions', value: '14,200', change: '+21%' }, { label: 'Branded search', value: '-8%', change: '' }] },
+                  { source: 'Google Ads', color: 'text-blue-600', metrics: [{ label: 'Spend', value: '£3,240', change: '' }, { label: 'Conversions', value: '187', change: '+14%' }, { label: 'CPA', value: '£28.50', change: '-17%' }, { label: 'ROAS', value: '4.2x', change: '+0.6x' }] },
+                  { source: 'Meta Ads', color: 'text-indigo-600', metrics: [{ label: 'Spend', value: '£1,800', change: '' }, { label: 'Conversions', value: '84', change: '+2%' }, { label: 'CPA', value: '£42', change: '-5%' }, { label: 'CTR', value: '2.1%', change: '+34%' }] },
+                  { source: 'TikTok Ads', color: 'text-gray-900', metrics: [{ label: 'Spend', value: '£1,200', change: '' }, { label: 'Conversions', value: '62', change: '+19%' }, { label: 'CPA', value: '£38', change: '-27%' }, { label: 'CTR', value: '2.8%', change: '+154%' }] },
                 ].map(group => (
                   <div key={group.source}>
                     <p className={`text-xs font-semibold mb-2 ${group.color}`}>{group.source}</p>
@@ -680,16 +517,7 @@ export default function DemoPage() {
                         <div key={m.label} className="bg-gray-50 rounded-lg p-3">
                           <p className="text-xs text-gray-500 mb-1">{m.label}</p>
                           <p className="text-sm font-semibold text-gray-900">{m.value}</p>
-                          {m.change && (
-                            <p className={cn(
-                              'text-xs font-medium mt-0.5',
-                              m.change.startsWith('-') && !['CPA', 'Branded search'].includes(m.label)
-                                ? 'text-red-600'
-                                : 'text-green-600'
-                            )}>
-                              {m.change}
-                            </p>
-                          )}
+                          {m.change && <p className={cn('text-xs font-medium mt-0.5', m.change.startsWith('-') && m.label !== 'CPA' ? 'text-red-600' : 'text-green-600')}>{m.change}</p>}
                         </div>
                       ))}
                     </div>
@@ -706,10 +534,7 @@ export default function DemoPage() {
           <p className="text-blue-100 text-sm mb-6 max-w-sm mx-auto">
             Connect GA4, Google Ads, Meta and TikTok in minutes. Your first real report generates automatically. 14-day free trial, no credit card.
           </p>
-          <Link
-            href="/signup"
-            className="inline-block bg-white text-blue-600 font-semibold px-8 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm"
-          >
+          <Link href="/signup" className="inline-block bg-white text-blue-600 font-semibold px-8 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm">
             Start free trial
           </Link>
         </div>
