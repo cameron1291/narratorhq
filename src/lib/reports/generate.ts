@@ -8,7 +8,8 @@ export interface ClientReportContext {
   goals: string[]
   sensitivities: string[] // things never to mention or frame negatively
   reusableInstructions: string[] // e.g. "always mention the team by name", "never use the word unfortunately"
-  previousNarrativeSummary: string | null // one-paragraph summary of what was said last month
+  previousNarrativeSummary: string | null // overview + next_steps promises from last report
+  multiMonthTrends: string | null // detected trends across the last 2-3 reports
   connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads' | 'tiktok_ads')[]
 }
 
@@ -112,6 +113,11 @@ CRITICAL RULES:
 4. For each section, assess your own confidence: high (data clearly supports the claim), medium (directional but limited data), low (data is insufficient — flag this explicitly in the content).
 5. In the supportingMetrics array, list only the exact metric names from the input data that your content references.
 
+CONTINUITY RULES — these make the report feel like it was written by someone who has been there from the start:
+6. If LAST MONTH'S NARRATIVE is provided, you MUST reference any promises or next steps that were stated. In the relevant section, explicitly state whether the promised action was taken and what the result was. Use language like "As we committed last month..." or "Following last month's plan to...".
+7. If MULTI-MONTH TRENDS are provided, reference them where relevant. A metric declining for 3 consecutive months is a pattern — say so. Don't treat each report as isolated data.
+8. If CLIENT GOALS are provided, explicitly evaluate progress toward them in the overview section. Are they on track? Behind? Ahead? Be specific about what the current numbers mean relative to the stated goal.
+
 OUTPUT FORMAT: Respond with valid JSON only — no markdown, no preamble. Schema:
 {
   "sections": [
@@ -129,7 +135,7 @@ export async function generateNarrative(input: GenerateReportInput): Promise<Nar
   const required = sectionsRequired(context, anomalies)
 
   const sectionDescriptions: Record<NarrativeSection['section'], string> = {
-    overview: '2-3 sentences. The headline story: what was the single most important thing that happened this month and did it move toward the client\'s goals?',
+    overview: '2-3 sentences. The headline story: what was the single most important thing that happened this month? If goals were provided, explicitly state whether the client is on track, ahead, or behind. If multi-month trends exist, reference the pattern.',
     organic: 'Organic and direct traffic: what drove sessions up or down, which channels performed, conversion rate from organic.',
     paid_search: 'Google Ads performance: spend efficiency, CPA/ROAS movement, what worked and what didn\'t. Be specific about bid strategy or audience changes if CPA moved.',
     paid_social: 'Meta Ads performance: reach, engagement, ROAS, spend efficiency. Explain any creative or audience changes that drove the result.',
@@ -146,7 +152,8 @@ export async function generateNarrative(input: GenerateReportInput): Promise<Nar
     context.goals.length > 0 ? `CLIENT GOALS:\n${context.goals.map(g => `- ${g}`).join('\n')}` : null,
     context.sensitivities.length > 0 ? `SENSITIVITIES (never frame these negatively or mention without careful context):\n${context.sensitivities.map(s => `- ${s}`).join('\n')}` : null,
     context.reusableInstructions.length > 0 ? `STANDING INSTRUCTIONS:\n${context.reusableInstructions.map(r => `- ${r}`).join('\n')}` : null,
-    context.previousNarrativeSummary ? `LAST MONTH'S NARRATIVE SUMMARY:\n${context.previousNarrativeSummary}` : null,
+    context.previousNarrativeSummary ? `LAST MONTH'S NARRATIVE (use this to follow up on promises and maintain continuity):\n${context.previousNarrativeSummary}` : null,
+    context.multiMonthTrends ? `MULTI-MONTH TRENDS (reference these where relevant — patterns matter more than single-month moves):\n${context.multiMonthTrends}` : null,
     '',
     '--- DATA ---',
     '',

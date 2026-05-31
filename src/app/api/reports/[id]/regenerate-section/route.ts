@@ -97,6 +97,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     sensitivities: contextItems?.filter(c => c.context_type === 'sensitivity').map(c => c.content) ?? [],
     reusableInstructions,
     previousNarrativeSummary: null,
+    multiMonthTrends: null,
     connectedPlatforms,
   }
 

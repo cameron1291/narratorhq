@@ -150,15 +150,15 @@ export async function POST(request: NextRequest) {
     .eq('client_id', clientId)
     .eq('is_active', true)
 
-  // Load last approved report for context continuity
-  const { data: lastReport } = await supabase
+  // Load last 3 approved/sent reports for context continuity and trend detection
+  const { data: recentReports } = await supabase
     .from('reports')
-    .select('narrative_sections')
+    .select('narrative_sections, raw_metrics, period_start, period_end')
     .eq('client_id', clientId)
-    .eq('status', 'approved')
+    .in('status', ['approved', 'sent'])
+    .lt('period_end', startDate)
     .order('period_end', { ascending: false })
-    .limit(1)
-    .single()
+    .limit(3)
 
   // Create report row with status 'generating'
   const { data: report, error: insertError } = await supabase
@@ -334,14 +334,52 @@ export async function POST(request: NextRequest) {
 
   const effectiveTone = (client.tone_override ?? agency?.tone ?? 'professional') as ClientReportContext['tone']
 
-  // Summarise last report's narrative for continuity context
+  // Build previous narrative summary — overview + promises made (next_steps)
   let previousNarrativeSummary: string | null = null
+  const lastReport = recentReports?.[0]
   if (lastReport?.narrative_sections) {
     const sections = lastReport.narrative_sections as Array<{ section: string; content: string; editedContent?: string | null }>
-    const overviewSection = sections.find(s => s.section === 'overview')
-    previousNarrativeSummary = overviewSection
-      ? (overviewSection.editedContent ?? overviewSection.content)
-      : null
+    const parts: string[] = []
+    const overview = sections.find(s => s.section === 'overview')
+    if (overview) parts.push(`What we reported: ${overview.editedContent ?? overview.content}`)
+    const nextSteps = sections.find(s => s.section === 'next_steps')
+    if (nextSteps) parts.push(`Promises we made: ${nextSteps.editedContent ?? nextSteps.content}`)
+    if (parts.length > 0) {
+      const prevLabel = periodLabel(lastReport.period_start, lastReport.period_end)
+      previousNarrativeSummary = `Last report (${prevLabel}):\n${parts.join('\n\n')}`
+    }
+  }
+
+  // Detect multi-month trends from the last 2-3 reports
+  let multiMonthTrends: string | null = null
+  if (recentReports && recentReports.length >= 2) {
+    type MetricRow = { period: string; sessions: number; conversions: number; cpa: number | null; roas: number | null }
+    const history: MetricRow[] = recentReports
+      .map(r => {
+        const m = (r.raw_metrics as { current: import('@/lib/normalization/types').CanonicalMetrics } | null)?.current
+        if (!m) return null
+        return { period: r.period_end, sessions: m.sessions, conversions: m.conversions, cpa: m.cpa, roas: m.roas }
+      })
+      .filter((r): r is MetricRow => r !== null)
+
+    function trendLine(values: number[], label: string, lowerIsBetter = false): string | null {
+      if (values.length < 2) return null
+      const allDown = values.every((v, i) => i === 0 || v <= values[i - 1])
+      const allUp = values.every((v, i) => i === 0 || v >= values[i - 1])
+      const pct = Math.round(Math.abs((values[0] - values[values.length - 1]) / values[values.length - 1]) * 100)
+      if (allDown) return `${label} has declined for ${values.length} consecutive periods (${pct}% total) — ${lowerIsBetter ? 'improving trend' : 'requires attention'}`
+      if (allUp) return `${label} has grown for ${values.length} consecutive periods (+${pct}% total) — ${lowerIsBetter ? 'concern' : 'positive trend'}`
+      return null
+    }
+
+    const lines = [
+      trendLine(history.map(r => r.sessions), 'Sessions'),
+      trendLine(history.map(r => r.conversions), 'Conversions'),
+      history.every(r => r.cpa !== null) ? trendLine(history.map(r => r.cpa!), 'CPA', true) : null,
+      history.every(r => r.roas !== null) ? trendLine(history.map(r => r.roas!), 'ROAS') : null,
+    ].filter(Boolean) as string[]
+
+    if (lines.length > 0) multiMonthTrends = lines.join('\n')
   }
 
   const context: ClientReportContext = {
@@ -355,6 +393,7 @@ export async function POST(request: NextRequest) {
     sensitivities: contextItems?.filter(c => c.context_type === 'sensitivity').map(c => c.content) ?? [],
     reusableInstructions: instructions?.map(i => i.instruction) ?? [],
     previousNarrativeSummary,
+    multiMonthTrends,
     connectedPlatforms,
   }
 
