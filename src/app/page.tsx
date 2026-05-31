@@ -777,10 +777,10 @@ export default function HomePage() {
                 <p className="font-medium text-gray-700 text-xs uppercase tracking-wider">Company</p>
                 <div className="space-y-1.5">
                   <Link href="/about" className="block hover:text-gray-900 transition-colors">About</Link>
+                  <Link href="/contact" className="block hover:text-gray-900 transition-colors">Contact</Link>
                   <Link href="/security" className="block hover:text-gray-900 transition-colors">Security</Link>
                   <Link href="/privacy" className="block hover:text-gray-900 transition-colors">Privacy Policy</Link>
                   <Link href="/terms" className="block hover:text-gray-900 transition-colors">Terms of Service</Link>
-                  <a href="mailto:cameron@narratorhq.com" className="block hover:text-gray-900 transition-colors">Contact</a>
                 </div>
               </div>
             </div>
