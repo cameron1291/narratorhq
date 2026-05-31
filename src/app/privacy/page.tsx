@@ -35,7 +35,7 @@ export default function PrivacyPage() {
               NarratorHQ (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is a client reporting automation platform for digital marketing agencies,
               operated by Cameron Drayton, trading as NarratorHQ, based at Carrhouse Road, Belton, Doncaster, DN9 1PG, United Kingdom.
               Contact:{' '}
-              <a href="mailto:hello@narratorhq.com" className="text-blue-600 hover:underline">hello@narratorhq.com</a>.
+              <a href="mailto:cameron@narratorhq.com" className="text-blue-600 hover:underline">cameron@narratorhq.com</a>.
             </p>
           </section>
 
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
             <p>
               Google OAuth access tokens and refresh tokens are stored encrypted at rest using AES-256 encryption. When you disconnect a Google connection or delete your account, all stored tokens and any cached API data for that connection are permanently deleted within 24 hours.
               If you request data deletion by emailing{' '}
-              <a href="mailto:hello@narratorhq.com" className="text-blue-600 hover:underline">hello@narratorhq.com</a>,
+              <a href="mailto:cameron@narratorhq.com" className="text-blue-600 hover:underline">cameron@narratorhq.com</a>,
               we will confirm deletion within 7 days.
             </p>
           </section>
@@ -181,7 +181,7 @@ export default function PrivacyPage() {
               your data is retained for 90 days before deletion, giving you time to export or re-activate.
               Google and Meta API tokens are deleted immediately when a connection is disconnected or the
               account is closed. You can request immediate deletion of all your data by emailing{' '}
-              <a href="mailto:hello@narratorhq.com" className="text-blue-600 hover:underline">hello@narratorhq.com</a>.
+              <a href="mailto:cameron@narratorhq.com" className="text-blue-600 hover:underline">cameron@narratorhq.com</a>.
             </p>
           </section>
 
@@ -197,7 +197,7 @@ export default function PrivacyPage() {
             </ul>
             <p className="mt-4">
               To exercise any of these rights, email{' '}
-              <a href="mailto:hello@narratorhq.com" className="text-blue-600 hover:underline">hello@narratorhq.com</a>.
+              <a href="mailto:cameron@narratorhq.com" className="text-blue-600 hover:underline">cameron@narratorhq.com</a>.
               We will respond within 30 days.
             </p>
           </section>
@@ -224,7 +224,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-3">11. Contact</h2>
             <p>
               For privacy-related questions, data requests, or to request deletion of your data, contact:{' '}
-              <a href="mailto:hello@narratorhq.com" className="text-blue-600 hover:underline">hello@narratorhq.com</a>.
+              <a href="mailto:cameron@narratorhq.com" className="text-blue-600 hover:underline">cameron@narratorhq.com</a>.
             </p>
           </section>
 

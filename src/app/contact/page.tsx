@@ -30,32 +30,18 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 mb-12">
+        <div className="mb-12">
           <a
-            href="mailto:hello@narratorhq.com"
-            className="flex items-start gap-4 p-5 border border-gray-200 rounded-xl hover:border-blue-200 hover:bg-blue-50 transition-colors group"
+            href="mailto:cameron@narratorhq.com"
+            className="flex items-start gap-4 p-5 border border-gray-200 rounded-xl hover:border-blue-200 hover:bg-blue-50 transition-colors group max-w-sm"
           >
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
               <Mail className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <p className="font-semibold text-gray-900 mb-0.5">General enquiries</p>
-              <p className="text-blue-600 text-sm group-hover:underline">hello@narratorhq.com</p>
-              <p className="text-xs text-gray-500 mt-1">Sales, partnerships, anything else</p>
-            </div>
-          </a>
-
-          <a
-            href="mailto:support@narratorhq.com"
-            className="flex items-start gap-4 p-5 border border-gray-200 rounded-xl hover:border-blue-200 hover:bg-blue-50 transition-colors group"
-          >
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
-              <Mail className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900 mb-0.5">Support</p>
-              <p className="text-blue-600 text-sm group-hover:underline">support@narratorhq.com</p>
-              <p className="text-xs text-gray-500 mt-1">Help with your account or reports</p>
+              <p className="font-semibold text-gray-900 mb-0.5">Get in touch</p>
+              <p className="text-blue-600 text-sm group-hover:underline">cameron@narratorhq.com</p>
+              <p className="text-xs text-gray-500 mt-1">Sales, support, partnerships — anything</p>
             </div>
           </a>
         </div>

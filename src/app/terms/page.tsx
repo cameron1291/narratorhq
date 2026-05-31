@@ -185,7 +185,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-3">14. Contact</h2>
             <p>
               For questions about these Terms, contact us at{' '}
-              <a href="mailto:hello@narratorhq.com" className="text-blue-600 hover:underline">hello@narratorhq.com</a>.
+              <a href="mailto:cameron@narratorhq.com" className="text-blue-600 hover:underline">cameron@narratorhq.com</a>.
             </p>
           </section>
         </div>

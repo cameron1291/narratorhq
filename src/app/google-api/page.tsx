@@ -55,7 +55,7 @@ export default function GoogleApiPage() {
               An agency account manager logs into NarratorHQ and connects their client&apos;s Google Analytics 4 and Google Ads accounts. NarratorHQ reads performance data from those accounts to generate a written monthly report, which the account manager reviews and sends to the client.
             </p>
             <p>
-              <strong>The end user of the Google API data is always the agency, not the end client.</strong> The end client receives only the finished report narrative — they never have access to NarratorHQ or to the raw API data.
+              <strong>The authorised user of the Google API data is the agency user who connects the account.</strong> The agency&apos;s client receives only the finished report narrative — they never have access to NarratorHQ or to the raw API data.
             </p>
           </div>
         </section>
@@ -89,6 +89,42 @@ export default function GoogleApiPage() {
                     <div className="flex sm:flex-col items-center gap-2 sm:gap-2 flex-1 w-full">
                       <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
                         <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shrink-0">
+                          {item.step}
+                        </div>
+                        {i < arr.length - 1 && (
+                          <div className="hidden sm:block h-0.5 flex-1 bg-blue-200 min-w-4" />
+                        )}
+                      </div>
+                      <div className="flex-1 sm:text-center sm:px-2 sm:mt-2">
+                        <p className="text-sm font-semibold text-gray-900 mb-1">{item.title}</p>
+                        <p className="text-xs text-gray-500 leading-relaxed">{item.body}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Google Ads journey */}
+          <div className="border border-gray-200 rounded-xl overflow-hidden mb-6">
+            <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">User journey — connecting Google Ads</p>
+            </div>
+            <div className="p-6">
+              <div className="flex flex-col sm:flex-row items-stretch gap-0">
+                {[
+                  { step: '1', title: 'Add a client', body: 'Agency user creates or opens a client in NarratorHQ' },
+                  { step: '2', title: 'Click Connect Google Ads', body: 'User clicks "Connect Google Ads" in the client connections panel' },
+                  { step: '3', title: 'Google OAuth screen', body: 'User is redirected to Google\'s consent screen showing NarratorHQ is requesting adwords (read-only) access' },
+                  { step: '4', title: 'User approves', body: 'User selects the Google account with access to their client\'s Google Ads account and clicks Allow' },
+                  { step: '5', title: 'Connection saved', body: 'NarratorHQ stores the encrypted access token and discovers the accessible customer ID automatically' },
+                  { step: '6', title: 'Campaign metrics retrieved', body: 'NarratorHQ uses the connection to pull spend, CPA, ROAS, and conversion data for report generation' },
+                ].map((item, i, arr) => (
+                  <div key={item.step} className="flex sm:flex-col items-start sm:items-center gap-3 sm:gap-2 flex-1">
+                    <div className="flex sm:flex-col items-center gap-2 sm:gap-2 flex-1 w-full">
+                      <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                        <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold shrink-0">
                           {item.step}
                         </div>
                         {i < arr.length - 1 && (
@@ -315,7 +351,7 @@ export default function GoogleApiPage() {
               },
               {
                 label: 'Data deletion request',
-                policy: 'Users can request deletion of all data by emailing hello@narratorhq.com. We confirm deletion within 7 days.',
+                policy: 'Users can request deletion of all data by emailing cameron@narratorhq.com. We confirm deletion within 7 days.',
               },
             ].map(item => (
               <div key={item.label} className="flex gap-4 p-4 border border-gray-200 rounded-xl">
@@ -392,7 +428,7 @@ export default function GoogleApiPage() {
         </section>
 
         <div className="border-t border-gray-100 pt-6 text-sm text-gray-400">
-          <p>NarratorHQ is operated by Cameron Drayton, Carrhouse Road, Belton, Doncaster, DN9 1PG, United Kingdom. Contact: <a href="mailto:hello@narratorhq.com" className="text-blue-500 hover:underline">hello@narratorhq.com</a></p>
+          <p>NarratorHQ is operated by Cameron Drayton, Carrhouse Road, Belton, Doncaster, DN9 1PG, United Kingdom. Contact: <a href="mailto:cameron@narratorhq.com" className="text-blue-500 hover:underline">cameron@narratorhq.com</a></p>
         </div>
 
       </main>

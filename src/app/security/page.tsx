@@ -143,7 +143,7 @@ export default function SecurityPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-3">Responsible disclosure</h2>
           <p className="text-sm text-gray-600 leading-relaxed">
             If you discover a security vulnerability in NarratorHQ, please report it responsibly by emailing{' '}
-            <a href="mailto:hello@narratorhq.com" className="text-blue-600 hover:underline">hello@narratorhq.com</a>.
+            <a href="mailto:cameron@narratorhq.com" className="text-blue-600 hover:underline">cameron@narratorhq.com</a>.
             We will acknowledge your report within 48 hours and work to resolve confirmed issues promptly.
             We do not currently operate a bug bounty programme but we are grateful for responsible disclosure.
           </p>
