@@ -25,6 +25,9 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
+  // Auto-collapse on mobile — sidebar starts collapsed on small screens
+  // The component re-renders client-side so this gives a sensible default
+  // without a flash. SSR renders uncollapsed (className handles the visual).
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -38,8 +41,9 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
 
   return (
     <aside className={cn(
-      'flex flex-col h-screen bg-gray-900 text-white transition-all duration-200',
-      collapsed ? 'w-16' : 'w-56'
+      'flex flex-col h-screen bg-gray-900 text-white transition-all duration-200 shrink-0',
+      collapsed ? 'w-16' : 'w-56 md:w-56',
+      'max-md:w-16' // always icon-only on mobile
     )}>
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
@@ -72,7 +76,7 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
-            {!collapsed && label}
+            <span className={cn(!collapsed ? 'inline' : 'hidden', 'max-md:hidden')}>{label}</span>
           </Link>
         ))}
       </nav>

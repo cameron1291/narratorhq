@@ -180,7 +180,11 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
       {/* Invite form */}
       {canManage && (
         <section>
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Invite someone</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-1">Invite someone</h3>
+          <p className="text-xs text-gray-500 mb-3">
+            <strong>Admin</strong> — can invite team members, manage clients, generate and send reports.{' '}
+            <strong>Member</strong> — can view clients and reports, generate drafts, but cannot send or invite.
+          </p>
           <div className="flex gap-2">
             <Input
               type="email"

@@ -51,17 +51,38 @@ export default async function ClientsPage() {
       </div>
 
       {!clients?.length ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <Users className="h-12 w-12 text-gray-300 mb-4" />
-          <h2 className="text-lg font-semibold text-gray-700">Add your first client</h2>
-          <p className="text-sm text-gray-500 mt-1 mb-6 max-w-sm">
-            Connect a client&apos;s GA4 and ad accounts, set their goals and context — then generate your first narrative report in minutes.
-          </p>
-          <AddClientDialog
-            agencyId={agencyUser?.agency_id ?? ''}
-            clientCount={clients?.length ?? 0}
-            clientLimit={agency?.client_limit ?? 5}
-          />
+        <div className="max-w-xl mx-auto py-12">
+          <div className="text-center mb-8">
+            <Users className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-lg font-semibold text-gray-700">Get your first report in 5 minutes</h2>
+            <p className="text-sm text-gray-500 mt-1">Follow these steps to send your first automated client report.</p>
+          </div>
+          <div className="space-y-3 mb-8">
+            {[
+              { step: 1, title: 'Add a client', desc: 'Enter their name, industry, and report email address.', done: false },
+              { step: 2, title: 'Connect Google Analytics 4', desc: 'OAuth takes under 2 minutes. NarratorHQ reads data but never modifies anything.', done: false },
+              { step: 3, title: 'Add client context (optional)', desc: 'Goals, sensitivities, promises — the system carries these into every report.', done: false },
+              { step: 4, title: 'Generate the first report', desc: 'Select the date range. Generation takes 15–30 seconds.', done: false },
+              { step: 5, title: 'Review, approve, and send', desc: 'Edit any section inline. Approve it. Send white-labeled to your client.', done: false },
+            ].map(item => (
+              <div key={item.step} className="flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-xl">
+                <div className="h-7 w-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  {item.step}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <AddClientDialog
+              agencyId={agencyUser?.agency_id ?? ''}
+              clientCount={clients?.length ?? 0}
+              clientLimit={agency?.client_limit ?? 5}
+            />
+          </div>
         </div>
       ) : (
         <div className="grid gap-3">

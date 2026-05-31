@@ -113,9 +113,24 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
       {/* Context items */}
       <div>
         <h3 className="text-sm font-semibold text-gray-700 mb-1">Client context</h3>
-        <p className="text-xs text-gray-500 mb-4">
-          Promises made, sensitivities, and goals — fed into every report to keep the narrative accurate and relevant.
+        <p className="text-xs text-gray-500 mb-3">
+          Everything added here is fed into every report AI generation — automatically, every month.
         </p>
+        <div className="grid grid-cols-2 gap-1.5 mb-4 text-xs">
+          {[
+            { type: 'promise', desc: 'Tracked until resolved — e.g. "Fix mobile CPA"' },
+            { type: 'goal', desc: 'Referenced in overview — e.g. "100 leads/mo by Q2"' },
+            { type: 'kpi', desc: 'Claude leads every section with this metric' },
+            { type: 'sensitivity', desc: 'Never framed negatively — e.g. "Anxious about CTR"' },
+            { type: 'change', desc: 'Flagged in report — e.g. "Tracking updated 15 Mar"' },
+            { type: 'win', desc: 'Referenced longitudinally — e.g. "CPA down 29% in Q1"' },
+          ].map(h => (
+            <div key={h.type} className={`rounded-lg px-2 py-1.5 border ${TYPE_LABELS[h.type]?.color ?? 'bg-gray-100 text-gray-700'} border-current/20`}>
+              <p className="font-semibold">{TYPE_LABELS[h.type]?.label}</p>
+              <p className="opacity-70 text-xs leading-relaxed">{h.desc}</p>
+            </div>
+          ))}
+        </div>
 
         <div className="space-y-2 mb-4">
           {activeItems.length === 0 && (

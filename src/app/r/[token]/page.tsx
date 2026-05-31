@@ -212,11 +212,6 @@ export default async function PublicReportPage({
           </div>
         </div>
 
-        {/* Discreet powered-by */}
-        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 11, color: '#d1d5db' }}>
-          Delivered via{' '}
-          <Link href="/" style={{ color: '#d1d5db' }}>NarratorHQ</Link>
-        </p>
       </div>
     </div>
   )

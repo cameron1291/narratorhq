@@ -69,13 +69,39 @@ export default async function ReportPage({
 
   if (report.status === 'failed') {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-          <p className="font-medium text-red-800">Report generation failed</p>
-          <p className="text-sm text-red-600 mt-1">Check your data connections and try generating again from the client page.</p>
-          <Link href={`/clients/${report.client_id}`} className="mt-4 inline-block text-sm text-blue-600 hover:underline">
-            Back to client
-          </Link>
+      <div className="max-w-2xl mx-auto px-4 py-12">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+              <span className="text-red-600 text-lg font-bold">!</span>
+            </div>
+            <div>
+              <p className="font-semibold text-red-800">Report generation failed</p>
+              <p className="text-sm text-red-600 mt-1">This usually means a data connection issue or no data in the selected date range.</p>
+            </div>
+          </div>
+          <div className="space-y-2 mb-5">
+            <p className="text-xs font-semibold text-red-700 uppercase tracking-wide">Common causes:</p>
+            <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
+              <li>GA4 OAuth token expired — reconnect from the client&apos;s Connections tab</li>
+              <li>No data in the selected date range — try a different period</li>
+              <li>GA4 property has no sessions recorded for this period</li>
+            </ul>
+          </div>
+          <div className="flex gap-3">
+            <Link
+              href={`/clients/${report.client_id}?tab=connections`}
+              className="flex-1 text-center text-sm font-medium bg-white border border-red-200 text-red-700 hover:bg-red-50 rounded-lg py-2 transition-colors"
+            >
+              Check connections
+            </Link>
+            <Link
+              href={`/clients/${report.client_id}`}
+              className="flex-1 text-center text-sm font-medium bg-red-600 text-white hover:bg-red-700 rounded-lg py-2 transition-colors"
+            >
+              Retry report
+            </Link>
+          </div>
         </div>
       </div>
     )

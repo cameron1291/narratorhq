@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, Copy, Send, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import type { NarrativeSection } from '@/lib/normalization/types'
@@ -107,8 +108,8 @@ function SectionCard({ reportId, section, originalContent, onUpdate }: SectionCa
         <button
           onClick={toggleApprove}
           className={cn(
-            'shrink-0 transition-colors',
-            section.isApproved ? 'text-green-500' : 'text-gray-300 hover:text-gray-400'
+            'shrink-0 transition-colors rounded-full p-0.5',
+            section.isApproved ? 'text-green-500 hover:text-green-600' : 'text-gray-300 hover:text-green-400 hover:bg-green-50'
           )}
           title={section.isApproved ? 'Approved — click to un-approve' : 'Click to approve'}
         >
@@ -214,7 +215,7 @@ function SectionCard({ reportId, section, originalContent, onUpdate }: SectionCa
               type="text"
               value={regenInstruction}
               onChange={e => setRegenInstruction(e.target.value)}
-              placeholder="Optional: direction for this rewrite (e.g. 'more positive tone')"
+              placeholder="e.g. 'more cautious tone', 'focus on ROI and cost per lead', 'simpler language for the CFO', 'more positive — emphasise what worked'"
               className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onKeyDown={e => e.key === 'Enter' && regenerate()}
             />
@@ -266,8 +267,19 @@ export function ReportApproval({
   const [sending, setSending] = useState(false)
   const [showMetricsSummary, setShowMetricsSummary] = useState(false)
 
+  const [partialSendOpen, setPartialSendOpen] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
   const approvedCount = sections.filter(s => s.isApproved).length
   const allApproved = approvedCount === sections.length && sections.length > 0
+  const someApproved = approvedCount > 0
+
+  function copyShareLink() {
+    const url = `${window.location.origin}/r/${shareToken}`
+    navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 2000)
+    })
+  }
 
   function updateSection(sectionName: NarrativeSection['section'], updated: Partial<NarrativeSection>) {
     setSections(prev => prev.map(s => s.section === sectionName ? { ...s, ...updated } : s))
@@ -288,10 +300,18 @@ export function ReportApproval({
 
   async function sendReport() {
     setSending(true)
+    setPartialSendOpen(false)
     const res = await fetch(`/api/reports/${reportId}/send`, { method: 'POST' })
     if (res.ok) {
       setStatus('sent')
-      toast.success('Report sent to client')
+      if (shareToken) {
+        toast.success('Report sent', {
+          description: 'Share the client link to let them view it online.',
+          action: { label: 'Copy link', onClick: copyShareLink },
+        })
+      } else {
+        toast.success('Report sent to client')
+      }
     } else {
       const data = await res.json().catch(() => ({})) as { error?: string }
       toast.error(data.error ?? 'Failed to send report — please try again')
@@ -303,29 +323,44 @@ export function ReportApproval({
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+      {/* Partial send confirmation dialog */}
+      <Dialog open={partialSendOpen} onOpenChange={setPartialSendOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogTitle>Send with unapproved sections?</DialogTitle>
+          <p className="text-sm text-gray-600 mt-1">
+            {sections.length - approvedCount} section{sections.length - approvedCount !== 1 ? 's are' : ' is'} still in draft.
+            The report will be sent as-is — unapproved sections will use the AI-generated text.
+          </p>
+          <div className="flex gap-2 mt-4">
+            <Button variant="default" className="flex-1" disabled={sending} onClick={sendReport}>
+              {sending ? 'Sending…' : 'Send anyway'}
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={() => setPartialSendOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-gray-900">{clientName}</h1>
           <p className="text-sm text-gray-500 mt-0.5">{periodLabel} · {sections.length} sections</p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
           <span className="text-sm text-gray-500">{approvedCount}/{sections.length} approved</span>
+
+          {/* Copy link — visible once report has a share token */}
+          {shareToken && status !== 'draft' && (
+            <Button size="sm" variant="outline" onClick={copyShareLink}>
+              <Copy className="h-3.5 w-3.5 mr-1.5" />
+              {linkCopied ? 'Copied!' : 'Copy link'}
+            </Button>
+          )}
+
           {status === 'sent' ? (
             <div className="flex items-center gap-2">
-              {shareToken && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    const url = `${window.location.origin}/r/${shareToken}`
-                    navigator.clipboard.writeText(url).then(() => toast.success('Report link copied'))
-                  }}
-                >
-                  <Copy className="h-3.5 w-3.5 mr-1.5" />
-                  Copy link
-                </Button>
-              )}
               <Button size="sm" variant="outline" onClick={sendReport} disabled={sending}>
                 <Send className="h-3.5 w-3.5 mr-1.5" />
                 {sending ? 'Sending…' : 'Resend'}
@@ -336,16 +371,30 @@ export function ReportApproval({
             </div>
           ) : status === 'approved' ? (
             <Button onClick={sendReport} disabled={sending} variant="default">
+              <Send className="h-3.5 w-3.5 mr-1.5" />
               {sending ? 'Sending…' : 'Send to client'}
             </Button>
           ) : (
-            <Button
-              onClick={approveAll}
-              disabled={approving || !allApproved}
-              title={!allApproved ? 'Approve all sections first' : undefined}
-            >
-              {approving ? 'Approving…' : 'Approve report'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={approveAll}
+                disabled={approving || !allApproved}
+                variant="default"
+              >
+                {approving ? 'Approving…' : 'Approve report'}
+              </Button>
+              {/* Allow partial send when some (but not all) sections approved */}
+              {someApproved && !allApproved && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setPartialSendOpen(true)}
+                  className="text-gray-500"
+                >
+                  Send anyway
+                </Button>
+              )}
+            </div>
           )}
         </div>
       </div>

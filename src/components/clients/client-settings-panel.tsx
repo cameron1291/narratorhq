@@ -118,10 +118,10 @@ export function ClientSettingsPanel({ client }: Props) {
           <Select value={form.toneOverride} onValueChange={v => v && set('toneOverride', v)}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="inherit">Inherit from agency</SelectItem>
-              <SelectItem value="professional">Professional</SelectItem>
-              <SelectItem value="conversational">Conversational</SelectItem>
-              <SelectItem value="data-heavy">Data-heavy</SelectItem>
+              <SelectItem value="inherit">Inherit from agency default</SelectItem>
+              <SelectItem value="professional">Professional — formal, structured, agency-polished</SelectItem>
+              <SelectItem value="conversational">Conversational — friendly, plain English, no jargon</SelectItem>
+              <SelectItem value="data-heavy">Data-heavy — metrics-led, minimal narrative prose</SelectItem>
             </SelectContent>
           </Select>
         </div>

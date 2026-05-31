@@ -119,9 +119,9 @@ export default async function DashboardPage() {
           { label: 'Needs review', value: needsReview?.length ?? 0, icon: AlertTriangle, color: (needsReview?.length ?? 0) > 0 ? 'text-amber-600 bg-amber-50 border-amber-200' : 'text-gray-500 bg-gray-50 border-gray-200', href: '/reports' },
           { label: 'Sent this month', value: sentThisMonthCount ?? 0, icon: CheckCircle, color: 'text-green-600 bg-green-50 border-green-200', href: '/reports' },
           { label: 'Active clients', value: clients?.length ?? 0, icon: Users, color: 'text-blue-600 bg-blue-50 border-blue-200', href: '/clients' },
-          { label: 'Hours saved', value: timeSavedHours, icon: Clock, color: 'text-purple-600 bg-purple-50 border-purple-200', href: null },
+          { label: 'Hours saved', value: timeSavedHours, icon: Clock, color: 'text-purple-600 bg-purple-50 border-purple-200', href: null, title: `${allSentCount ?? 0} reports × ~90 min each` },
         ].map(stat => (
-          <div key={stat.label} className={`border rounded-xl p-4 ${stat.color}`}>
+          <div key={stat.label} className={`border rounded-xl p-4 ${stat.color}`} title={'title' in stat ? stat.title : undefined}>
             <div className="flex items-center justify-between mb-2">
               <stat.icon className="h-4 w-4" />
               {stat.href && <Link href={stat.href} className="text-xs opacity-60 hover:opacity-100">View →</Link>}
@@ -177,8 +177,13 @@ export default async function DashboardPage() {
         {/* At-risk clients + Upcoming */}
         <div className="space-y-4">
 
-          {/* At risk */}
-          {atRiskClients.length > 0 && (
+          {/* At risk — always show so users know their client health */}
+          {atRiskClients.length === 0 ? (
+            <div className="bg-white border border-green-200 rounded-xl px-4 py-3 flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+              <p className="text-sm text-green-700 font-medium">All clients have had a recent report</p>
+            </div>
+          ) : (
             <section className="bg-white border border-amber-200 rounded-xl overflow-hidden">
               <div className="flex items-center gap-2 px-4 py-3 border-b border-amber-100">
                 <AlertTriangle className="h-4 w-4 text-amber-500" />
@@ -230,7 +235,7 @@ export default async function DashboardPage() {
                 <p className="text-xs font-semibold text-blue-100 uppercase tracking-wide">NarratorHQ has saved you</p>
               </div>
               <p className="text-3xl font-bold">{timeSavedHours} hours</p>
-              <p className="text-xs text-blue-200 mt-1">across {allSentCount ?? 0} reports sent · at ~90 min per report</p>
+              <p className="text-xs text-blue-200 mt-1">across {allSentCount ?? 0} reports sent · calculated at ~90 min per report</p>
             </div>
           )}
         </div>

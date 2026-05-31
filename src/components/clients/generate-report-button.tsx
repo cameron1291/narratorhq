@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { FileText, Loader2 } from 'lucide-react'
+import { FileText, Loader2, Link2 } from 'lucide-react'
 
 interface GenerateReportButtonProps {
   clientId: string
@@ -62,10 +63,30 @@ export function GenerateReportButton({ clientId, hasGa4 }: GenerateReportButtonP
     }
   }
 
+  if (!hasGa4) {
+    return (
+      <Link
+        href={`/clients/${clientId}`}
+        onClick={e => {
+          // If we're already on the client page, just switch to connections tab
+          if (typeof window !== 'undefined' && window.location.pathname === `/clients/${clientId}`) {
+            e.preventDefault()
+            const tab = document.querySelector('[data-state][value="connections"]') as HTMLElement
+            tab?.click()
+          }
+        }}
+        className="inline-flex items-center gap-2 text-sm font-medium border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 rounded-lg px-4 py-2 transition-colors"
+      >
+        <Link2 className="h-4 w-4" />
+        Connect GA4 to generate
+      </Link>
+    )
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <Button variant="default" disabled={!hasGa4} title={!hasGa4 ? 'Connect GA4 first' : undefined}>
+        <Button variant="default">
           <FileText className="h-4 w-4 mr-2" />
           Generate report
         </Button>
@@ -73,6 +94,7 @@ export function GenerateReportButton({ clientId, hasGa4 }: GenerateReportButtonP
       <DialogContent className="max-w-sm">
         <DialogTitle>Generate report</DialogTitle>
         <div className="space-y-4 mt-2">
+          <p className="text-xs text-gray-500">Select the start and end of the reporting period. Defaults to last calendar month.</p>
           <div className="space-y-1">
             <label className="text-sm font-medium text-gray-700">Period start</label>
             <input

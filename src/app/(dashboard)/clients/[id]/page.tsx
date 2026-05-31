@@ -92,9 +92,9 @@ export default async function ClientDetailPage({
       </div>
 
       <Tabs defaultValue="connections">
-        <TabsList className="mb-6">
+        <TabsList className="mb-6 overflow-x-auto flex-nowrap">
           <TabsTrigger value="connections">Connections</TabsTrigger>
-          <TabsTrigger value="context">Client context</TabsTrigger>
+          <TabsTrigger value="context">Context</TabsTrigger>
           <TabsTrigger value="intelligence">Intelligence</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
