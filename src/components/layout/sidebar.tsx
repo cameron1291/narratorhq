@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Users, FileText, Settings, LogOut, Menu, ChevronRight } from 'lucide-react'
+import { Users, FileText, Settings, LogOut, Menu, ChevronRight, LayoutDashboard } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 
 const nav = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/clients', label: 'Clients', icon: Users },
   { href: '/reports', label: 'Reports', icon: FileText },
   { href: '/settings', label: 'Settings', icon: Settings },
@@ -42,7 +43,7 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
     )}>
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
-          <Link href="/clients">
+          <Link href="/dashboard">
             <div className="bg-white rounded-lg px-2 py-0.5">
               <img src="/logo.png" alt="NarratorHQ" className="h-7 w-auto" />
             </div>
@@ -65,7 +66,7 @@ export function Sidebar({ userEmail, userName }: SidebarProps) {
             href={href}
             className={cn(
               'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
-              pathname.startsWith(href)
+              pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
                 ? 'bg-blue-600 text-white'
                 : 'text-gray-300 hover:bg-gray-700 hover:text-white'
             )}

@@ -2,10 +2,19 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X, Brain, ChevronRight, Wifi, Sparkles } from 'lucide-react'
+import { CheckCircle, Circle, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Info, X, Brain, ChevronRight, Wifi, Sparkles, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const CLIENT_MEMORY = [
+  {
+    type: 'kpi',
+    label: 'Primary KPI',
+    color: 'bg-purple-100 text-purple-800 border-purple-200',
+    content: 'Qualified leads (cost per lead target: under £35). Client does not care about impressions or clicks.',
+    resolved: false,
+    resolvedIn: null,
+    resolvedMonthsAgo: null,
+  },
   {
     type: 'promise',
     label: 'Promise',
@@ -16,10 +25,19 @@ const CLIENT_MEMORY = [
     resolvedMonthsAgo: 1,
   },
   {
-    type: 'goal',
-    label: 'Goal',
-    color: 'bg-green-100 text-green-800 border-green-200',
-    content: '100 qualified leads per month by end of Q2 2026',
+    type: 'win',
+    label: 'Win',
+    color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    content: 'TikTok Ads hit sub-£40 CPA in April for the first time — 27% improvement since campaign launch in February',
+    resolved: false,
+    resolvedIn: null,
+    resolvedMonthsAgo: null,
+  },
+  {
+    type: 'change',
+    label: 'What Changed',
+    color: 'bg-orange-100 text-orange-800 border-orange-200',
+    content: 'Conversion tracking updated 15 March — pre/post comparisons for March affected by this change',
     resolved: false,
     resolvedIn: null,
     resolvedMonthsAgo: null,
@@ -37,7 +55,7 @@ const CLIENT_MEMORY = [
     type: 'note',
     label: 'Note',
     color: 'bg-gray-100 text-gray-700 border-gray-200',
-    content: 'Decision maker is the CFO, not the marketing lead — always lead with ROI and business outcomes',
+    content: 'Decision maker is the CFO — always lead with cost per lead and ROI. Not sessions or impressions.',
     resolved: false,
     resolvedIn: null,
     resolvedMonthsAgo: null,
@@ -76,6 +94,7 @@ const DEMO_SECTIONS: {
   isApproved: boolean
   supportingMetrics: string[]
   promiseKept?: string
+  opportunities?: { title: string; rationale: string; expectedImpact: string }[]
 }[] = [
   {
     section: 'overview',
@@ -93,11 +112,18 @@ const DEMO_SECTIONS: {
   },
   {
     section: 'paid_search',
-    content: "Google Ads delivered 187 conversions at a CPA of £28.50 — down from £34.20 in March, an improvement of 17%. ROAS improved to 4.2x (from 3.6x).\n\nAs we committed last month, we applied bid modifier adjustments to mobile campaigns. Mobile CPA has improved from 41% above desktop to 23% above desktop — meaningful progress, and we'll continue tightening this in May.\n\nWe also cut three underperforming ad groups targeting broad match gardening terms that were generating clicks but no conversions. That budget has been reallocated to the retargeting campaign, which is now converting at a CPA of £18.",
+    content: "Google Ads delivered 187 conversions at a CPA of £28.50 — down from £34.20 in March, an improvement of 17%. ROAS improved to 4.2x.\n\nThis result continues a four-month improvement trend that began in January when we identified inefficient broad match terms driving high CPA. Since implementing the keyword restructure in February, CPA has improved from £48 to £28.50 — a 41% reduction over four reporting periods and well below the £35 cost-per-lead target.\n\nAs we committed last month, we applied bid modifier adjustments to mobile campaigns. Mobile CPA has improved from 41% above desktop to 23% above desktop — meaningful progress that we'll continue tightening in May.\n\nSearch campaigns are currently driving 82% of all conversions at 54% of total spend — the highest efficiency channel in the account.",
     confidence: 'high',
     isApproved: true,
-    supportingMetrics: ['CPA £28.50 (-17%)', 'ROAS 4.2x', 'Spend £3,240', 'Mobile CPA improved'],
+    supportingMetrics: ['CPA £28.50 (-41% since Jan)', 'ROAS 4.2x', 'Spend £3,240', 'Mobile CPA improving'],
     promiseKept: 'Fix mobile CPC issue — mobile CPA is currently 41% above desktop',
+    opportunities: [
+      {
+        title: 'Increase search budget by 20%',
+        rationale: 'Search drives 82% of conversions at 54% of spend — highest efficiency channel',
+        expectedImpact: 'Est. +35 conversions/month at current £28.50 CPA',
+      },
+    ],
   },
   {
     section: 'paid_social',
@@ -297,7 +323,7 @@ export default function DemoPage() {
             <p className="text-sm text-gray-500 mt-0.5">{DEMO_SECTIONS.length} sections · Generated in 28 seconds</p>
             <p className="text-xs text-purple-600 mt-1.5 flex items-center gap-1">
               <Brain className="h-3 w-3" />
-              4 memory items used · 1 promise tracked and addressed
+              6 memory items used · 4-month CPA history referenced · 1 opportunity identified
             </p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -331,7 +357,7 @@ export default function DemoPage() {
               </span>
               {!memoryExpanded && (
                 <span className="ml-2 text-xs text-purple-500">
-                  4 items · including 1 promise from last month
+                  6 items · KPIs, promises, wins, changes
                 </span>
               )}
             </div>
@@ -455,6 +481,23 @@ export default function DemoPage() {
                     </p>
                   )}
                 </div>
+
+                {/* Opportunities */}
+                {section.opportunities && section.opportunities.length > 0 && (
+                  <div className="mx-4 mb-3 rounded-lg border border-blue-200 bg-blue-50 overflow-hidden">
+                    <div className="flex items-center gap-1.5 px-3 py-2 border-b border-blue-100">
+                      <Zap className="h-3.5 w-3.5 text-blue-500" />
+                      <p className="text-xs font-semibold text-blue-700">Opportunity identified</p>
+                    </div>
+                    {section.opportunities.map((opp, i) => (
+                      <div key={i} className="px-3 py-2.5">
+                        <p className="text-xs font-semibold text-blue-900">{opp.title}</p>
+                        <p className="text-xs text-blue-700 mt-0.5">{opp.rationale}</p>
+                        <p className="text-xs text-blue-500 mt-0.5 italic">{opp.expectedImpact}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Supporting metrics */}
                 {section.supportingMetrics.length > 0 && (

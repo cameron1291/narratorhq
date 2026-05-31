@@ -57,7 +57,7 @@ create table clients (
 create table data_connections (
   id uuid primary key default gen_random_uuid(),
   client_id uuid references clients(id) on delete cascade not null,
-  platform text not null check (platform in ('ga4', 'google_ads', 'meta_ads')),
+  platform text not null check (platform in ('ga4', 'google_ads', 'meta_ads', 'tiktok_ads')),
   property_id text,
   property_name text,
   access_token text not null,
@@ -115,7 +115,7 @@ create table reports (
 create table client_context (
   id uuid primary key default gen_random_uuid(),
   client_id uuid references clients(id) on delete cascade not null,
-  context_type text not null check (context_type in ('promise', 'sensitivity', 'goal', 'note')),
+  context_type text not null check (context_type in ('promise', 'sensitivity', 'goal', 'note', 'change', 'win', 'kpi')),
   content text not null,
   is_active boolean default true,
   created_by uuid references agency_users(id),

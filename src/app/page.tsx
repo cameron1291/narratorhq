@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle, Circle, Shield, AlertTriangle, BookOpen, Target, Heart, Star, Clock } from 'lucide-react'
+import { ArrowRight, CheckCircle, Circle, Shield, AlertTriangle, BookOpen, Target, Heart, Star, Clock, Zap, TrendingUp, Brain, BarChart3 } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'NarratorHQ — Client Reports That Remember',
@@ -26,27 +26,32 @@ const MEMORY_ITEMS = [
   {
     icon: Target,
     label: 'Client goals',
-    desc: 'What success looks like for this specific client — referenced every month.',
+    desc: 'What success looks like for this specific client — referenced every month. Behind or ahead? The report says so.',
   },
   {
     icon: CheckCircle,
     label: 'Promises made',
-    desc: '"We\'ll address the mobile CPA issue next month." The system tracks this and follows up automatically.',
+    desc: '"We\'ll fix mobile CPA next month." The system tracks this across every future report until it\'s resolved.',
+  },
+  {
+    icon: Brain,
+    label: 'Primary KPIs',
+    desc: 'This client only cares about qualified leads — not clicks, not impressions. Every section leads with what they measure.',
+  },
+  {
+    icon: AlertTriangle,
+    label: 'What Changed',
+    desc: 'Conversion tracking updated, budget cut, campaign restructured — logged once, flagged in every report it affects.',
+  },
+  {
+    icon: Star,
+    label: 'Wins recorded',
+    desc: 'CPA reduced 29% over Q1 — recorded and referenced in future reports. Your agency looks brilliant, consistently.',
   },
   {
     icon: Heart,
     label: 'Sensitivities',
-    desc: 'Topics to handle carefully, metrics they\'re anxious about, language they dislike.',
-  },
-  {
-    icon: BookOpen,
-    label: 'Tone preference',
-    desc: 'Each client relationship has a different register. Professional, conversational, data-heavy.',
-  },
-  {
-    icon: Star,
-    label: 'Strategic priorities',
-    desc: 'This quarter\'s focus areas, retainer scope, active campaigns — not just the raw numbers.',
+    desc: 'Topics to handle carefully, metrics they\'re anxious about, language they dislike. Never forgotten.',
   },
 ]
 
@@ -60,12 +65,16 @@ const COMPARISON_ROWS = [
     narrator: 'Last month\'s promises auto-surface in this month\'s draft',
   },
   {
-    traditional: 'Bad months are written by whoever has time',
-    narrator: 'Bad months explained consistently — with data and a plan',
+    traditional: 'No memory of what was promised 3 months ago',
+    narrator: 'Full commitment history — "this initiative began in January..."',
   },
   {
-    traditional: 'Tone varies by account manager and how tired they are',
-    narrator: 'Same strategic voice, every client, every month',
+    traditional: 'Just reports the data — no proactive recommendations',
+    narrator: 'Identifies opportunities: "Search drives 82% of conversions at 54% of spend — increase budget"',
+  },
+  {
+    traditional: 'Bad months are written by whoever has time',
+    narrator: 'Bad months explained consistently — with data and a plan',
   },
   {
     traditional: '90 minutes per client to produce the narrative',
@@ -131,8 +140,8 @@ const FAQ = [
     a: 'No. Reports are sent from your agency name and email address. The PDF shows your logo and brand colour. Your client sees your work — not our tool.',
   },
   {
-    q: 'How does the "promise tracking" work?',
-    a: 'When you add a standing instruction like "follow up on the mobile CPA improvement promised in March", the system carries that forward into every subsequent draft until you remove it. It\'s not magic — it\'s structured context that the system uses every time it writes.',
+    q: 'How does the Agency Memory Graph work?',
+    a: 'Every report you approve is stored. When the next report is generated, NarratorHQ reads the full history of commitments made and can write sentences like "This initiative began in January when we identified X. Since then, CPA has improved from £48 to £34 — a 29% reduction over four reporting periods." The longer you use it, the more longitudinal context it has. Switching to a competitor means starting that memory from zero.',
   },
   {
     q: 'Can I edit the draft before it goes out?',
@@ -397,6 +406,149 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Agency Memory Graph */}
+      <section className="bg-gray-50 border-y border-gray-100 py-20">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 text-sm text-purple-700 bg-purple-50 border border-purple-200 rounded-full px-3 py-1 mb-5">
+              <Brain className="h-3.5 w-3.5" />
+              The longer you use it, the smarter it gets
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900">Agency Memory Graph</h2>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+              NarratorHQ doesn&apos;t just remember last month. It remembers every commitment ever made —
+              and can write sentences no agency account manager writes consistently.
+            </p>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            {/* Narrative example */}
+            <div className="bg-gray-900 rounded-2xl p-6 mb-6 text-sm leading-relaxed">
+              <p className="text-xs text-gray-500 mb-4 uppercase tracking-wider">April 2026 report — generated automatically</p>
+              <p className="text-gray-200 leading-relaxed">
+                <span className="text-purple-300">"This initiative began in January when we identified inefficient search terms driving high CPA.
+                In February, following a keyword pruning exercise, CPA improved 12% to £38.
+                In March, we began scaling the winning ad groups. This month, CPA has reached £34 —
+                a </span><span className="text-green-300 font-semibold">29% reduction over four reporting periods</span>
+                <span className="text-purple-300">, compared to the £48 baseline when the optimisation began."</span>
+              </p>
+              <p className="text-xs text-gray-600 mt-4">↑ No agency account manager writes this consistently across 15 clients. NarratorHQ does it automatically.</p>
+            </div>
+
+            {/* Timeline */}
+            <div className="relative">
+              <div className="absolute left-6 top-6 bottom-6 w-px bg-purple-200 hidden sm:block" />
+              <div className="space-y-4">
+                {[
+                  { month: 'January', color: 'bg-purple-100 text-purple-800', label: 'Problem identified', text: 'Keyword pruning needed — CPA at £48, above target' },
+                  { month: 'February', color: 'bg-blue-100 text-blue-800', label: 'Action taken', text: 'Keyword pruning complete. CPA dropped to £38 (–12%)' },
+                  { month: 'March', color: 'bg-blue-100 text-blue-800', label: 'Scaling', text: 'Winning campaigns scaled. CPA at £36, trend positive' },
+                  { month: 'April', color: 'bg-green-100 text-green-800', label: '✓ Objective achieved', text: 'CPA reaches £34 — 29% improvement from baseline' },
+                ].map((item, i) => (
+                  <div key={item.month} className="flex items-start gap-5">
+                    <div className="h-12 w-12 rounded-full bg-white border-2 border-purple-200 text-purple-700 text-xs font-bold flex items-center justify-center shrink-0 z-10">
+                      {item.month.slice(0, 3)}
+                    </div>
+                    <div className="bg-white border border-gray-200 rounded-xl p-4 flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${item.color}`}>{item.label}</span>
+                      </div>
+                      <p className="text-sm text-gray-600">{item.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <p className="text-center mt-6 text-sm text-gray-500">
+              Switching to a competitor means starting this memory from zero.
+              <span className="font-medium text-gray-700"> That&apos;s the moat.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Opportunity Engine */}
+      <section className="max-w-5xl mx-auto px-4 py-20">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="inline-flex items-center gap-2 text-sm text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 mb-5">
+              <Zap className="h-3.5 w-3.5" />
+              Not just reporting — advising
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              The Opportunity Engine
+            </h2>
+            <p className="text-gray-500 leading-relaxed mb-4">
+              Every section now includes AI-identified opportunities grounded in the actual data.
+              Specific, actionable, with the rationale shown.
+            </p>
+            <p className="text-gray-500 leading-relaxed mb-4">
+              Your account managers look like strategists — not just reporters.
+            </p>
+            <ul className="space-y-3 text-sm text-gray-600">
+              {[
+                'Only shown when data directly supports it',
+                'Includes expected impact, not just the recommendation',
+                'Editable before the report is approved',
+                'Based on your specific numbers — not generic advice',
+              ].map(point => (
+                <li key={point} className="flex items-start gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+            <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+              <span className="text-sm font-semibold text-gray-900">Google Ads</span>
+              <span className="ml-auto text-xs text-green-700 bg-green-50 border border-green-200 rounded px-1.5 py-0.5">High confidence</span>
+            </div>
+            <div className="p-5">
+              <p className="text-sm text-gray-700 leading-relaxed mb-4">
+                Google Ads delivered 187 conversions at a CPA of £28.50 — down 17% from last month. ROAS improved to 4.2x.
+                Search campaigns are producing 82% of all conversions at just 54% of total spend.
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl overflow-hidden">
+                <div className="flex items-center gap-1.5 px-3 py-2 border-b border-blue-100">
+                  <Zap className="h-3.5 w-3.5 text-blue-500" />
+                  <p className="text-xs font-semibold text-blue-700">Opportunity identified</p>
+                </div>
+                <div className="px-3 py-2.5">
+                  <p className="text-xs font-semibold text-blue-900">Increase search budget by 20%</p>
+                  <p className="text-xs text-blue-700 mt-0.5">Search drives 82% of conversions at 54% of spend — highest efficiency channel</p>
+                  <p className="text-xs text-blue-500 mt-0.5 italic">Est. +35 conversions/month at current CPA</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Don't Forget Engine */}
+      <section className="bg-gray-50 border-y border-gray-100 py-16">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-3 py-1 mb-5">
+            <AlertTriangle className="h-3.5 w-3.5" />
+            The thing most agencies miss
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">The &ldquo;Don&apos;t Forget&rdquo; Engine</h2>
+          <p className="text-gray-500 leading-relaxed mb-8 max-w-xl mx-auto">
+            Recommended something three months ago that still hasn&apos;t been actioned? NarratorHQ surfaces it — every single month — until it&apos;s done.
+          </p>
+          <div className="bg-white border border-amber-200 rounded-xl p-5 text-left max-w-lg mx-auto">
+            <p className="text-xs text-gray-400 mb-3 uppercase tracking-wide">June 2026 — Google Ads section</p>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              <span className="text-amber-700 font-medium">&ldquo;The landing page recommendation first raised in March has not yet been implemented
+              and remains one of the highest-impact opportunities available — estimated +18% conversion rate
+              improvement based on comparable clients in this category.&rdquo;</span>
+            </p>
+          </div>
+          <p className="text-sm text-gray-400 mt-5">This makes reports feel like a strategic account manager wrote them — not a template.</p>
         </div>
       </section>
 

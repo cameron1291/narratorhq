@@ -16,6 +16,9 @@ const TYPE_LABELS: Record<string, { label: string; color: string }> = {
   sensitivity: { label: 'Sensitivity', color: 'bg-amber-100 text-amber-800' },
   goal:        { label: 'Goal',        color: 'bg-green-100 text-green-800' },
   note:        { label: 'Note',        color: 'bg-gray-100 text-gray-800' },
+  change:      { label: 'What Changed', color: 'bg-orange-100 text-orange-800' },
+  win:         { label: 'Win',         color: 'bg-emerald-100 text-emerald-800' },
+  kpi:         { label: 'Primary KPI', color: 'bg-purple-100 text-purple-800' },
 }
 
 interface ContextItem {
@@ -148,8 +151,11 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="promise">Promise</SelectItem>
-              <SelectItem value="sensitivity">Sensitivity</SelectItem>
               <SelectItem value="goal">Goal</SelectItem>
+              <SelectItem value="kpi">Primary KPI</SelectItem>
+              <SelectItem value="sensitivity">Sensitivity</SelectItem>
+              <SelectItem value="change">What Changed</SelectItem>
+              <SelectItem value="win">Win</SelectItem>
               <SelectItem value="note">Note</SelectItem>
             </SelectContent>
           </Select>

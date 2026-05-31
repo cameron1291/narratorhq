@@ -36,7 +36,8 @@ export async function middleware(request: NextRequest) {
   // - /update-password requires an active session (user just clicked password reset link)
   // - /verify-email is a static info page accessible to anyone
 
-  const isDashboardRoute = request.nextUrl.pathname.startsWith('/clients') ||
+  const isDashboardRoute = request.nextUrl.pathname.startsWith('/dashboard') ||
+    request.nextUrl.pathname.startsWith('/clients') ||
     request.nextUrl.pathname.startsWith('/reports') ||
     request.nextUrl.pathname.startsWith('/settings') ||
     request.nextUrl.pathname.startsWith('/team')

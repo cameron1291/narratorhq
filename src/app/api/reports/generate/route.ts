@@ -150,15 +150,25 @@ export async function POST(request: NextRequest) {
     .eq('client_id', clientId)
     .eq('is_active', true)
 
-  // Load last 3 approved/sent reports for context continuity and trend detection
-  const { data: recentReports } = await supabase
-    .from('reports')
-    .select('narrative_sections, raw_metrics, period_start, period_end')
-    .eq('client_id', clientId)
-    .in('status', ['approved', 'sent'])
-    .lt('period_end', startDate)
-    .order('period_end', { ascending: false })
-    .limit(3)
+  // Load last 3 reports for trends + full history for agency memory
+  const [{ data: recentReports }, { data: allPastReports }] = await Promise.all([
+    supabase
+      .from('reports')
+      .select('narrative_sections, raw_metrics, period_start, period_end')
+      .eq('client_id', clientId)
+      .in('status', ['approved', 'sent'])
+      .lt('period_end', startDate)
+      .order('period_end', { ascending: false })
+      .limit(3),
+    supabase
+      .from('reports')
+      .select('narrative_sections, period_start, period_end')
+      .eq('client_id', clientId)
+      .in('status', ['approved', 'sent'])
+      .lt('period_end', startDate)
+      .order('period_end', { ascending: true })
+      .limit(24), // up to 2 years of history
+  ])
 
   // Create report row with status 'generating'
   const { data: report, error: insertError } = await supabase
@@ -382,6 +392,28 @@ export async function POST(request: NextRequest) {
     if (lines.length > 0) multiMonthTrends = lines.join('\n')
   }
 
+  // Build agency memory graph — full timeline of promises → next steps across all reports
+  let agencyMemory: string | null = null
+  if (allPastReports && allPastReports.length > 0) {
+    const timelineEntries = allPastReports
+      .map(r => {
+        const sections = r.narrative_sections as Array<{ section: string; content: string; editedContent?: string | null }> | null
+        const nextSteps = sections?.find(s => s.section === 'next_steps')
+        if (!nextSteps) return null
+        const label = periodLabel(r.period_start, r.period_end)
+        return `${label}: ${nextSteps.editedContent ?? nextSteps.content}`
+      })
+      .filter(Boolean)
+    if (timelineEntries.length > 0) {
+      agencyMemory = `Full history of commitments made (chronological):\n${timelineEntries.join('\n\n')}`
+    }
+  }
+
+  // Surface "What Changed" events, wins, and primary KPIs from client context
+  const recentChanges = contextItems?.filter(c => c.context_type === 'change').map(c => c.content) ?? []
+  const wins = contextItems?.filter(c => c.context_type === 'win').map(c => c.content) ?? []
+  const primaryKPIs = contextItems?.filter(c => c.context_type === 'kpi').map(c => c.content) ?? []
+
   const context: ClientReportContext = {
     clientName: client.name,
     reportPeriodLabel: periodLabel(startDate, endDate),
@@ -394,6 +426,10 @@ export async function POST(request: NextRequest) {
     reusableInstructions: instructions?.map(i => i.instruction) ?? [],
     previousNarrativeSummary,
     multiMonthTrends,
+    agencyMemory,
+    recentChanges,
+    wins,
+    primaryKPIs,
     connectedPlatforms,
   }
 
@@ -425,6 +461,34 @@ export async function POST(request: NextRequest) {
       original_narrative: narrativeSections,
     })
     .eq('id', report.id)
+
+  // Notify the agency owner that the report is ready to review
+  try {
+    const { data: owner } = await supabase
+      .from('agency_users')
+      .select('id, full_name')
+      .eq('agency_id', client.agency_id)
+      .eq('role', 'owner')
+      .single()
+    const { data: ownerAuth } = await supabase.auth.admin.getUserById(owner?.id ?? '')
+    const ownerEmail = ownerAuth?.user?.email
+    if (ownerEmail) {
+      const { getResendClient } = await import('@/lib/resend/client')
+      const resend = getResendClient()
+      const reportUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reports/${report.id}`
+      const period = periodLabel(startDate, endDate)
+      const firstName = owner?.full_name?.split(' ')[0] ?? 'there'
+      await resend.emails.send({
+        from: `NarratorHQ <${process.env.DEFAULT_SENDER_EMAIL ?? 'noreply@narratorhq.com'}>`,
+        to: ownerEmail,
+        subject: `${client.name} — ${period} report is ready to review`,
+        html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px"><p style="color:#111827;font-size:16px;font-weight:600;margin:0 0 8px">Hi ${firstName},</p><p style="color:#6b7280;margin:0 0 24px">The <strong>${period}</strong> report for <strong>${client.name}</strong> has been generated and is ready for your review.</p><a href="${reportUrl}" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Review report →</a><p style="color:#9ca3af;font-size:12px;margin-top:24px">You can approve individual sections, make edits, and send directly to your client from the review page.</p></div>`,
+        text: `Hi ${firstName},\n\nThe ${period} report for ${client.name} is ready to review.\n\nReview it here: ${reportUrl}`,
+      })
+    }
+  } catch {
+    // Non-fatal — report is saved, notification is best-effort
+  }
 
   return NextResponse.json({ reportId: report.id })
 }

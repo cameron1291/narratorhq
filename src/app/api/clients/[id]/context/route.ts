@@ -37,7 +37,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
-  const validTypes = ['promise', 'sensitivity', 'goal', 'note']
+  const validTypes = ['promise', 'sensitivity', 'goal', 'note', 'change', 'win', 'kpi']
   if (!body.content?.trim() || !body.context_type || !validTypes.includes(body.context_type)) {
     return NextResponse.json({ error: 'content and valid context_type required' }, { status: 400 })
   }

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Users } from 'lucide-react'
+import { Users, Archive } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { AddClientDialog } from '@/components/clients/add-client-dialog'
 
@@ -37,11 +37,17 @@ export default async function ClientsPage() {
             {clients?.length ?? 0} of {agency?.client_limit ?? 5} on your plan
           </p>
         </div>
-        <AddClientDialog
-          agencyId={agencyUser?.agency_id ?? ''}
-          clientCount={clients?.length ?? 0}
-          clientLimit={agency?.client_limit ?? 5}
-        />
+        <div className="flex items-center gap-2">
+          <Link href="/clients/archived" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 transition-colors">
+            <Archive className="h-3.5 w-3.5" />
+            Archived
+          </Link>
+          <AddClientDialog
+            agencyId={agencyUser?.agency_id ?? ''}
+            clientCount={clients?.length ?? 0}
+            clientLimit={agency?.client_limit ?? 5}
+          />
+        </div>
       </div>
 
       {!clients?.length ? (

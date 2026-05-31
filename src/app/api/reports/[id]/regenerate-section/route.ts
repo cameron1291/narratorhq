@@ -98,6 +98,10 @@ export async function POST(request: NextRequest, { params }: Params) {
     reusableInstructions,
     previousNarrativeSummary: null,
     multiMonthTrends: null,
+    agencyMemory: null,
+    recentChanges: [],
+    wins: [],
+    primaryKPIs: [],
     connectedPlatforms,
   }
 

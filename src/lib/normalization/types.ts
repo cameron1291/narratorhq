@@ -78,4 +78,11 @@ export interface NarrativeSection {
   supportingMetrics: string[]
   isApproved: boolean
   editedContent: string | null
+  opportunities?: Opportunity[] // AI-identified opportunities for this section
+}
+
+export interface Opportunity {
+  title: string // e.g. "Increase search budget by 20%"
+  rationale: string // e.g. "Search campaigns produce 82% of conversions at 54% of spend"
+  expectedImpact: string // e.g. "Est. +30 conversions/month"
 }

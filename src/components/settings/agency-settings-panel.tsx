@@ -231,6 +231,42 @@ export function AgencySettingsPanel({ agency }: AgencySettingsPanelProps) {
         {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save changes'}
       </Button>
 
+      {/* Report email preview */}
+      <div className="pt-6 border-t border-gray-100">
+        <h3 className="text-sm font-semibold text-gray-900 mb-1">Report email preview</h3>
+        <p className="text-xs text-gray-500 mb-4">This is how your client report emails will appear.</p>
+        <div className="border border-gray-200 rounded-xl overflow-hidden max-w-lg">
+          <div style={{ background: brandColor }} className="px-6 py-4">
+            {logoUrl
+              ? <img src={logoUrl} alt={name} className="h-8 w-auto" />
+              : <p className="text-white font-bold text-lg">{name || 'Your Agency'}</p>
+            }
+          </div>
+          <div className="bg-white px-6 py-5">
+            <h2 className="text-xl font-bold text-gray-900 mb-0.5">Acme Ltd</h2>
+            <p className="text-sm text-gray-500 mb-5">April 2026 Performance Report</p>
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: brandColor }}>Overview</p>
+                <p className="text-sm text-gray-700 leading-relaxed">April was a strong month — organic sessions up 18% and paid CPA improved to £28.50. The content refresh across your main product cluster drove the majority of organic growth.</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: brandColor }}>Next Steps</p>
+                <p className="text-sm text-gray-700 leading-relaxed">1. Scale the top-performing creative set in Meta. 2. Launch the product landing page by 10 May.</p>
+              </div>
+            </div>
+            <div className="mt-5 text-center">
+              <span className="inline-block px-6 py-2.5 rounded-lg text-white text-sm font-semibold" style={{ background: brandColor }}>
+                View full report
+              </span>
+            </div>
+          </div>
+          <div className="bg-gray-50 px-6 py-3 border-t border-gray-100">
+            <p className="text-xs text-gray-400">This report was prepared by {name || 'Your Agency'}. It is intended solely for Acme Ltd.</p>
+          </div>
+        </div>
+      </div>
+
       {/* Danger zone */}
       <div className="pt-6 border-t border-red-100">
         <h3 className="text-sm font-semibold text-red-700 mb-1">Danger zone</h3>

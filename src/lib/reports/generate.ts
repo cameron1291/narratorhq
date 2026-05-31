@@ -10,6 +10,10 @@ export interface ClientReportContext {
   reusableInstructions: string[] // e.g. "always mention the team by name", "never use the word unfortunately"
   previousNarrativeSummary: string | null // overview + next_steps promises from last report
   multiMonthTrends: string | null // detected trends across the last 2-3 reports
+  agencyMemory: string | null // full chronological history of all commitments made
+  recentChanges: string[] // "What Changed" entries: budget, tracking, campaign changes
+  wins: string[] // recorded agency wins
+  primaryKPIs: string[] // what this client actually cares about measuring
   connectedPlatforms: ('ga4' | 'google_ads' | 'meta_ads' | 'tiktok_ads')[]
 }
 
@@ -24,6 +28,7 @@ interface RawSection {
   content: string
   confidence: NarrativeSection['confidence']
   supportingMetrics: string[]
+  opportunities?: { title: string; rationale: string; expectedImpact: string }[]
 }
 
 interface RawNarrativeOutput {
@@ -117,6 +122,10 @@ CONTINUITY RULES — these make the report feel like it was written by someone w
 6. If LAST MONTH'S NARRATIVE is provided, you MUST reference any promises or next steps that were stated. In the relevant section, explicitly state whether the promised action was taken and what the result was. Use language like "As we committed last month..." or "Following last month's plan to...".
 7. If MULTI-MONTH TRENDS are provided, reference them where relevant. A metric declining for 3 consecutive months is a pattern — say so. Don't treat each report as isolated data.
 8. If CLIENT GOALS are provided, explicitly evaluate progress toward them in the overview section. Are they on track? Behind? Ahead? Be specific about what the current numbers mean relative to the stated goal.
+9. If AGENCY MEMORY is provided, use it to write longitudinal narrative. For example: "This initiative began in January when we identified X. Since implementing the change, Y metric has improved from A to B — a Z% improvement over N reporting periods." This is the most powerful differentiator — use it whenever the data supports it.
+10. If PRIMARY KPIs are provided, structure every section around those metrics first. De-prioritise vanity metrics the client hasn't indicated they care about.
+11. If WHAT CHANGED is provided, mention it where relevant and note that it may affect how comparisons should be interpreted. Example: "Note: conversion tracking was updated on [date] — comparisons with prior periods should be interpreted with this in mind."
+12. If RECORDED WINS are provided, reference them to build a narrative of agency success over time.
 
 OUTPUT FORMAT: Respond with valid JSON only — no markdown, no preamble. Schema:
 {
@@ -125,10 +134,19 @@ OUTPUT FORMAT: Respond with valid JSON only — no markdown, no preamble. Schema
       "section": "<section_name>",
       "content": "<narrative text>",
       "confidence": "high" | "medium" | "low",
-      "supportingMetrics": ["<metric_name>", ...]
+      "supportingMetrics": ["<metric_name>", ...],
+      "opportunities": [
+        {
+          "title": "<specific recommended action>",
+          "rationale": "<data point that supports this>",
+          "expectedImpact": "<what outcome this could produce>"
+        }
+      ]
     }
   ]
-}`
+}
+
+The "opportunities" array is optional but encouraged where the data clearly supports a specific action. Max 2 opportunities per section. Only include when the data directly supports the recommendation — never speculate.`
 
 export async function generateNarrative(input: GenerateReportInput): Promise<NarrativeSection[]> {
   const { comparison, anomalies, context } = input
@@ -152,8 +170,12 @@ export async function generateNarrative(input: GenerateReportInput): Promise<Nar
     context.goals.length > 0 ? `CLIENT GOALS:\n${context.goals.map(g => `- ${g}`).join('\n')}` : null,
     context.sensitivities.length > 0 ? `SENSITIVITIES (never frame these negatively or mention without careful context):\n${context.sensitivities.map(s => `- ${s}`).join('\n')}` : null,
     context.reusableInstructions.length > 0 ? `STANDING INSTRUCTIONS:\n${context.reusableInstructions.map(r => `- ${r}`).join('\n')}` : null,
+    context.primaryKPIs.length > 0 ? `PRIMARY KPIs (what this client cares about most — lead every section with these metrics):\n${context.primaryKPIs.map(k => `- ${k}`).join('\n')}` : null,
     context.previousNarrativeSummary ? `LAST MONTH'S NARRATIVE (use this to follow up on promises and maintain continuity):\n${context.previousNarrativeSummary}` : null,
     context.multiMonthTrends ? `MULTI-MONTH TRENDS (reference these where relevant — patterns matter more than single-month moves):\n${context.multiMonthTrends}` : null,
+    context.agencyMemory ? `AGENCY MEMORY — FULL COMMITMENT HISTORY (use this to write sentences like "This initiative began in [month] when we..." or "Since implementing [action] in [month], [metric] has improved by X%"):\n${context.agencyMemory}` : null,
+    context.recentChanges.length > 0 ? `WHAT CHANGED THIS PERIOD (flag these in the relevant sections — they affect how data should be interpreted):\n${context.recentChanges.map(c => `- ${c}`).join('\n')}` : null,
+    context.wins.length > 0 ? `RECORDED WINS (reference these where relevant to show continuity of success):\n${context.wins.map(w => `- ${w}`).join('\n')}` : null,
     '',
     '--- DATA ---',
     '',
@@ -213,6 +235,7 @@ export async function generateNarrative(input: GenerateReportInput): Promise<Nar
     content: raw.content ?? '',
     confidence: (['high', 'medium', 'low'] as const).includes(raw.confidence) ? raw.confidence : 'low',
     supportingMetrics: Array.isArray(raw.supportingMetrics) ? raw.supportingMetrics : [],
+    opportunities: Array.isArray(raw.opportunities) ? raw.opportunities : [],
     isApproved: false,
     editedContent: null,
   }))
