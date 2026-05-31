@@ -106,11 +106,11 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
         return (
           <div
             key={key}
-            className={`flex items-center justify-between p-4 bg-white border rounded-lg ${isBroken ? 'border-amber-300 bg-amber-50' : ''}`}
+            className={`flex items-center justify-between p-4 bg-white border rounded-lg transition-colors ${isBroken ? 'border-red-300 bg-red-50' : ''}`}
           >
             <div className="flex items-center gap-3">
               {isBroken ? (
-                <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
+                <AlertTriangle className="h-5 w-5 text-red-500 shrink-0" />
               ) : isConnected ? (
                 <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
               ) : (
@@ -125,7 +125,7 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
                 </div>
                 <p className="text-xs text-gray-500">
                   {isBroken
-                    ? 'Connected but property not found — reconnect to fix'
+                    ? '⚠ Connection broken — click Reconnect to fix'
                     : isConnected
                     ? (conn.property_name ?? 'Connected')
                     : description}
@@ -163,12 +163,12 @@ export function ClientConnectionsPanel({ clientId, connections }: Props) {
                   <>
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant={isBroken ? 'default' : 'outline'}
                       onClick={() => handleConnect(key)}
-                      title="Reconnect"
+                      className={isBroken ? 'bg-red-600 hover:bg-red-700 text-white border-0' : ''}
                     >
                       <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-                      Reconnect
+                      {isBroken ? 'Fix connection' : 'Reconnect'}
                     </Button>
                     <Button
                       size="sm"

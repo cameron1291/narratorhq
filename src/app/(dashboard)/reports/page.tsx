@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { GeneratingRefresh } from '@/components/reports/generating-refresh'
 import { CheckCircle, Clock, AlertCircle, Send, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -70,8 +71,11 @@ export default async function ReportsPage() {
     )
   }
 
+  const hasGenerating = reports?.some(r => r.status === 'generating')
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      {hasGenerating && <GeneratingRefresh />}
       <h1 className="text-xl font-bold text-gray-900">Reports</h1>
 
       {drafts.length > 0 && (

@@ -22,10 +22,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ClientDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ tab?: string }>
 }) {
-  const { id } = await params
+  const [{ id }, { tab }] = await Promise.all([params, searchParams])
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -91,7 +93,7 @@ export default async function ClientDetailPage({
         />
       </div>
 
-      <Tabs defaultValue="connections">
+      <Tabs defaultValue={(['connections','context','intelligence','settings'].includes(tab ?? '') ? tab : 'connections') as string}>
         <TabsList className="mb-6 overflow-x-auto flex-nowrap">
           <TabsTrigger value="connections">Connections</TabsTrigger>
           <TabsTrigger value="context">Context</TabsTrigger>

@@ -66,15 +66,7 @@ export function GenerateReportButton({ clientId, hasGa4 }: GenerateReportButtonP
   if (!hasGa4) {
     return (
       <Link
-        href={`/clients/${clientId}`}
-        onClick={e => {
-          // If we're already on the client page, just switch to connections tab
-          if (typeof window !== 'undefined' && window.location.pathname === `/clients/${clientId}`) {
-            e.preventDefault()
-            const tab = document.querySelector('[data-state][value="connections"]') as HTMLElement
-            tab?.click()
-          }
-        }}
+        href={`/clients/${clientId}?tab=connections`}
         className="inline-flex items-center gap-2 text-sm font-medium border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 rounded-lg px-4 py-2 transition-colors"
       >
         <Link2 className="h-4 w-4" />
