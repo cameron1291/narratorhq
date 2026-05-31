@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -138,7 +139,7 @@ export function ClientSettingsPanel({ client }: Props) {
 
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={saving}>
-          {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save changes'}
+          {saving ? 'Saving…' : saved ? <><CheckCircle className="h-4 w-4 mr-1.5" />Saved</> : 'Save changes'}
         </Button>
       </div>
 

@@ -85,7 +85,7 @@ export default async function ReportsPage() {
       {rest.length > 0 && (
         <section>
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">All reports</h2>
-          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="bg-white border border-gray-200 rounded-xl overflow-hidden divide-y divide-gray-100">
             {rest.map(r => <ReportRow key={r.id} report={r} />)}
           </div>
         </section>

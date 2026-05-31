@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { Trash2, Crown, Shield, User } from 'lucide-react'
+import { Trash2, Crown, Shield, User, Copy, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Member {
@@ -46,6 +46,7 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
   const [inviteManualUrl, setInviteManualUrl] = useState<string | null>(null)
   const [removeTarget, setRemoveTarget] = useState<Member | null>(null)
   const [removing, setRemoving] = useState(false)
+  const [urlCopied, setUrlCopied] = useState(false)
 
   const canManage = ['owner', 'admin'].includes(currentUserRole)
 
@@ -202,11 +203,28 @@ export function TeamPanel({ currentUserId, currentUserRole, members: initialMemb
               {inviting ? 'Sending…' : inviteSuccess ? 'Sent!' : 'Send invite'}
             </Button>
           </div>
-          {inviteError && <p className="text-sm text-red-600 mt-2">{inviteError}</p>}
+          {inviteError && (
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mt-2">
+              {inviteError}
+            </div>
+          )}
           {inviteManualUrl && (
             <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-xs text-amber-800 font-medium mb-1">Email delivery failed — share this link manually:</p>
-              <code className="text-xs text-amber-900 break-all">{inviteManualUrl}</code>
+              <p className="text-xs text-amber-800 font-medium mb-2">Email delivery failed — share this link manually:</p>
+              <div className="flex items-center gap-2">
+                <code className="text-xs text-amber-900 break-all flex-1 bg-white border border-amber-200 rounded px-2 py-1.5">{inviteManualUrl}</code>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(inviteManualUrl)
+                    setUrlCopied(true)
+                    setTimeout(() => setUrlCopied(false), 2000)
+                  }}
+                  className="shrink-0 text-amber-700 hover:text-amber-900 transition-colors"
+                  title="Copy link"
+                >
+                  {urlCopied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
           )}
           <p className="text-xs text-gray-400 mt-2">Invite link valid for 7 days. Admins can invite and manage members. Owners can manage admins.</p>

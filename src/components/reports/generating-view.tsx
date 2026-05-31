@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { Loader2 } from 'lucide-react'
 import { GeneratingPoller } from './generating-poller'
 
 export function GeneratingView({ clientId }: { clientId: string }) {
@@ -31,8 +32,8 @@ export function GeneratingView({ clientId }: { clientId: string }) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12 text-center">
       <GeneratingPoller onTimeout={() => setTimedOut(true)} />
-      <div className="inline-flex items-center gap-2 text-gray-600">
-        <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="inline-flex items-center gap-2 text-gray-600" aria-live="polite">
+        <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
         Generating report…
       </div>
       <p className="text-sm text-gray-400 mt-2">This usually takes 10–15 seconds.</p>
