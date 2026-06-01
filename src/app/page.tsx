@@ -4,14 +4,14 @@ import { ArrowRight, CheckCircle, Circle, Shield, AlertTriangle, BookOpen, Targe
 
 export const metadata: Metadata = {
   title: 'NarratorHQ — Client Reports That Remember',
-  description: 'NarratorHQ remembers your client goals, promises, and sensitivities — so every monthly report feels like it was written by someone who has been there from the start. White-labeled, human-reviewed, delivered automatically.',
+  description: 'NarratorHQ remembers your client goals, promises, and sensitivities. Every monthly report reads like someone who actually knows the client wrote it. White-labeled, human-reviewed, delivered automatically.',
   keywords: 'client reporting automation, agency reporting software, marketing report automation, automated client reports, white label reporting, GA4 reporting, Google Ads reports, Meta Ads reports',
   alternates: {
     canonical: 'https://narratorhq.com',
   },
   openGraph: {
     title: 'NarratorHQ — Client Reports That Remember',
-    description: 'Most reporting tools show last month\'s numbers. NarratorHQ remembers what you promised, what you changed, and why — so every report builds on the last.',
+    description: 'Most reporting tools show last month\'s numbers. NarratorHQ remembers what you promised, what you changed, and why. So every report builds on the last.',
     url: 'https://narratorhq.com',
     type: 'website',
   },
@@ -227,8 +227,8 @@ export default function HomePage() {
         </h1>
         <p className="text-xl text-gray-500 mt-5 max-w-2xl mx-auto leading-relaxed">
           Most reporting tools show last month&apos;s numbers.
-          NarratorHQ remembers what you promised, what you changed, and why —
-          so every report builds on the last and your clients always feel informed, not just sent data.
+          NarratorHQ remembers what you promised, what you changed, and why.
+          So every report builds on the last, and your clients always feel looked after.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
           <Link

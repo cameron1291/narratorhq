@@ -367,7 +367,7 @@ export default function DemoPage() {
           {memoryExpanded && (
             <div className="px-4 pb-4 space-y-2 border-t border-purple-200">
               <p className="text-xs text-purple-600 pt-3 pb-1">
-                These items were stored from previous reports. NarratorHQ reads them before writing every section — so nothing slips through the cracks.
+                These items were stored from previous reports. NarratorHQ reads all of this before writing every section. Nothing slips through the cracks.
               </p>
               {CLIENT_MEMORY.map((item, i) => (
                 <div key={i} className="flex items-start gap-2.5 bg-white rounded-lg p-3 border border-purple-100">

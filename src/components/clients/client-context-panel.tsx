@@ -114,7 +114,7 @@ export function ClientContextPanel({ clientId, contextItems, instructions }: Pro
       <div>
         <h3 className="text-sm font-semibold text-gray-700 mb-1">Client context</h3>
         <p className="text-xs text-gray-500 mb-3">
-          Everything added here is fed into every report AI generation — automatically, every month.
+          Everything here feeds into every report generated for this client — automatically, every month.
         </p>
         <div className="grid grid-cols-2 gap-1.5 mb-4 text-xs">
           {[

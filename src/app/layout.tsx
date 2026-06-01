@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     default: 'NarratorHQ — Client Reporting Automation for Agencies',
     template: '%s | NarratorHQ',
   },
-  description: 'NarratorHQ automates client performance reports for digital marketing agencies. Connect GA4, Google Ads, and Meta — get a polished narrative in minutes, not hours.',
+  description: 'NarratorHQ automates client performance reports for digital marketing agencies. Connect GA4, Google Ads, and Meta. Get a polished narrative in minutes, not hours.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://narratorhq.com'),
   openGraph: {
     type: 'website',
