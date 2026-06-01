@@ -112,7 +112,7 @@ export default function BlogPost() {
               <li><strong>Confidence indicators.</strong> Flag sections where the model was less certain, so reviewers know where to spend time.</li>
               <li><strong>One-tap approve all.</strong> For clients where the AI consistently gets it right.</li>
             </ul>
-            <p className="mt-2">Target: under 5 minutes to review and approve a monthly report. That&apos;s the threshold where automation becomes genuinely transformative for agency margins.</p>
+            <p className="mt-2">Target: under 5 minutes to review and approve a monthly report. That&apos;s when automation actually changes the economics.</p>
           </section>
 
           <section>

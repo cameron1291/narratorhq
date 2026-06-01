@@ -54,7 +54,7 @@ export default function BlogPost() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">The three questions every client has every month</h2>
-            <p>Strip away the complexity of any client relationship and there are three questions that every client is asking every month, regardless of what sector they are in or how sophisticated they are about marketing:</p>
+            <p>Strip away everything and there are three questions every client is asking every month, regardless of sector or how much they know about marketing:</p>
             <ol className="list-decimal pl-6 space-y-2 mt-3">
               <li><strong>Did my marketing money work?</strong> Not &quot;what were the impressions,&quot; not &quot;what was the CTR.&quot; Did the money I spent on marketing this month produce a return I can justify to my board, my partner, or myself?</li>
               <li><strong>Why did X happen?</strong> Something changed. Traffic went up or down. Conversions improved or dropped. Spend delivered better or worse results than last month. Why?</li>

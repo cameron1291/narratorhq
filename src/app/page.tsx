@@ -26,7 +26,7 @@ const MEMORY_ITEMS = [
   {
     icon: Target,
     label: 'Client goals',
-    desc: 'What success looks like for this specific client — referenced every month. Behind or ahead? The report says so.',
+    desc: 'What success looks like for this specific client, referenced every month. Behind or ahead? The report says so.',
   },
   {
     icon: CheckCircle,
@@ -36,17 +36,17 @@ const MEMORY_ITEMS = [
   {
     icon: Brain,
     label: 'Primary KPIs',
-    desc: 'This client only cares about qualified leads — not clicks, not impressions. Every section leads with what they measure.',
+    desc: 'This client only cares about qualified leads. Not clicks, not impressions. Every section leads with what they measure.',
   },
   {
     icon: AlertTriangle,
     label: 'What Changed',
-    desc: 'Conversion tracking updated, budget cut, campaign restructured — logged once, flagged in every report it affects.',
+    desc: 'Conversion tracking updated, budget cut, campaign restructured. Logged once and flagged in every report it affects.',
   },
   {
     icon: Star,
     label: 'Wins recorded',
-    desc: 'CPA reduced 29% over Q1 — recorded and referenced in future reports. Your agency looks brilliant, consistently.',
+    desc: 'CPA reduced 29% over Q1. Recorded and referenced in future reports so your agency looks brilliant, consistently.',
   },
   {
     icon: Heart,
@@ -66,15 +66,15 @@ const COMPARISON_ROWS = [
   },
   {
     traditional: 'No memory of what was promised 3 months ago',
-    narrator: 'Full commitment history — "this initiative began in January..."',
+    narrator: 'Full commitment history: "this initiative began in January..."',
   },
   {
-    traditional: 'Just reports the data — no proactive recommendations',
-    narrator: 'Identifies opportunities: "Search drives 82% of conversions at 54% of spend — increase budget"',
+    traditional: 'Just reports the data, no proactive recommendations',
+    narrator: 'Identifies opportunities: "Search drives 82% of conversions at 54% of spend. Increase budget."',
   },
   {
     traditional: 'Bad months are written by whoever has time',
-    narrator: 'Bad months explained consistently — with data and a plan',
+    narrator: 'Bad months explained consistently, with data and a plan',
   },
   {
     traditional: '90 minutes per client to produce the narrative',
@@ -82,7 +82,7 @@ const COMPARISON_ROWS = [
   },
   {
     traditional: 'Context lives in the account manager\'s head',
-    narrator: 'Context lives in the system — survives staff changes',
+    narrator: 'Context lives in the system, not in anyone\'s head. Survives staff changes.',
   },
 ]
 
@@ -116,11 +116,11 @@ const GUARDRAILS = [
   },
   {
     title: 'Confidence scoring on every section',
-    desc: 'Each section is rated High / Review Recommended / Low Confidence — so you know where to spend your review time.',
+    desc: 'Each section is rated High / Review Recommended / Low Confidence, so you know exactly where to focus your review.',
   },
   {
-    title: 'Claims grounded in actual data',
-    desc: 'Every statement is backed by the numbers provided. No speculation without being flagged as such.',
+    title: 'Everything backed by your numbers',
+    desc: 'Every statement is tied to the data provided. If something is uncertain, it\'s flagged — never presented as fact.',
   },
   {
     title: 'Edit or regenerate any section',
@@ -137,7 +137,7 @@ const PLANS = [
 const FAQ = [
   {
     q: 'Does my client see NarratorHQ branding?',
-    a: 'No. Reports are sent from your agency name and email address. The PDF shows your logo and brand colour. Your client sees your work — not our tool.',
+    a: 'No. Reports are sent from your agency name and email address. The PDF shows your logo and brand colour. Your client sees your work, not our tool.',
   },
   {
     q: 'How does the Agency Memory Graph work?',
@@ -149,7 +149,7 @@ const FAQ = [
   },
   {
     q: 'What if it gets something wrong?',
-    a: 'Every section includes a confidence score. Low-confidence sections are flagged clearly. Human review is required — there is no auto-send. The system can\'t send anything without a person approving it first.',
+    a: 'Every section includes a confidence score. Low-confidence sections are flagged clearly. Human review is required and there is no auto-send. The system cannot send anything without a person approving it first.',
   },
   {
     q: 'What platforms does it connect to?',
@@ -483,8 +483,7 @@ export default function HomePage() {
               The Opportunity Engine
             </h2>
             <p className="text-gray-500 leading-relaxed mb-4">
-              Every section now includes AI-identified opportunities grounded in the actual data.
-              Specific, actionable, with the rationale shown.
+              Every section surfaces specific, actionable opportunities — backed by the actual numbers, with the rationale shown.
             </p>
             <p className="text-gray-500 leading-relaxed mb-4">
               Your account managers look like strategists — not just reporters.

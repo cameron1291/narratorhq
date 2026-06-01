@@ -101,10 +101,9 @@ export default function AboutPage() {
           </p>
 
           <p>
-            The operational inefficiency of manual reporting was visible from the outside: skilled account
-            managers spending significant time each month on copy-paste work that added no strategic value
-            to their clients. NarratorHQ was built to solve that — not as an AI experiment, but as a
-            practical tool that saves real hours and makes agencies look more strategic to their clients.
+            He watched skilled account managers lose hours every month to copy-paste work that added nothing
+            for their clients. NarratorHQ was built to fix that — not as an AI experiment, but as a
+            practical tool that saves real time and makes agencies look sharper to the people paying them.
           </p>
         </section>
 

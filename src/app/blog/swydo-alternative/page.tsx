@@ -110,7 +110,7 @@ export default function SwydoAlternativePage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">The one thing NarratorHQ adds</h2>
             <p>
-              The narrative. Not a template with boilerplate text — an actual written explanation of what happened, grounded in the data, referencing what you said last month, and written in the tone your client expects.
+              The narrative. Not a template with boilerplate text — an actual written explanation of what happened, backed by the data, referencing what you said last month, and written in the tone your client expects.
             </p>
             <p className="mt-3">
               NarratorHQ also stores client memory: goals set in onboarding, sensitivities (&quot;this client hates seeing bounce rate&quot;), and promises made in previous reports (&quot;we&apos;ll fix the mobile CPC issue by May&quot;). Every new report drafts knowing all of this.
