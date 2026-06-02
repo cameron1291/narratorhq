@@ -37,6 +37,12 @@ export async function POST(request: NextRequest, { params }: Params) {
   if (!report) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (report.status === 'sent') return NextResponse.json({ error: 'Already sent' }, { status: 409 })
 
+  // PDF-sourced reports have no stored metrics, so regeneration is not supported
+  const rawMetrics = report.raw_metrics as { source?: string } | null
+  if (rawMetrics?.source === 'pdf') {
+    return NextResponse.json({ error: 'Section regeneration is not available for PDF-imported reports. Edit the section directly instead.' }, { status: 422 })
+  }
+
   const { data: client } = await supabase
     .from('clients')
     .select('name, tone_override, goals')

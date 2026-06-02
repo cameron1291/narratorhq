@@ -7,6 +7,7 @@ import { ClientContextPanel } from '@/components/clients/client-context-panel'
 import { ClientConnectionsPanel } from '@/components/clients/client-connections-panel'
 import { ClientSettingsPanel } from '@/components/clients/client-settings-panel'
 import { GenerateReportButton } from '@/components/clients/generate-report-button'
+import { UploadPdfReportButton } from '@/components/clients/upload-pdf-report-button'
 import { ConnectionToast } from '@/components/clients/connection-toast'
 import { PromiseTracker } from '@/components/clients/promise-tracker'
 import Link from 'next/link'
@@ -87,10 +88,13 @@ export default async function ClientDetailPage({
             </Badge>
           </div>
         </div>
-        <GenerateReportButton
-          clientId={id}
-          hasGa4={connections.some(c => c.platform === 'ga4' && c.is_active)}
-        />
+        <div className="flex items-center gap-2">
+          <UploadPdfReportButton clientId={id} agencyId={agencyUser?.agency_id ?? ''} />
+          <GenerateReportButton
+            clientId={id}
+            hasGa4={connections.some(c => c.platform === 'ga4' && c.is_active)}
+          />
+        </div>
       </div>
 
       <Tabs defaultValue={(['connections','context','intelligence','settings'].includes(tab ?? '') ? tab : 'connections') as string}>

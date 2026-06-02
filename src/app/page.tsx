@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, CheckCircle, Circle, Shield, AlertTriangle, BookOpen, Target, Heart, Star, Clock, Zap, TrendingUp, Brain, BarChart3 } from 'lucide-react'
+import { ArrowRight, CheckCircle, Circle, Shield, AlertTriangle, BookOpen, Target, Heart, Star, Clock, Zap, TrendingUp, Brain, BarChart3, FileUp } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'NarratorHQ — Client Reports That Remember',
@@ -90,7 +90,7 @@ const HOW_IT_WORKS = [
   {
     step: '1',
     title: 'Connect your client accounts',
-    desc: 'Link GA4, Google Ads, Meta, and TikTok via OAuth in under 2 minutes. No manual data exports.',
+    desc: 'Link GA4, Google Ads, Meta, and TikTok via OAuth in under 2 minutes. Or upload an existing PDF report to get started immediately — no connections needed.',
   },
   {
     step: '2',
@@ -154,6 +154,10 @@ const FAQ = [
   {
     q: 'What platforms does it connect to?',
     a: 'GA4, Google Ads, Meta Ads, and TikTok Ads. Microsoft Ads and LinkedIn Ads are on the roadmap.',
+  },
+  {
+    q: 'Can I try it without connecting my ad accounts?',
+    a: 'Yes. Upload any existing client report PDF and NarratorHQ will read it, extract the KPIs, and generate a structured draft — Executive Summary, Wins, Issues, and Recommendations. It\'s the fastest way to see what the product does with a real client, before touching any OAuth connections.',
   },
   {
     q: 'Is there a minimum contract?',
@@ -643,6 +647,47 @@ export default function HomePage() {
                 <span className="text-amber-400 font-semibold uppercase text-xs tracking-wider block mb-1.5">What we&apos;re doing</span>
                 <p className="text-gray-300">Content audit of affected pages by April 7th · Increase paid budget by 15% to cover organic shortfall while recovery happens · Weekly ranking check-ins until positions stabilise</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PDF import callout */}
+      <section className="max-w-5xl mx-auto px-4 py-16">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-8 md:p-10">
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            <div className="h-12 w-12 rounded-xl bg-blue-600 flex items-center justify-center shrink-0">
+              <FileUp className="h-6 w-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full px-3 py-1 mb-3">
+                No connections needed
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                Already have client reports? Upload one.
+              </h2>
+              <p className="text-gray-600 leading-relaxed mb-5">
+                Upload any existing PDF report and NarratorHQ reads it, extracts the KPIs, and generates a structured draft in under 60 seconds — Executive Summary, Wins, Issues, and Recommendations. No GA4, no Ads connections required. It&apos;s the fastest way to see what the product does with a real client.
+              </p>
+              <div className="grid sm:grid-cols-3 gap-3 mb-6 text-sm">
+                {[
+                  { label: 'Upload', desc: 'Any existing PDF report' },
+                  { label: 'Read', desc: 'NarratorHQ extracts the KPIs' },
+                  { label: 'Review', desc: 'Edit, approve, and send' },
+                ].map((item, i) => (
+                  <div key={i} className="bg-white rounded-lg border border-blue-100 p-3">
+                    <p className="font-semibold text-gray-900 text-xs uppercase tracking-wide mb-1">{item.label}</p>
+                    <p className="text-gray-500 text-xs">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                Try it free
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </div>

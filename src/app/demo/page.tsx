@@ -571,6 +571,20 @@ export default function DemoPage() {
           )}
         </div>
 
+        {/* PDF import callout */}
+        <div className="bg-white border border-blue-200 rounded-2xl p-6 text-center">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 mb-3">
+            No connections needed
+          </div>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Already have a client report? Upload it.</h2>
+          <p className="text-sm text-gray-500 mb-4 max-w-sm mx-auto">
+            Upload any existing PDF report and NarratorHQ reads it, extracts the KPIs, and generates this exact draft structure — in under 60 seconds. No GA4 or Ads connections required.
+          </p>
+          <Link href="/signup" className="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+            Try it with a PDF
+          </Link>
+        </div>
+
         {/* CTA */}
         <div className="bg-blue-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-xl font-bold mb-2">Ready to do this for your clients?</h2>
