@@ -171,6 +171,88 @@ const CONFIDENCE_CONFIG = {
   low: { label: 'Low confidence — please review carefully', color: 'text-red-700 bg-red-50 border-red-200' },
 }
 
+const MEMORY_TIMELINE = [
+  {
+    id: 'jan',
+    label: 'Month 1',
+    month: 'January',
+    cpa: '£52',
+    status: 'Goal set',
+    statusColor: 'text-gray-600 bg-gray-100 border-gray-300',
+    excerpt: "January was a solid month for lead volume, but CPA remains a concern at £52 — above our £45 target. The primary driver of high cost is inefficient broad match terms pulling in low-intent traffic. We have set a clear objective for Q1: get CPA below £45. We will begin with a keyword restructure in February and report back on progress.",
+    highlight: null,
+    annotation: null,
+    memoryItems: [
+      { type: 'goal', label: 'Goal', color: 'bg-green-100 text-green-800', text: 'Reduce CPA below £45 before end of Q1.' },
+    ],
+    memoryExplainer: "Month 1 — nothing has been referenced yet. The goal is now stored and will inform every report from here.",
+  },
+  {
+    id: 'feb',
+    label: 'Month 2',
+    month: 'February',
+    cpa: '£47',
+    status: 'Progress made',
+    statusColor: 'text-amber-700 bg-amber-50 border-amber-200',
+    excerpt: "Following our January commitment to address the high CPA, the keyword restructure was completed on 8 February. CPA has improved from £52 to £47 — meaningful progress, but the £45 target is not yet achieved. We expect to reach it in March as the restructured campaigns build quality score. We will report back on this specifically next month.",
+    highlight: "Following our January commitment to address the high CPA",
+    annotation: "Referenced January's stored goal — automatically, without prompting",
+    memoryItems: [
+      { type: 'goal', label: 'Goal', color: 'bg-green-100 text-green-800', text: 'Reduce CPA below £45 before end of Q1.' },
+      { type: 'promise', label: 'Promise', color: 'bg-blue-100 text-blue-800', text: 'Keyword restructure complete — targeting sub-£45 CPA by March.' },
+    ],
+    memoryExplainer: "NarratorHQ knew about January's goal and referenced it in the February draft. You didn't remind it — it remembered.",
+  },
+  {
+    id: 'mar',
+    label: 'Month 3',
+    month: 'March',
+    cpa: '£42',
+    status: 'Goal achieved ✓',
+    statusColor: 'text-green-700 bg-green-50 border-green-200',
+    excerpt: "CPA reached £42 this month — below the £45 target we set in January for the first time. This closes the objective we committed to two months ago. The keyword restructure completed in February delivered a £10 CPA reduction from the January baseline. We have recorded this as a win and will continue optimising toward the next milestone.",
+    highlight: "below the £45 target we set in January for the first time. This closes the objective we committed to two months ago.",
+    annotation: "Closed the loop on January's goal — said \"two months ago\" because it knew the timeline",
+    memoryItems: [
+      { type: 'goal', label: 'Goal', color: 'bg-green-100 text-green-800', text: 'Reduce CPA below £45 — achieved March.' },
+      { type: 'promise', label: 'Promise', color: 'bg-blue-100 text-blue-800', text: 'Keyword restructure complete — CPA target achieved.' },
+      { type: 'win', label: 'Win', color: 'bg-emerald-100 text-emerald-800', text: 'CPA £42 — below £45 target, first time. March.' },
+    ],
+    memoryExplainer: "NarratorHQ knew the goal was set in January and the promise made in February. It closed the loop explicitly — including the months — without being told to.",
+  },
+  {
+    id: 'jun',
+    label: 'Month 6',
+    month: 'June',
+    cpa: '£40',
+    status: '6-month memory',
+    statusColor: 'text-purple-700 bg-purple-50 border-purple-200',
+    excerpt: "This initiative began in January when CPA was running at £52 against a £45 target. Following the keyword restructure completed in February and the landing page improvements we proposed in March, CPA has now reached £40 — a 23% reduction over six reporting periods. What started as a flagged problem in the first report has become one of the most significant performance improvements in this account.",
+    highlight: "This initiative began in January when CPA was running at £52 against a £45 target. Following the keyword restructure completed in February and the landing page improvements we proposed in March, CPA has now reached £40 — a 23% reduction over six reporting periods.",
+    annotation: "Wrote the full initiative arc — start, actions, outcome, months, percentages — from 6 months of stored context",
+    memoryItems: [
+      { type: 'goal', label: 'Goal', color: 'bg-green-100 text-green-800', text: 'Reduce CPA below £45 — achieved March.' },
+      { type: 'win', label: 'Win', color: 'bg-emerald-100 text-emerald-800', text: 'CPA £42 — below £45 target, first time. March.' },
+      { type: 'promise', label: 'Promise', color: 'bg-blue-100 text-blue-800', text: 'Landing page improvements proposed March — referenced June.' },
+      { type: 'win', label: 'Win', color: 'bg-emerald-100 text-emerald-800', text: 'CPA £40 — 23% reduction from January baseline.' },
+    ],
+    memoryExplainer: "No account manager writes this consistently across 15 clients. NarratorHQ read 6 months of approved reports and wrote the full initiative arc — specific months, specific numbers, specific actions — automatically.",
+  },
+]
+
+function WithHighlight({ text, highlight }: { text: string; highlight: string | null }) {
+  if (!highlight) return <span className="text-gray-300">{text}</span>
+  const idx = text.indexOf(highlight)
+  if (idx === -1) return <span className="text-gray-300">{text}</span>
+  return (
+    <>
+      <span className="text-gray-300">{text.slice(0, idx)}</span>
+      <mark className="bg-purple-500/30 text-purple-200 rounded px-0.5 not-italic">{highlight}</mark>
+      <span className="text-gray-300">{text.slice(idx + highlight.length)}</span>
+    </>
+  )
+}
+
 function SignupPrompt({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
@@ -252,6 +334,7 @@ export default function DemoPage() {
   const [showSignup, setShowSignup] = useState(false)
   const [regenSection, setRegenSection] = useState<string | null>(null)
   const [memoryExpanded, setMemoryExpanded] = useState(false)
+  const [selectedMonth, setSelectedMonth] = useState('jan')
 
   const approvedCount = Object.values(sectionStates).filter(s => s.isApproved).length
   const allApproved = approvedCount === DEMO_SECTIONS.length
@@ -299,6 +382,104 @@ export default function DemoPage() {
           </Link>
         </div>
       </nav>
+
+      {/* ── CLIENT MEMORY TIMELINE ── */}
+      <section className="bg-white border-b border-gray-100 py-12">
+        <div className="max-w-4xl mx-auto px-4">
+
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-200 rounded-full px-3 py-1 mb-4">
+              <Brain className="h-3.5 w-3.5" />
+              Client Memory in action
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Watch how 6 months of memory changes the writing</h2>
+            <p className="text-sm text-gray-500 max-w-lg mx-auto">
+              Hartley Bathrooms. One CPA goal set in January. Click through the months and watch how NarratorHQ remembers, tracks, and references it — automatically.
+            </p>
+          </div>
+
+          {/* CPA journey */}
+          <div className="flex items-center justify-center gap-2 mb-7">
+            {MEMORY_TIMELINE.map((m, i) => (
+              <div key={m.id} className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedMonth(m.id)}
+                  className={cn(
+                    'flex flex-col items-center px-4 py-2.5 rounded-xl border transition-all text-center',
+                    selectedMonth === m.id
+                      ? 'bg-gray-900 text-white border-gray-900 shadow-md'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  )}
+                >
+                  <span className={cn('text-lg font-bold', selectedMonth === m.id ? 'text-white' : 'text-gray-900')}>{m.cpa}</span>
+                  <span className={cn('text-xs', selectedMonth === m.id ? 'text-gray-300' : 'text-gray-500')}>{m.month}</span>
+                </button>
+                {i < MEMORY_TIMELINE.length - 1 && (
+                  <ChevronRight className="h-4 w-4 text-gray-300 shrink-0" />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Active month */}
+          {MEMORY_TIMELINE.filter(m => m.id === selectedMonth).map(m => (
+            <div key={m.id} className="grid md:grid-cols-5 gap-4">
+
+              {/* Report excerpt */}
+              <div className="md:col-span-3 bg-gray-900 rounded-2xl p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-0.5">Hartley Bathrooms — {m.month} 2026</p>
+                    <p className="text-xs text-gray-600">Google Ads · AI-generated draft</p>
+                  </div>
+                  <span className={cn('text-xs font-semibold border rounded-full px-2.5 py-1 shrink-0', m.statusColor)}>
+                    {m.status}
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed">
+                  <WithHighlight text={m.excerpt} highlight={m.highlight} />
+                </p>
+                {m.annotation && (
+                  <div className="flex items-start gap-2 mt-4 pt-4 border-t border-gray-800">
+                    <Brain className="h-3.5 w-3.5 text-purple-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-purple-400 leading-relaxed">{m.annotation}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Memory panel */}
+              <div className="md:col-span-2 flex flex-col gap-3">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 flex-1">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Stored in memory</p>
+                  <div className="space-y-2">
+                    {m.memoryItems.map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className={cn('text-xs font-medium px-1.5 py-0.5 rounded shrink-0', item.color)}>{item.label}</span>
+                        <p className="text-xs text-gray-600 leading-relaxed">{item.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-purple-50 border border-purple-200 rounded-2xl p-4">
+                  <p className="text-xs font-semibold text-purple-700 uppercase tracking-wider mb-2">What this enabled</p>
+                  <p className="text-xs text-purple-800 leading-relaxed">{m.memoryExplainer}</p>
+                </div>
+              </div>
+
+            </div>
+          ))}
+
+          <p className="text-center text-sm text-gray-500 mt-7">
+            No agency account manager writes this consistently across 15 clients every month.
+            <Link href="/signup" className="text-blue-600 hover:underline ml-1 font-medium">Start your free trial →</Link>
+          </p>
+        </div>
+      </section>
+
+      {/* ── APPROVAL QUEUE DEMO ── */}
+      <div className="bg-blue-600 text-white text-center py-2.5 text-sm font-medium">
+        Now see how you review and approve in minutes
+      </div>
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
 
