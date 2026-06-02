@@ -116,9 +116,9 @@ export default function PrivacyPage() {
             <h3 className="text-base font-semibold text-gray-800 mb-2">Account data</h3>
             <p>When you sign up, we collect your email address, full name, and agency name. We use this to authenticate your account and send product and transactional emails.</p>
 
-            <h3 className="text-base font-semibold text-gray-800 mb-2 mt-4">Meta Ads data</h3>
+            <h3 className="text-base font-semibold text-gray-800 mb-2 mt-4">Meta Ads and TikTok Ads data</h3>
             <p>
-              If you connect Meta Ads via a system user access token, we access campaign and ad set performance metrics (spend, impressions, CPA, ROAS) from the Meta Marketing API. This data is used exclusively for report generation. The same Limited Use principles described above apply.
+              If you connect Meta Ads or TikTok Ads via a system user access token, we access campaign and ad set performance metrics (spend, impressions, CPA, ROAS) from the Meta Marketing API and TikTok Ads API respectively. This data is used exclusively for report generation and is never sold, shared with third parties, or used to train machine learning models. The same Limited Use principles described above apply.
             </p>
 
             <h3 className="text-base font-semibold text-gray-800 mb-2 mt-4">Usage data</h3>
@@ -145,7 +145,7 @@ export default function PrivacyPage() {
               Data sent to the Claude API is governed by{' '}
               <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                 Anthropic&apos;s Privacy Policy
-              </a>. Anthropic does not use API data to train models by default.
+              </a>. Anthropic does not use API data to train models. Data sent to Anthropic is used solely to generate the report narrative and for no other purpose.
             </p>
           </section>
 
@@ -171,6 +171,7 @@ export default function PrivacyPage() {
               <li><strong>Anthropic (Claude API)</strong> — AI narrative generation from anonymised metrics</li>
               <li><strong>Google APIs</strong> — GA4 and Google Ads data access (read-only, report generation only)</li>
               <li><strong>Meta Marketing API</strong> — Meta Ads data access (read-only, report generation only)</li>
+              <li><strong>TikTok Ads API</strong> — TikTok Ads data access (read-only, report generation only)</li>
             </ul>
           </section>
 
