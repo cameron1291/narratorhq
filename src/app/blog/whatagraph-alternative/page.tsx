@@ -114,9 +114,16 @@ export default function ComparisonPage() {
             <p className="mt-2">Some agencies use both. Whatagraph handles the always-on dashboard that clients check day to day; NarratorHQ handles the monthly written report that the account manager signs off and sends. They serve different moments in the client relationship, and there&apos;s no rule that says you have to pick one.</p>
           </section>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mt-10">
+          <section className="bg-amber-50 border border-amber-200 rounded-xl p-6 mt-10">
+            <h3 className="font-bold text-gray-900 mb-2">Already using Whatagraph? Upload one of your existing PDFs.</h3>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              If you&apos;re currently exporting monthly PDFs from Whatagraph, you can upload one directly to NarratorHQ. We&apos;ll read it, extract the KPIs, and produce a structured narrative draft — Executive Summary, Wins, Issues, and Recommendations — in under 60 seconds. No need to reconnect your data sources to see what NarratorHQ does with a real client.
+            </p>
+          </section>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mt-6">
             <h3 className="font-bold text-gray-900 mb-2">See what NarratorHQ generates</h3>
-            <p className="text-sm text-gray-600 mb-4">Read a real example of an AI-generated client report, or connect GA4 and get your first narrative automatically. 14-day free trial, no credit card.</p>
+            <p className="text-sm text-gray-600 mb-4">Upload an existing PDF, read a report example, or connect GA4 and get your first narrative automatically. 14-day free trial, no credit card.</p>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/report-example"

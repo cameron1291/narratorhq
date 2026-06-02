@@ -140,9 +140,16 @@ export default function LookerStudioAlternativePage() {
             </div>
           </section>
 
-          <div className="bg-blue-600 rounded-2xl p-8 text-center text-white mt-8">
+          <section className="bg-amber-50 border border-amber-200 rounded-xl p-6 mt-8">
+            <h3 className="font-bold text-gray-900 mb-2">Already using Looker Studio? Upload one of your existing PDFs.</h3>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              If your team is already exporting monthly PDF reports from Looker Studio, you can upload one directly to NarratorHQ. We&apos;ll read it, extract the KPIs, and generate a structured draft — Executive Summary, Wins, Issues, and Recommendations — in under 60 seconds. No need to rebuild your data connections to see what NarratorHQ does with a real client.
+            </p>
+          </section>
+
+          <div className="bg-blue-600 rounded-2xl p-8 text-center text-white mt-6">
             <h2 className="text-xl font-bold mb-2">Try NarratorHQ free for 14 days</h2>
-            <p className="text-blue-100 text-sm mb-6">No credit card required. Generate your first client report in under 30 seconds.</p>
+            <p className="text-blue-100 text-sm mb-6">Upload an existing PDF or connect GA4 in minutes. No credit card required.</p>
             <Link href="/signup" className="inline-block bg-white text-blue-600 font-semibold px-8 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm">
               Start free trial
             </Link>

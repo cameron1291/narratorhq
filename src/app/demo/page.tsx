@@ -572,13 +572,11 @@ export default function DemoPage() {
         </div>
 
         {/* PDF import callout */}
-        <div className="bg-white border border-blue-200 rounded-2xl p-6 text-center">
-          <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 mb-3">
-            No connections needed
-          </div>
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Already have a client report? Upload it.</h2>
-          <p className="text-sm text-gray-500 mb-4 max-w-sm mx-auto">
-            Upload any existing PDF report and NarratorHQ reads it, extracts the KPIs, and generates this exact draft structure — in under 60 seconds. No GA4 or Ads connections required.
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+          <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Already using Looker Studio, AgencyAnalytics, Whatagraph, or DashThis?</p>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Upload an existing PDF report and see this in 60 seconds.</h2>
+          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+            If your team already exports monthly PDF reports from another tool, you can upload one directly. NarratorHQ reads it, extracts the KPIs, and generates this exact draft structure — Executive Summary, Wins, Issues, and Recommendations. No GA4 connections, no OAuth setup. Your existing report is enough to get started.
           </p>
           <Link href="/signup" className="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors text-sm">
             Try it with a PDF

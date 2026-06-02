@@ -116,9 +116,16 @@ export default function ComparisonPage() {
             <p>Yes. Agencies sometimes use DashThis for clients who want a live dashboard they can check at any time, and NarratorHQ for the monthly narrative that gets emailed. They serve different formats of the same information.</p>
           </section>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mt-10">
-            <h3 className="font-bold text-gray-900 mb-2">See NarratorHQ with your own data</h3>
-            <p className="text-sm text-gray-600 mb-4">Connect GA4 in under 2 minutes. Your first report is generated automatically. 14-day free trial, no credit card.</p>
+          <section className="bg-amber-50 border border-amber-200 rounded-xl p-6 mt-10">
+            <h3 className="font-bold text-gray-900 mb-2">Already using DashThis? Upload one of your existing PDFs.</h3>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              If you&apos;re currently exporting monthly PDFs from DashThis, you can upload one directly to NarratorHQ. We&apos;ll read it, extract the KPIs, and generate a structured draft — Executive Summary, Wins, Issues, and Recommendations — in under 60 seconds. No need to reconnect your data sources to get started.
+            </p>
+          </section>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mt-6">
+            <h3 className="font-bold text-gray-900 mb-2">Try it with your own clients</h3>
+            <p className="text-sm text-gray-600 mb-4">Upload an existing PDF or connect GA4 in under 2 minutes. 14-day free trial, no credit card.</p>
             <Link
               href="/signup"
               className="inline-block bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"

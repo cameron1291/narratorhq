@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Users, Archive } from 'lucide-react'
+import { Users, Archive, FileUp } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { AddClientDialog } from '@/components/clients/add-client-dialog'
 
@@ -60,9 +60,9 @@ export default async function ClientsPage() {
           <div className="space-y-3 mb-8">
             {[
               { step: 1, title: 'Add a client', desc: 'Enter their name, industry, and report email address.', done: false },
-              { step: 2, title: 'Connect Google Analytics 4', desc: 'OAuth takes under 2 minutes. NarratorHQ reads data but never modifies anything.', done: false },
+              { step: 2, title: 'Connect GA4 — or upload an existing PDF', desc: 'Connect GA4 via OAuth in under 2 minutes. Or skip straight to "Import from PDF" on the client page to analyse a report you already have.', done: false },
               { step: 3, title: 'Add client context (optional)', desc: 'Goals, sensitivities, promises — the system carries these into every report.', done: false },
-              { step: 4, title: 'Generate the first report', desc: 'Select the date range. Generation takes 15–30 seconds.', done: false },
+              { step: 4, title: 'Generate the first report', desc: 'Select the date range. Generation takes 15–40 seconds.', done: false },
               { step: 5, title: 'Review, approve, and send', desc: 'Edit any section inline. Approve it. Send white-labeled to your client.', done: false },
             ].map(item => (
               <div key={item.step} className="flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-xl">
@@ -76,6 +76,15 @@ export default async function ClientsPage() {
               </div>
             ))}
           </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+            <FileUp className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-800 leading-relaxed">
+              <strong>Already using Looker Studio, AgencyAnalytics, Whatagraph, or DashThis?</strong>{' '}
+              Add a client, then click <strong>Import from PDF</strong> on their page. Upload your existing monthly PDF export and get a NarratorHQ draft in under 60 seconds — no OAuth needed.
+            </p>
+          </div>
+
           <div className="text-center">
             <AddClientDialog
               agencyId={agencyUser?.agency_id ?? ''}

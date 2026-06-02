@@ -663,11 +663,12 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-700 bg-blue-100 rounded-full px-3 py-1 mb-3">
                 No connections needed
               </div>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Already using Looker Studio, AgencyAnalytics, Whatagraph, or DashThis?</p>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                Already have client reports? Upload one.
+                Upload an existing client PDF and see the output in 60 seconds.
               </h2>
               <p className="text-gray-600 leading-relaxed mb-5">
-                Upload any existing PDF report and NarratorHQ reads it, extracts the KPIs, and generates a structured draft in under 60 seconds — Executive Summary, Wins, Issues, and Recommendations. No GA4, no Ads connections required. It&apos;s the fastest way to see what the product does with a real client.
+                If your team already exports monthly PDF reports from another tool, upload one directly. NarratorHQ reads it, extracts the KPIs, and generates a structured draft — Executive Summary, Wins, Issues, and Recommendations. No GA4, no OAuth, no reconnecting anything. Your existing report is enough to get started.
               </p>
               <div className="grid sm:grid-cols-3 gap-3 mb-6 text-sm">
                 {[
