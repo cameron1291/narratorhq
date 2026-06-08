@@ -383,6 +383,49 @@ export default function DemoPage() {
         </div>
       </nav>
 
+      {/* ── CLIENT MEMORY PANEL — first thing users see ── */}
+      <section className="bg-white border-b border-gray-100 py-12">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="text-center mb-7">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-200 rounded-full px-3 py-1 mb-4">
+              <Brain className="h-3.5 w-3.5" />
+              Client Intelligence
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">This is what NarratorHQ stores for every client</h2>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              Set once. Used in every report, review and handover — automatically.
+            </p>
+          </div>
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+              <div className="flex items-center gap-2">
+                <Brain className="h-4 w-4 text-purple-600" />
+                <span className="text-sm font-semibold text-gray-900">Meridian Home &amp; Garden — Client Memory</span>
+              </div>
+              <span className="text-xs text-purple-700 bg-purple-50 border border-purple-200 rounded-full px-2.5 py-0.5 font-medium">5 items active</span>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {[
+                { label: 'Goal', color: 'bg-green-100 text-green-800', text: 'Reach 100 qualified leads/month by Q2 2026' },
+                { label: 'Promise', color: 'bg-blue-100 text-blue-800', text: 'Reduce mobile CPA — currently 41% above desktop' },
+                { label: 'Stakeholder', color: 'bg-violet-100 text-violet-800', text: 'CFO prefers plain English — never mention CTR or impressions' },
+                { label: 'Change', color: 'bg-orange-100 text-orange-800', text: 'Google Ads budget increased 20% on 14 March' },
+                { label: 'Win', color: 'bg-emerald-100 text-emerald-800', text: 'Mobile CPA reduced 41% following bid modifier restructure' },
+              ].map(item => (
+                <div key={item.label} className="flex items-start gap-3 px-5 py-3.5">
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 mt-0.5 ${item.color}`}>{item.label}</span>
+                  <p className="text-sm text-gray-700 leading-relaxed">{item.text}</p>
+                </div>
+              ))}
+            </div>
+            <div className="px-5 py-3 border-t border-gray-100 bg-purple-50 flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 text-purple-600 shrink-0" />
+              <p className="text-xs text-purple-800 font-medium">All 5 items referenced in this month&apos;s report — automatically, without prompting</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── CLIENT MEMORY TIMELINE ── */}
       <section className="bg-white border-b border-gray-100 py-12">
         <div className="max-w-4xl mx-auto px-4">

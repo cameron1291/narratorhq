@@ -3,22 +3,22 @@ import Link from 'next/link'
 import { ArrowRight, CheckCircle, Circle, Shield, AlertTriangle, BookOpen, Target, Heart, Star, Clock, Zap, TrendingUp, Brain, BarChart3, FileUp } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'NarratorHQ — Client Reports That Remember',
-  description: 'NarratorHQ remembers your client goals, promises, and sensitivities. Every monthly report reads like someone who actually knows the client wrote it. White-labeled, human-reviewed, delivered automatically.',
-  keywords: 'client reporting automation, agency reporting software, marketing report automation, automated client reports, white label reporting, GA4 reporting, Google Ads reports, Meta Ads reports',
+  title: 'NarratorHQ — Every Client Relationship. Fully Remembered.',
+  description: 'NarratorHQ remembers every goal, promise, campaign decision and stakeholder preference across every client. That context feeds automatically into every report, review and handover.',
+  keywords: 'agency knowledge management, client context management, account manager handover, client reporting continuity, agency client intelligence, marketing report automation, white label reporting',
   alternates: {
     canonical: 'https://narratorhq.com',
   },
   openGraph: {
-    title: 'NarratorHQ — Client Reports That Remember',
-    description: 'Most reporting tools show last month\'s numbers. NarratorHQ remembers what you promised, what you changed, and why. So every report builds on the last.',
+    title: 'NarratorHQ — Every Client Relationship. Fully Remembered.',
+    description: 'NarratorHQ remembers every goal, promise, campaign decision and stakeholder preference across every client. That context feeds automatically into every report, review and handover.',
     url: 'https://narratorhq.com',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NarratorHQ — Client Reports That Remember',
-    description: 'Most reporting tools show last month\'s numbers. NarratorHQ remembers what you promised, what you changed, and why.',
+    title: 'NarratorHQ — Every Client Relationship. Fully Remembered.',
+    description: 'NarratorHQ remembers every goal, promise, campaign decision and stakeholder preference across every client — automatically.',
   },
 }
 
@@ -86,28 +86,30 @@ const COMPARISON_ROWS = [
   },
 ]
 
-const HOW_IT_WORKS = [
-  {
-    step: '1',
-    title: 'Connect your client accounts',
-    desc: 'Link GA4, Google Ads, Meta, and TikTok via OAuth in under 2 minutes. Or upload an existing PDF report to get started immediately — no connections needed.',
-  },
-  {
-    step: '2',
-    title: 'Add client context once',
-    desc: 'Set goals, sensitivities, promises, and standing instructions. The system carries these forward every month.',
-  },
-  {
-    step: '3',
-    title: 'Review the draft',
-    desc: 'Each report arrives section by section. Confidence scores show where to look. Edit anything in-line.',
-  },
-  {
-    step: '4',
-    title: 'Send white-labeled',
-    desc: 'White-labeled PDF and email from your agency name. Your client never sees NarratorHQ.',
-  },
-]
+const AGENCY_MEMORY_LAYER = {
+  connect: [
+    { label: 'GA4', desc: 'Sessions, conversions, organic performance' },
+    { label: 'Google Ads', desc: 'Spend, CPA, ROAS, campaign performance' },
+    { label: 'Meta Ads', desc: 'Campaign metrics, creative performance' },
+    { label: 'TikTok Ads', desc: 'CPA, CTR, creative performance' },
+  ],
+  store: [
+    'Goals & targets',
+    'Promises made',
+    'Decisions taken',
+    'Campaign changes',
+    'Stakeholder preferences',
+    'Recorded wins',
+    'Previous recommendations',
+  ],
+  generate: [
+    'Monthly reports',
+    'Account handover documents',
+    'Quarterly reviews',
+    'Client briefings',
+    'QBR narratives',
+  ],
+}
 
 const GUARDRAILS = [
   {
@@ -195,7 +197,10 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/"><img src="/logo.png" alt="NarratorHQ" className="h-14 w-auto" /></Link>
           <div className="flex items-center gap-4">
-            <Link href="/report-example" className="text-sm text-gray-600 hover:text-gray-900 transition-colors hidden sm:block">
+            <Link href="/client-memory" className="text-sm text-gray-600 hover:text-gray-900 transition-colors hidden sm:block">
+              Client Memory
+            </Link>
+            <Link href="/report-example" className="text-sm text-gray-600 hover:text-gray-900 transition-colors hidden md:block">
               Sample report
             </Link>
             <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
@@ -227,12 +232,11 @@ export default function HomePage() {
           14-day free trial · No credit card required
         </div>
         <h1 className="text-5xl font-bold text-gray-900 leading-tight tracking-tight">
-          Reports that remember.
+          Every client relationship.<br />Fully remembered.
         </h1>
         <p className="text-xl text-gray-500 mt-5 max-w-2xl mx-auto leading-relaxed">
-          Most reporting tools show last month&apos;s numbers.
-          NarratorHQ remembers what you promised, what you changed, and why.
-          So every report builds on the last, and your clients always feel looked after.
+          NarratorHQ remembers every goal, promise, campaign decision and stakeholder preference
+          across every client. That context feeds automatically into every report, review and handover.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
           <Link
@@ -252,66 +256,38 @@ export default function HomePage() {
         <p className="text-sm text-gray-400 mt-4">14 days free, then from £149/mo · No credit card required</p>
       </section>
 
-      {/* Promise kept — inline demo mockup */}
-      <section className="max-w-4xl mx-auto px-4 pb-20">
-        <div className="bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-          {/* Window chrome */}
-          <div className="bg-gray-800 px-5 py-3 flex items-center gap-2 border-b border-gray-700">
-            <div className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-            <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
-            <div className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
-            <span className="text-xs text-gray-500 ml-3">May 2026 Report — Thornton Kitchens</span>
+      {/* Client Memory Panel — hero visual */}
+      <section className="max-w-2xl mx-auto px-4 pb-20">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+          <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+            <div className="flex items-center gap-2">
+              <Brain className="h-4 w-4 text-purple-600" />
+              <span className="text-sm font-semibold text-gray-900">Client Intelligence — Thornton Kitchens</span>
+            </div>
+            <span className="text-xs text-purple-700 bg-purple-50 border border-purple-200 rounded-full px-2.5 py-0.5 font-medium">5 items stored</span>
           </div>
-
-          <div className="p-8 space-y-6 text-sm leading-relaxed">
-            {/* Overview section */}
-            <div>
-              <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-2">Overview</span>
-              <p className="text-gray-300">
-                May was a strong month across the board — organic sessions up 22% and paid CPA fell to £31,
-                the lowest since we launched the Google Ads restructure in February. The kitchen renovation
-                content cluster we prioritised in Q1 is now the top converting entry point on the site.
-              </p>
-            </div>
-
-            {/* Promise kept callout */}
-            <div className="bg-green-900/40 border border-green-700/50 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-green-300 font-semibold text-sm mb-1">Promise kept ✓</p>
-                  <p className="text-gray-400 text-xs leading-relaxed">
-                    In April&apos;s report we committed to addressing mobile CPA, which was running 34% above desktop.
-                    This month, mobile CPA dropped from £49 to £38 following bid modifier adjustments —
-                    still above desktop but trending in the right direction. We&apos;ll continue optimising in June.
-                  </p>
-                </div>
+          <div className="divide-y divide-gray-50">
+            {[
+              { label: 'Goal', color: 'bg-green-100 text-green-800', text: 'Reach 100 qualified leads/month by Q3 2026' },
+              { label: 'Promise', color: 'bg-blue-100 text-blue-800', text: 'Reduce mobile CPA — currently 41% above desktop' },
+              { label: 'Stakeholder', color: 'bg-violet-100 text-violet-800', text: 'MD prefers plain English — never mention impressions or CTR' },
+              { label: 'Change', color: 'bg-orange-100 text-orange-800', text: 'Google Ads budget increased 20% on 14 March' },
+              { label: 'Win', color: 'bg-emerald-100 text-emerald-800', text: 'Mobile CPA reduced 41% following bid modifier restructure in April' },
+            ].map(item => (
+              <div key={item.label} className="flex items-start gap-3 px-5 py-3.5">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 mt-0.5 ${item.color}`}>{item.label}</span>
+                <p className="text-sm text-gray-700 leading-relaxed">{item.text}</p>
               </div>
-            </div>
-
-            {/* Next steps */}
-            <div>
-              <span className="text-blue-400 font-semibold uppercase text-xs tracking-wider block mb-2">What we&apos;re doing next</span>
-              <p className="text-gray-300">
-                Continue scaling the content cluster · Expand the Display awareness campaign into the 35–54 demographic ·
-                Review branded search volume — down 6% for the second month running, which warrants a dedicated campaign
-              </p>
-            </div>
-
-            {/* Confidence + approval row */}
-            <div className="flex items-center justify-between border-t border-gray-700 pt-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-green-400 bg-green-900/50 border border-green-700/50 rounded px-2 py-0.5">High confidence</span>
-                <span className="text-xs text-gray-600">Backed by GA4 + Google Ads data</span>
-              </div>
-              <button className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium cursor-default">Approve section ✓</button>
-            </div>
+            ))}
+          </div>
+          <div className="px-5 py-3 border-t border-gray-100 bg-purple-50 flex items-center gap-2">
+            <CheckCircle className="h-4 w-4 text-purple-600 shrink-0" />
+            <p className="text-xs text-purple-800 font-medium">All 5 items referenced in this month&apos;s report — automatically</p>
           </div>
         </div>
-
         <p className="text-center mt-5 text-sm text-gray-500">
-          The <span className="text-green-600 font-medium">Promise kept ✓</span> block was generated automatically — the system remembered what was written in April.
-          <Link href="/demo" className="text-blue-600 hover:underline ml-1">Try the live demo →</Link>
+          Set once. Referenced every month. Survives any staff change.
+          <Link href="/client-memory" className="text-blue-600 hover:underline ml-1">See how memory works →</Link>
         </p>
       </section>
 
@@ -555,39 +531,59 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why agencies switch */}
+      {/* Knowledge Loss section */}
       <section className="bg-gray-50 border-y border-gray-100 py-20">
         <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Why agencies switch to NarratorHQ</h2>
+            <h2 className="text-3xl font-bold text-gray-900">The problem nobody talks about</h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
-              The problem isn&apos;t finding the data. It&apos;s carrying the context.
+              Client knowledge doesn&apos;t live in the CRM. It lives in the account manager&apos;s head.
+              When they leave, it&apos;s gone.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-3 max-w-3xl mx-auto">
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Traditional reporting</p>
+          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+            <div className="bg-white rounded-xl border border-red-200 p-6">
+              <p className="text-xs font-semibold text-red-500 uppercase tracking-wider mb-5">Without NarratorHQ</p>
               <div className="space-y-3">
-                {COMPARISON_ROWS.map(row => (
-                  <div key={row.traditional} className="flex items-start gap-2.5 text-sm text-gray-600">
+                {[
+                  'Account manager leaves — client history disappears',
+                  'Promises made in January forgotten by March',
+                  'New AM starts from scratch on every handover',
+                  'Recommendations repeated because nobody logged them',
+                  'Stakeholder preferences live in one person\'s memory',
+                  'Context lives in someone\'s head and nowhere else',
+                ].map(item => (
+                  <div key={item} className="flex items-start gap-2.5 text-sm text-gray-600">
                     <span className="mt-0.5 h-4 w-4 rounded-full bg-red-100 text-red-600 text-xs flex items-center justify-center shrink-0 font-bold">✕</span>
-                    {row.traditional}
+                    {item}
                   </div>
                 ))}
               </div>
             </div>
-            <div className="bg-white rounded-xl border border-blue-300 ring-1 ring-blue-100 p-5">
-              <p className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-4">NarratorHQ</p>
+            <div className="bg-white rounded-xl border border-green-300 ring-1 ring-green-100 p-6">
+              <p className="text-xs font-semibold text-green-600 uppercase tracking-wider mb-5">With NarratorHQ</p>
               <div className="space-y-3">
-                {COMPARISON_ROWS.map(row => (
-                  <div key={row.narrator} className="flex items-start gap-2.5 text-sm text-gray-700">
+                {[
+                  'Full client timeline preserved — survives any staff change',
+                  'Every promise tracked until explicitly resolved',
+                  'Handover takes minutes — new AM has full context on day one',
+                  'Every recommendation logged and referenced in future reports',
+                  'Stakeholder preferences stored and applied automatically',
+                  'Context lives in the system. Not in anyone\'s head.',
+                ].map(item => (
+                  <div key={item} className="flex items-start gap-2.5 text-sm text-gray-700">
                     <CheckCircle className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                    {row.narrator}
+                    {item}
                   </div>
                 ))}
               </div>
             </div>
           </div>
+          <p className="text-center mt-8 text-sm text-gray-500">
+            <Link href="/blog/account-manager-handover" className="text-blue-600 hover:underline font-medium">
+              Read the handover case study →
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -694,20 +690,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* Agency Memory Layer */}
       <section className="bg-gray-50 border-y border-gray-100 py-20">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">How it works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {HOW_IT_WORKS.map(step => (
-              <div key={step.step} className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="h-8 w-8 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center mb-4">
-                  {step.step}
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">The Agency Memory Layer</h2>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto">
+              Connect your data sources. Store what matters. Generate everything from reports to handovers.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Connect */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="h-8 w-8 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center mb-4">1</div>
+              <h3 className="font-semibold text-gray-900 mb-3">Connect</h3>
+              <div className="space-y-2">
+                {AGENCY_MEMORY_LAYER.connect.map(p => (
+                  <div key={p.label} className="flex items-start gap-2">
+                    <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded px-1.5 py-0.5 shrink-0">{p.label}</span>
+                    <p className="text-xs text-gray-500 leading-relaxed">{p.desc}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            {/* Store */}
+            <div className="bg-white rounded-xl border border-purple-200 ring-1 ring-purple-100 p-6">
+              <div className="h-8 w-8 rounded-full bg-purple-600 text-white text-sm font-bold flex items-center justify-center mb-4">2</div>
+              <h3 className="font-semibold text-gray-900 mb-3">Store</h3>
+              <div className="space-y-1.5">
+                {AGENCY_MEMORY_LAYER.store.map(item => (
+                  <div key={item} className="flex items-center gap-2 text-sm text-gray-600">
+                    <CheckCircle className="h-3.5 w-3.5 text-purple-400 shrink-0" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Generate */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="h-8 w-8 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center mb-4">3</div>
+              <h3 className="font-semibold text-gray-900 mb-3">Generate</h3>
+              <div className="space-y-1.5">
+                {AGENCY_MEMORY_LAYER.generate.map(item => (
+                  <div key={item} className="flex items-center gap-2 text-sm text-gray-600">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-400 shrink-0" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-400 mt-4 leading-relaxed">All of these draw from the same stored context — built once, used everywhere.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -920,10 +952,10 @@ export default function HomePage() {
       {/* Final CTA */}
       <section className="bg-gray-900 py-20">
         <div className="max-w-xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-white">Reports that remember.<br />Clients who stay.</h2>
+          <h2 className="text-3xl font-bold text-white">Every client relationship.<br />Fully remembered.</h2>
           <p className="text-gray-400 mt-4 mb-8 leading-relaxed">
             The context that makes client reports good has always been in the account manager&apos;s head.
-            Now it&apos;s in the system. 14-day trial, no credit card.
+            Now it&apos;s in the system. It stays when people leave. 14-day trial, no credit card.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
@@ -955,6 +987,7 @@ export default function HomePage() {
               <div className="space-y-2">
                 <p className="font-medium text-gray-700 text-xs uppercase tracking-wider">Product</p>
                 <div className="space-y-1.5">
+                  <Link href="/client-memory" className="block hover:text-gray-900 transition-colors">Client Memory</Link>
                   <Link href="/#pricing" className="block hover:text-gray-900 transition-colors">Pricing</Link>
                   <Link href="/report-example" className="block hover:text-gray-900 transition-colors">Sample report</Link>
                   <Link href="/demo" className="block hover:text-gray-900 transition-colors">Interactive demo</Link>
@@ -965,9 +998,11 @@ export default function HomePage() {
               <div className="space-y-2">
                 <p className="font-medium text-gray-700 text-xs uppercase tracking-wider">Resources</p>
                 <div className="space-y-1.5">
+                  <Link href="/blog/account-manager-handover" className="block hover:text-gray-900 transition-colors">Account manager handover</Link>
+                  <Link href="/blog/agency-knowledge-management" className="block hover:text-gray-900 transition-colors">Agency knowledge management</Link>
+                  <Link href="/blog/client-reporting-continuity" className="block hover:text-gray-900 transition-colors">Reporting continuity</Link>
                   <Link href="/blog/how-to-automate-client-marketing-reports" className="block hover:text-gray-900 transition-colors">How to automate reports</Link>
                   <Link href="/blog/agencyanalytics-alternative" className="block hover:text-gray-900 transition-colors">AgencyAnalytics alternative</Link>
-                  <Link href="/blog/dashthis-alternative" className="block hover:text-gray-900 transition-colors">DashThis alternative</Link>
                 </div>
               </div>
               <div className="space-y-2">
