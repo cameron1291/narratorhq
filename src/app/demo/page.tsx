@@ -369,8 +369,8 @@ export default function DemoPage() {
 
       {/* Demo banner */}
       <div className="bg-blue-600 text-white text-center py-2.5 text-sm font-medium">
-        Interactive demo — edits are local only.{' '}
-        <Link href="/signup" className="underline hover:no-underline font-semibold">Start your free trial →</Link>
+        You&apos;re looking at a live demo client.{' '}
+        <Link href="/signup" className="underline hover:no-underline font-semibold">Sign up to generate reports for your own clients →</Link>
       </div>
 
       {/* Nav */}
